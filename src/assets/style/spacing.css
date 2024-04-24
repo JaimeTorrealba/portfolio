@@ -1,0 +1,71 @@
+/* // PADDING */
+/* // small */
+.pa-s {
+    padding: var(--s-small);
+}
+.px-s {
+    padding: 0 var(--s-small);
+}
+.py-s {
+    padding: var(--s-small) 0;
+}
+
+/* // normal */
+.pa {
+    padding: var(--s-normal);
+}
+.px {
+    padding: 0 var(--s-normal);
+}
+.py {
+    padding: var(--s-normal) 0;
+}
+
+/* // large */
+.pa-l {
+    padding: var(--s-large);
+}
+.px-l {
+    padding: 0 var(--s-large);
+}
+.py-l {
+    padding: var(--s-large) 0;
+}
+
+/* // MARGIN */
+
+/* //small */
+
+.margin-small {
+    margin: var(--s-small);
+}
+.margin-small-x {
+    margin: 0 var(--s-small);
+}
+.margin-small-y {
+    margin: var(--s-small) 0;
+}
+
+/* //normal */
+
+.margin-normal {
+    margin: var(--s-normal);
+}
+.margin-normal-x {
+    margin: 0 var(--s-normal);
+}
+.margin-normal-y {
+    margin: var(--s-normal) 0;
+}
+
+/* //large */
+
+.margin-large {
+    margin: var(--s-large);
+}
+.margin-large-x {
+    margin: 0 var(--s-large);
+}
+.margin-large-y {
+    margin: var(--s-large) 0;
+}

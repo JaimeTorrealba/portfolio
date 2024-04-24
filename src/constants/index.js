@@ -1,0 +1,1 @@
+export const perfectWidthResolution = 1280;

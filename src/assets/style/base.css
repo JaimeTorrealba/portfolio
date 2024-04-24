@@ -1,0 +1,63 @@
+:root {
+  --white: #f7f7f7;
+  --black: #111;
+  --s-small: 0.5rem;
+  --s-normal: 1rem;
+  --s-large: 2rem;
+  --step--2: clamp(0.6944rem, 0.6021rem + 0.4618vi, 0.96rem);
+  --step--1: clamp(0.8333rem, 0.7058rem + 0.6377vi, 1.2rem);
+  --step-0: clamp(1rem, 0.8261rem + 0.8696vi, 1.5rem);
+  --step-1: clamp(1.2rem, 0.9652rem + 1.1739vi, 1.875rem);
+  --step-2: clamp(1.44rem, 1.1257rem + 1.5717vi, 2.3438rem);
+  --step-3: clamp(1.728rem, 1.31rem + 2.0899vi, 2.9297rem);
+  --step-4: clamp(2.0736rem, 1.5211rem + 2.7626vi, 3.6621rem);
+  --step-5: clamp(2.4883rem, 1.7616rem + 3.6336vi, 4.5776rem);
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Friz Quadrata Regular OS';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: local('CascadiaCode'),
+      url('../fonts/friz-quadrata-regular-os-5870333951e7c.woff') format('woff');
+}
+
+body {
+  min-height: 100vh;
+  color: var(--white);
+  font-family: 'Friz Quadrata Regular OS';
+  cursor: url('../wcursor.cur'), pointer;
+  padding: 0;
+  overflow: hidden;
+}
+
+a {
+  color: var(--white);
+  text-decoration: none;
+}
+li{
+  list-style: none;
+}
+ul{
+  padding: 0;
+  margin: 0;
+}
+button{
+  cursor: pointer;
+  border: none;
+  background: none;
+  margin: 0;
+  padding: 0;
+}
+
+.debug{
+  outline: 1px solid red;
+}
