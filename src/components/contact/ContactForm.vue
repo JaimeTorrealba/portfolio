@@ -1,15 +1,8 @@
 <script setup>
-import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import CloseIcon from '@/assets/icons/CloseIcon.vue'
 
 const router = useRouter()
-
-const formData = reactive({
-    name: '',
-    email: '',
-    message: ''
-})
 
 function encode(data) {
     return Object.keys(data)
@@ -18,13 +11,12 @@ function encode(data) {
 }
 
 const handleSubmit = (e) => {
-    e.preventDefault()
     fetch('/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: encode({
             'form-name': 'contactMe',
-            ...formData
+            ...e
         })
     })
         .then(() => {
@@ -35,6 +27,7 @@ const handleSubmit = (e) => {
             console.error('jaime ~ handleSubmit ~ error:', error)
         })
 }
+
 </script>
 <template>
     <div class="form-container bloom-effect-layout">
