@@ -17,7 +17,8 @@ function encode(data) {
         .join('&')
 }
 
-const handleSubmit = () => {
+const handleSubmit = (e) => {
+    e.preventDefault()
     fetch('/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -27,21 +28,22 @@ const handleSubmit = () => {
         })
     })
         .then(() => {
-            // modal success
-            console.log('jaime ~ success')
+            router.push('/success')
         })
         .catch((error) => {
+            router.push('/reject')
             console.error('jaime ~ handleSubmit ~ error:', error)
-            // modal error
         })
 }
 </script>
 <template>
     <div class="form-container bloom-effect-layout">
-        <button class="button-back pointer" @click="router.back()"><CloseIcon /></button>
-        <FormKit type="form" netlify data-netlify="true" data-netlify-honeypot="bot-field"
-            @submit.prevent="handleSubmit" :config="{ validationVisibility: 'live' }" method="POST" name="contactMe"
-            submit-label="Send" :submit-attrs="{
+        <button class="button-back pointer" @click="router.back()">
+            <CloseIcon />
+        </button>
+        <FormKit type="form" netlify data-netlify="true" data-netlify-honeypot="bot-field" @submit="handleSubmit"
+            :config="{ validationVisibility: 'submit' }" method="POST" name="contactMe" submit-label="Send"
+            :submit-attrs="{
             inputClass: 'submit-button',
             wrapperClass: 'width-100',
             outerClass: 'flex flex-center width-100'
@@ -97,7 +99,7 @@ const handleSubmit = () => {
 
 .submit-button {
     background-color: #e4e4e4;
-    box-shadow:  inset 0 0 4px 1.5px rgba(1, 1, 1, 0.5);
+    box-shadow: inset 0 0 4px 1.5px rgba(1, 1, 1, 0.5);
     color: #111;
     border: none;
     width: 100%;
@@ -116,7 +118,8 @@ const handleSubmit = () => {
 .mb-form {
     margin-bottom: 1rem;
 }
-.first-item-margin{
+
+.first-item-margin {
     margin-top: 1rem;
 }
 </style>
