@@ -40,7 +40,7 @@ const handleSubmit = () => {
     <div class="form-container bloom-effect-layout">
         <button class="button-back pointer" @click="router.back()"><CloseIcon /></button>
         <FormKit type="form" netlify data-netlify="true" data-netlify-honeypot="bot-field"
-            @submit.prevent="handleSubmit" :config="{ validationVisibility: 'submit' }" method="POST" name="contactMe"
+            @submit.prevent="handleSubmit" :config="{ validationVisibility: 'live' }" method="POST" name="contactMe"
             submit-label="Send" :submit-attrs="{
             inputClass: 'submit-button',
             wrapperClass: 'width-100',
@@ -61,7 +61,7 @@ const handleSubmit = () => {
             'input-form': true,
         }" />
             <FormKit type="textarea" name="message" id="message" label="Message" placeholder="Hi! how are you?" rows="5"
-                validation="required|min:10" :input-class="{
+                validation="required" :input-class="{
             'formkit-input': false,
             'input-form': true,
         }" messages-class="error-text" inner-class="py-s" outer-class="mb-form" />
