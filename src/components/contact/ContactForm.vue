@@ -1,8 +1,10 @@
 <script setup>
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import CloseIcon from '@/assets/icons/CloseIcon.vue'
 
 const router = useRouter()
+const error = ref(null)
 
 function encode(data) {
     return Object.keys(data)
@@ -20,11 +22,11 @@ const handleSubmit = (e) => {
         })
     })
         .then(() => {
-            router.push('/success')
+            router.push({ name: 'Success', params: { name: e.name } })
         })
-        .catch((error) => {
-            router.push('/reject')
-            console.error('jaime ~ handleSubmit ~ error:', error)
+        .catch((e) => {
+            error.value = e
+            console.error('jaime ~ handleSubmit ~ error:', e)
         })
 }
 
@@ -61,6 +63,9 @@ const handleSubmit = (e) => {
             'input-form': true,
         }" messages-class="error-text" inner-class="py-s" outer-class="mb-form" />
         </FormKit>
+        <pre v-show="error">
+            {{ error }}
+        </pre>
     </div>
 </template>
 <style>

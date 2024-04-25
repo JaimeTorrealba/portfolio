@@ -7,7 +7,6 @@ import MusicButton from '@/components/common/MusicButton.vue';
 const store = useMainStore()
 
 // TODO transition in loading screen
-// animations in contact page when reload
 </script>
 
 <template>
@@ -25,7 +24,7 @@ const store = useMainStore()
   </router-view>
 </template>
 <style scoped>
-.version{
+.version {
   position: fixed;
   bottom: 1%;
   left: 1%;

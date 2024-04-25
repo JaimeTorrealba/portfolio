@@ -16,17 +16,8 @@
     </svg>
 </template>
 <style scoped>
-.cls-1 {
-    fill: #ccc;
-    filter: drop-shadow(0 0 5px #e4e4e4);
-}
-
-.cls-2 {
-    fill: #b2b2b2;
-    filter: drop-shadow(0 0 5px #e4e4e4);
-}
 path {
     stroke: var(--white);
     stroke-width: 1px;
-  }
+}
 </style>
