@@ -1,8 +1,9 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
 import { TresCanvas } from '@tresjs/core'
-import { MouseParallax } from '@tresjs/cientos'
+import { MouseParallax, GlobalAudio } from '@tresjs/cientos'
 import { useWindowSize } from '@vueuse/core'
+import { useMainStore } from '@/stores'
 import { perfectWidthResolution } from '@/constants'
 // COMPONENTS
 import LoadingScreen from '../misc/LoadingScreen.vue'
@@ -11,14 +12,19 @@ import Nail from './PureNail.vue'
 import SpotLight from './SpotLight.vue'
 import ParticlesRing from './ParticlesRing.vue'
 
-//TODO add shadow
+const store = useMainStore()
 
+const music = ref()
+
+watch(music, (_music) => {
+  store.musicInstance = _music.sound
+})
 // Components
 //debug
 // import { useDebuggerStore } from '@/stores/debugger'
 // const store = useDebuggerStore()
 
-//modifiers 
+//modifiers
 const cameraRef = ref()
 watch(cameraRef, camera => {
   camera.lookAt(0, 3.5, 0)
@@ -36,6 +42,9 @@ const scaleFactor = computed(() => Math.min(Math.max(width.value / perfectWidthR
   <TresCanvas clear-color="#111" window-size shadows class="canvas-styles">
     <TresPerspectiveCamera ref="cameraRef" :position="[0, 3.5, 25]" :fov="30" />
     <TresFog color="#111" near="8" far="50" />
+    <Suspense>
+      <GlobalAudio ref="music" src="/assets/What_Dwells_Beneath.wav" :volume="0.5" :loop="true" />
+    </Suspense>
     <Suspense>
       <Floor :scaleFactor="scaleFactor" />
     </Suspense>

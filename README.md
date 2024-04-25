@@ -2,8 +2,10 @@
 
 ## Models
 
-Pure nail
+Pure nail https://skfb.ly/6WqoT
 
 ## Textures
 
-https://3dtextures.me/
+https://polyhaven.com/a/dry_riverbed_rock
+
+<!-- https://3dtextures.me/ -->

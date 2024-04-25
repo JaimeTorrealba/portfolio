@@ -1,23 +1,26 @@
 <script setup>
-import { ref } from 'vue'
+import { useMainStore } from "@/stores";
 import FirstScreen from '@/components/home/FirstScreen.vue'
 import SecondScreen from '@/components/home/SecondScreen.vue'
 
-const showFirstScreen = ref(true) // true
+const store = useMainStore()
 
 const handleNextScreen = (e) => {
-  showFirstScreen.value = e
-}
+  store.showFirstPage = e
+  if (!e) {
+    store.musicInstance.play()
+  }
 
+}
 </script>
 
 <template>
   <main class="container">
     <Transition name="fade" mode="out-in">
-      <FirstScreen @first-screen="handleNextScreen" :firstScreen="showFirstScreen" v-if="showFirstScreen" />
+      <FirstScreen @first-screen="handleNextScreen" :firstScreen="store.showFirstPage" v-if="store.showFirstPage" />
     </Transition>
     <Transition name="fade" mode="out-in">
-      <SecondScreen @first-screen="handleNextScreen" :firstScreen="showFirstScreen" v-if="!showFirstScreen" />
+      <SecondScreen @first-screen="handleNextScreen" :firstScreen="store.showFirstPage" v-if="!store.showFirstPage" />
     </Transition>
   </main>
 </template>
@@ -34,6 +37,7 @@ const handleNextScreen = (e) => {
 .fade-leave-active {
   transition: all 0.4s;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;

@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import { useMainStore } from '@/stores'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,6 +18,16 @@ const router = createRouter({
     },
     { path: '/:pathMatch(.*)*', name: 'NotFound', component: () => import('../views/NotFound.vue') }
   ]
+})
+
+router.beforeEach((to) => {
+const store = useMainStore()
+
+  if (store.showFirstPage && to.path !== '/') {
+    return '/'
+  } else {
+    return true
+  }
 })
 
 export default router
