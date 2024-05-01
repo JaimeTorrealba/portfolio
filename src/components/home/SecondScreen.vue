@@ -41,7 +41,7 @@ watchEffect(() => {
         <ul class="flex flex-column flex-center-column">
             <li class="menu-items bloom-effect-tiny line-through"><router-link to="/projects"> Projects </router-link>
             </li>
-            <li class="menu-items bloom-effect-tiny line-through"><router-link to="/about-me"> About me </router-link>
+            <li class="menu-items bloom-effect-tiny"><router-link to="/about-me"> About me </router-link>
             </li>
             <li class="menu-items bloom-effect-tiny"><router-link to="/ContactMe"> Contact me </router-link></li>
             <li class="menu-items bloom-effect-tiny line-through"><router-link to="/settings"> Settings </router-link>

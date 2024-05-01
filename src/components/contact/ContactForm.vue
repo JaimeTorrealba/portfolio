@@ -82,7 +82,6 @@ const handleSubmit = (e) => {
     top: 2%;
     right: 2.5%;
     border-radius: 4px;
-
 }
 
 .input-form {
@@ -108,9 +107,10 @@ const handleSubmit = (e) => {
 }
 
 .error-text {
-    font-size: var(--text-size--2);
+    font-size: 0.75rem;
+    color: #FFC038;
     text-decoration: underline;
-    margin-block-end: 1rem;
+    margin-block-end: 0.5rem 0;
 }
 
 .mb-form {

@@ -61,3 +61,6 @@ button{
 .debug{
   outline: 1px solid red;
 }
+p{
+  max-width: 75ch;
+}
