@@ -5,17 +5,16 @@ import { useRouter } from 'vue-router'
 import TheContent from '@/components/about/TheContent.vue'
 import CloseIcon from '@/assets/icons/CloseIcon.vue'
 import DividerSvg from '@/assets/icons/DividerSvg.vue'
-import { showText, drawIllustration } from '@/utils/gsaps.js'
+import { showText, drawIllustration, showLongText } from '@/utils/gsaps.js'
 
 const router = useRouter()
+
+
 
 onMounted(() => {
     const master = gsap.timeline()
     master.add(showText('#aboutTitle', { delay: 0 }))
-    //   master.from('#form-id', {
-    //     duration: 1.5,
-    //     opacity: 0,
-    //   })
+    master.add(showLongText('#aboutText', { stagger: 0.05, delay: 0 }), '<')
     master.add(drawIllustration('#divider'), '<')
 })
 </script>
@@ -32,16 +31,14 @@ onMounted(() => {
                 <button class="button-back pointer" @click="router.back()">
                     <CloseIcon />
                 </button>
-                <div class="flex flex-center">
-                    <p class="text-center">
+                <div class="flex flex-center py-l">
+                    <p class="text-center" id="aboutText">
                         I’m very pasionate about good quality coding, beautiful desings and help people. I formed myself
                         as a front-end developer, but I discover the beautiful of creating amazing experiences for final
                         users.
                     </p>
                 </div>
-                <div class="pa">
                     <TheContent />
-                </div>
             </div>
         </div>
     </main>
