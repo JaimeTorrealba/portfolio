@@ -37,7 +37,7 @@ watchEffect(() => {
 
 </script>
 <template>
-    <section class="content-v2">
+    <nav class="content-v2">
         <ul class="flex flex-column flex-center-column">
             <li class="menu-items bloom-effect-tiny line-through"><router-link to="/projects"> Projects </router-link>
             </li>
@@ -48,7 +48,7 @@ watchEffect(() => {
             </li>
             <li class="menu-items bloom-effect-tiny pointer" @click="$emit('firstScreen', true)"> Exit </li>
         </ul>
-    </section>
+    </nav>
 </template>
 <style scoped>
 .content-v2 {

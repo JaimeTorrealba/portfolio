@@ -1,13 +1,23 @@
 <script setup>
+import { onMounted } from "vue";
+import { appear } from "@/utils/gsaps";
+import { gsap } from "gsap";
+
+
+onMounted(() => {
+    const master = gsap.timeline()
+    master.add(appear('#listValues *', { delay: 0, stagger: 0.1 }))
+    master.add(appear('#headValues *', { delay: 0, stagger: 0.1 }), '<')
+})
 
 </script>
 <template>
     <section>
-        <div class="flex flex-column flex-center-column pb-l">
-            <h4 class="center-text h2 py-s">My Values </h4>
+        <div class="flex flex-column flex-center-column pb-l" id="headValues">
+            <h3 class="center-text h2 py-s">My Values </h3>
             <img src="/img/Values.png" alt="Values" width="96px" class="img-about" />
         </div>
-        <ul>
+        <ul id="listValues">
             <li><strong class="bloom-effect-tiny">Passion</strong>: I love code and I love beautiful code. I believe the code you deliver says
                 something about you and
                 you should be proud of it. I also love design, 3D design, pixel-art and illustration. Although there is

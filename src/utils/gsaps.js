@@ -5,7 +5,6 @@ import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin'
 gsap.registerPlugin(SplitText, DrawSVGPlugin)
 
 export const showText = (elem, options, className) => {
-  console.log('jaime ~ showText ~ elem:', elem)
   gsap.set(elem, { overflowY: 'hidden' }) // prevent fouc
   const tl = gsap.timeline(),
     mySplitText = new SplitText(elem, { type: 'lines', linesClass: className ?? 'line' }),
@@ -22,7 +21,6 @@ export const showText = (elem, options, className) => {
 }
 
 export const showLongText = (elem, options) => {
-  console.log('jaime ~ showLongText ~ elem:', elem)
   gsap.set(elem, { overflowY: 'hidden' }) // prevent fouc
   const tl = gsap.timeline(),
     mySplitText = new SplitText(elem, { type: 'words', linesClass: 'line' }),
@@ -40,10 +38,10 @@ export const showLongText = (elem, options) => {
 export const appear = (elem, options) => {
   const tl = gsap.timeline()
   return tl.from(elem, {
-    y: 50,
+    y: options?.y ?? 50,
     opacity: 0,
-    duration: 1,
-    delay: 1,
+    duration: options?.duration ?? 1,
+    delay: options?.delay ?? 1,
     ...options
   })
 }

@@ -108,7 +108,7 @@ const handleSubmit = (e) => {
 
 .error-text {
     font-size: 0.75rem;
-    color: #FFC038;
+    color: var(--gold);
     text-decoration: underline;
     margin-block-end: 0.5rem 0;
 }

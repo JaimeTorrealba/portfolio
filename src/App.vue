@@ -7,7 +7,7 @@ import MusicButton from '@/components/common/MusicButton.vue';
 const store = useMainStore()
 
 // TODO transition in loading screen
-// TODO transition in content about
+// TODO transition in content about and mobile
 </script>
 
 <template>

@@ -32,7 +32,7 @@ onMounted(() => {
                     <CloseIcon />
                 </button>
                 <div class="flex flex-center py-l">
-                    <p class="text-center" id="aboutText">
+                    <p class="text-center principal-about-text" id="aboutText">
                         I’m very pasionate about good quality coding, beautiful desings and help people. I formed myself
                         as a front-end developer, but I discover the beautiful of creating amazing experiences for final
                         users.
@@ -72,5 +72,9 @@ onMounted(() => {
     border-radius: 2px;
     padding: 2rem;
     overflow-y: auto;
+}
+.principal-about-text{
+    font-size: 1.25rem;
+    line-height: 1.5;
 }
 </style>
