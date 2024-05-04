@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import SignatureJT from '@/assets/icons/SignatureJT.vue'
 import Values from './tabs/TheValues.vue'
 import Articles from './tabs/TheArticles.vue'
+import OSS from './tabs/TheOSS.vue'
 import { appear } from "@/utils/gsaps";
 import { gsap } from "gsap";
 
@@ -20,7 +21,7 @@ const handleComponents = (component) => {
 const aboutComponents = {
     Values,
     Articles,
-    // OSS: 'OSS',
+    OSS,
     // Languages: 'Languages',
     // Links: 'Links',
     // Hobbies: 'Hobbies',
