@@ -4,11 +4,10 @@ import SignatureJT from '@/assets/icons/SignatureJT.vue'
 import Values from './tabs/TheValues.vue'
 import Articles from './tabs/TheArticles.vue'
 import OSS from './tabs/TheOSS.vue'
+import Links from './tabs/TheLinks.vue'
+import Languages from './tabs/TheLanguages.vue'
 import { appear } from "@/utils/gsaps";
 import { gsap } from "gsap";
-
-
-
 
 const imgSize = 48
 
@@ -22,14 +21,14 @@ const aboutComponents = {
     Values,
     Articles,
     OSS,
-    // Languages: 'Languages',
-    // Links: 'Links',
+    Languages,
+    Links,
     // Hobbies: 'Hobbies',
 }
 
 onMounted(() => {
     const master = gsap.timeline()
-     master.add(appear('#aboutButtons *', { delay: 0, stagger: 0.075, y:0 }))
+    master.add(appear('#aboutButtons *', { delay: 0, stagger: 0.075, y:0 }))
     master.add(appear('#imgAbout', { delay: 0, stagger: 0.1 }), '<')
 })
 </script>
@@ -138,6 +137,7 @@ onMounted(() => {
 .img-perfil {
     border-radius: 0.5rem;
     min-width: 300px;
+    min-height: 250px;
     max-width: 600px;
 }
 

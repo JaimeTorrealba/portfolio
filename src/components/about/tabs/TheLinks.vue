@@ -13,52 +13,49 @@ onMounted(() => {
     master.add(appear('.AccordionHeader', { delay: 0, stagger: 0.05 }), '-=0.5')
 })
 
-const maintainer = [
-    { title: 'TresJs', href: 'https://github.com/tresjs/tres' },
-    { title: 'Cientos', href: 'https://github.com/tresjs/cientos' },
+const Models = [
+    { title: 'Sketchfab', href: 'https://sketchfab.com/solucionesinformaticasjtc' },
+    { title: 'Artstation', href: 'https://www.artstation.com/jaimebboyjt' },
+    // { title: 'CGTrader', href: '' },
+    // { title: 'Blender Market', href: '' },
+    // { title: 'Poly Pizza', href: '' },
 ]
 
-const libraries = [
-    { title: 'Creative-lab', href: 'https://github.com/JaimeTorrealba/creative-lab' },
-    { title: 'Tres FPS Controls', href: 'https://github.com/JaimeTorrealba/tres-fps-controls' },
-    { title: 'Portfolio', href: 'https://github.com/JaimeTorrealba/portfolio' },
-    { title: 'vScale', href: 'https://github.com/JaimeTorrealba/vScale' },
-    { title: 'Path selector (Achieved)', href: 'https://github.com/JaimeTorrealba/path-selector' },
+const Course = [
+    { title: 'ThreeJs desde 0 (EDteam)', href: 'https://ed.team/cursos/threejs' },
+    { title: 'TresJS desde 0 (Udemy - soon)', href: '' },
 ]
 
-const contributions = [
-    { title: 'ThreeJs', href: 'https://github.com/mrdoob/three.js' },
-    { title: 'vue-telescope-analyzer', href: 'https://github.com/nuxtlabs/vue-telescope-analyzer' },
-    { title: 'ThreeJs', href: 'https://github.com/FarazzShaikh/THREE-CustomShaderMaterial' },
-    { title: 'THREE-CustomShaderMateria', href: 'https://github.com/RenaudRohlinger/stats-gl' },
-    { title: 'awesome-vue', href: 'https://github.com/vuejs/awesome-vue' },
-    { title: 'awesome-threejs', href: 'https://github.com/AxiomeCG/awesome-threejs' },
+const Others = [
+    { title: 'Codepen', href: 'https://codepen.io/jaime_torrealba' },
+    { title: 'Instagram', href: 'https://www.instagram.com/jaimebboyjt/' },
+    { title: 'Dribbble', href: 'https://dribbble.com/Jaime_Torrealba' },
+    { title: 'Youtube', href: 'https://www.youtube.com/channel/UCUxpOj2vNhEVD3rGWeP_1GQ' },
 ]
 
 const accordionItems = [
     {
         value: 'item-1',
-        title: 'Maintainer',
-        content: maintainer,
+        title: '3D Models',
+        content: Models,
     },
     {
         value: 'item-2',
-        title: 'My libraries',
-        content: libraries,
+        title: 'Courses',
+        content: Course,
     },
     {
         value: 'item-3',
-        title: 'Other contributions',
-        content: contributions,
+        title: 'Others RRSS',
+        content: Others,
     },
 ]
 </script>
 <template>
     <section>
         <div class="flex flex-column flex-center-column pb-l" id="headOSS">
-            <!-- problem with font size -->
-            <h3 class="center-text h2 py-s">Open Source </h3>
-            <img src="/img/Open_Sources.png" alt="Open source" width="96px" class="img-about" />
+            <h3 class="center-text h2 py-s">Links</h3>
+            <img src="/img/Links.png" alt="Open source" width="96px" class="img-about" />
         </div>
         <AccordionRoot class="AccordionRoot" default-value="'item-1'" type="single" :collapsible="true">
             <template v-for="item in accordionItems" :key="item.value">

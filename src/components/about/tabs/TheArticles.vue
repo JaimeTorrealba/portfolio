@@ -63,7 +63,7 @@ li {
     margin-bottom: 0.5rem;
     text-indent: 1rem;
     list-style-type: disc;
-
+    text-decoration: underline;
 }
 
 .pb-l {
