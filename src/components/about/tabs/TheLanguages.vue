@@ -17,8 +17,9 @@ const animateBar = (bar) => {
 
 onMounted(() => {
     const master = gsap.timeline()
-    master.add(appear('#headLanguages *', { delay: 0, stagger: 0.1 }), '<')
-    master.add(animateBar('spanishBar'), '<')
+    master.add(appear('#headLanguages *', { delay: 0, stagger: 0.1 }))
+    master.add(appear('.appear', { delay: 0, y:0 }))
+    master.add(animateBar('spanishBar'), '-=0.5')
     master.add(animateBar('englishBar'), '-=0.5')
     master.add(animateBar('italianBar'), '-=0.5')
     master.add(animateBar('germanBar'), '-=0.5')
@@ -32,7 +33,7 @@ onMounted(() => {
             <img src="/img/Languages.png" alt="Values" width="96px" class="img-about" />
         </div>
 
-        <div class="flex flex-between gab px-l">
+        <div class="flex flex-between gab px-l appear">
             <div class="flex flex-column flex-center-column flex-between px">
                 <h4 class="h3"> Spanish </h4>
                 <LanguagesBar :width="100" id="spanishBar" />
@@ -54,7 +55,7 @@ onMounted(() => {
                 A1
             </div>
         </div>
-        <p class="py-l helper-text">*All the levels are certified and based on the CEFR.</p>
+        <p class="py-l helper-text appear">*All the levels are certified and based on the CEFR.</p>
     </section>
 </template>
 <style scoped>

@@ -6,6 +6,7 @@ import Articles from './tabs/TheArticles.vue'
 import OSS from './tabs/TheOSS.vue'
 import Links from './tabs/TheLinks.vue'
 import Languages from './tabs/TheLanguages.vue'
+import Hobbies from './tabs/TheHobbies.vue'
 import { appear } from "@/utils/gsaps";
 import { gsap } from "gsap";
 
@@ -23,7 +24,7 @@ const aboutComponents = {
     OSS,
     Languages,
     Links,
-    // Hobbies: 'Hobbies',
+    Hobbies,
 }
 
 onMounted(() => {

@@ -14,7 +14,7 @@ const router = useRouter()
 onMounted(() => {
     const master = gsap.timeline()
     master.add(showText('#aboutTitle', { delay: 0 }))
-    master.add(showLongText('#aboutText', { stagger: 0.05, delay: 0 }), '<')
+    master.add(showLongText('#aboutText', { stagger: 0.025, delay: 0 }), '<')
     master.add(drawIllustration('#divider'), '<')
 })
 </script>
@@ -38,7 +38,7 @@ onMounted(() => {
                         users.
                     </p>
                 </div>
-                    <TheContent />
+                <TheContent />
             </div>
         </div>
     </main>
@@ -59,6 +59,11 @@ onMounted(() => {
     border-radius: 4px;
 }
 
+.principal-about-text {
+    font-size: 1.25rem;
+    line-height: 1.5;
+}
+
 .custom-padding-about {
     padding: 0 3rem 2rem;
 }
@@ -73,8 +78,31 @@ onMounted(() => {
     padding: 2rem;
     overflow-y: auto;
 }
-.principal-about-text{
-    font-size: 1.25rem;
-    line-height: 1.5;
+
+
+.about-container {
+    --sb-track-color: #232E33;
+    --sb-thumb-color: #e4e4e4;
+    --sb-size: 14px;
+}
+
+.about-container::-webkit-scrollbar {
+    width: var(--sb-size);
+}
+
+.about-container::-webkit-scrollbar-track {
+    background: var(--sb-track-color);
+    border-radius: 3px;
+}
+
+.about-container::-webkit-scrollbar-thumb {
+    background: var(--sb-thumb-color);
+    border-radius: 3px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+    .about-container {
+        scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
+    }
 }
 </style>

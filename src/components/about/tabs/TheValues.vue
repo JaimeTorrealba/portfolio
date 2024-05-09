@@ -6,8 +6,8 @@ import { gsap } from "gsap";
 
 onMounted(() => {
     const master = gsap.timeline()
-    master.add(appear('#listValues *', { delay: 0, stagger: 0.1 }))
-    master.add(appear('#headValues *', { delay: 0, stagger: 0.1 }), '<')
+    master.add(appear('#headValues *', { delay: 1, stagger: 0.1 }))
+    master.add(appear('#listValues *', { delay: 0, stagger: 0.05 }))
 })
 
 </script>

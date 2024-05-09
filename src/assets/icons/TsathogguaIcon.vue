@@ -19,5 +19,6 @@
 path {
     stroke: var(--white);
     stroke-width: 1px;
+    fill: rgb(200, 200, 200, 0.75);
 }
 </style>
