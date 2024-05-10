@@ -1,101 +1,92 @@
 <script setup>
+import { shallowRef, toRefs, watchEffect } from 'vue'
 import { useRenderLoop } from '@tresjs/core'
-import { Color, AdditiveBlending } from 'three'
-import fragment from './particles_shader/fragment.glsl'
-import vertex from './particles_shader/vertex.glsl'
+
 
 const props = defineProps({
-    scaleFactor: Number,
+  size: { default: 0.2, },
+  area: { default: () => [30, 30, 30], },
+  color: { default: 0xFFFFFF, },
+  alphaTest: { default: 0.01, },
+  opacity: { default: 0.8, },
+  count: { default: 100, },
+  speed: { default: 0.001, },
+  randomness: { default: 0.5, },
+  depthWrite: { default: true, },
+  transparent: { default: true, },
+  sizeAttenuation: { default: true, },
+  alphaMap: { default: null, },
 })
 
-const parameters = {}
-parameters.count = 250 * props.scaleFactor
-parameters.radius = 150
-parameters.size = 150
-parameters.branches = 5
-parameters.spin = 5
-parameters.randomness = 0.5
-parameters.randomnessPower = 3
-parameters.insideColor = '#CEB890'
-parameters.outsideColor = '#F7F7F7'
+const {
+  size,
+  area,
+  color,
+  alphaMap,
+  map,
+  opacity,
+  alphaTest,
+  depthWrite,
+  transparent,
+  sizeAttenuation,
+  count,
+  speed,
+  randomness,
+} = toRefs(props)
 
-const shader = {
-  transparent: true,
-  depthWrite: false,
-  blending: AdditiveBlending,
-  vertexColors: true,
-  vertexShader: vertex,
-  fragmentShader: fragment,
-  uniforms: {
-    uTime: { value: 0 },
-    uSize: {
-      value: parameters.size,
-    },
-  },
+const geometryRef = shallowRef()
+let positionArray = []
+let velocityArray = []
+
+const setPosition = () => {
+  positionArray = new Float32Array(count.value * 3)
+  for (let i = 0; i < count.value; i++) {
+    const i3 = i * 3
+    positionArray[i3] = (Math.random() - 0.5) * area.value[0]
+    positionArray[i3 + 1] = (Math.random() - 0.5) * area.value[1]
+    positionArray[i3 + 2] = (Math.random() - 0.5) * area.value[2]
+  }
 }
-
-const positions = new Float32Array(parameters.count * 3)
-const colors = new Float32Array(parameters.count * 3)
-const scales = new Float32Array(parameters.count * 1)
-const randomness = new Float32Array(parameters.count * 3)
-
-const insideColor = new Color(parameters.insideColor)
-const outsideColor = new Color(parameters.outsideColor)
-
-for (let i = 0; i < parameters.count; i++) {
-  const i3 = i * 3
-
-  // Position
-  const radius = Math.random() * parameters.radius
-
-  const branchAngle =
-    ((i % parameters.branches) / parameters.branches) * Math.PI * 2
-
-  positions[i3] = Math.cos(branchAngle) * radius
-  positions[i3 + 1] = 0
-  positions[i3 + 2] = Math.sin(branchAngle) * radius
-
-  const randomX =
-    Math.pow(Math.random(), parameters.randomnessPower) *
-    (Math.random() < 0.5 ? 1 : -1) *
-    parameters.randomness *
-    radius
-  const randomY =
-    Math.pow(Math.random(), parameters.randomnessPower) *
-    (Math.random() < 0.5 ? 1 : -1) *
-    parameters.randomness *
-    radius
-  const randomZ =
-    Math.pow(Math.random(), parameters.randomnessPower) *
-    (Math.random() < 0.5 ? 1 : -1) *
-    parameters.randomness *
-    radius
-
-  randomness[i3] = randomX
-  randomness[i3 + 1] = randomY
-  randomness[i3 + 2] = randomZ
-
-  // Color
-  const mixedColor = insideColor.clone()
-  mixedColor.lerp(outsideColor, radius / parameters.radius)
-
-  colors[i3] = mixedColor.r
-  colors[i3 + 1] = mixedColor.g
-  colors[i3 + 2] = mixedColor.b
-
-  //Scale
-  scales[i] = Math.random()
+const setSpeed = () => {
+  velocityArray = new Float32Array(count.value * 2)
+  for (let i = 0; i < count.value * 2; i += 2) {
+    velocityArray[i] = ((Math.random() - 0.5) / 5) * speed.value * randomness.value
+    velocityArray[i + 1] = (Math.random() / 5) * speed.value + 0.01
+  }
 }
+setSpeed()
+setPosition()
+
+watchEffect(() => {
+  setSpeed()
+  setPosition()
+})
 
 const { onLoop } = useRenderLoop()
-onLoop(({ elapsed }) => {
-  shader.uniforms.uTime.value = -elapsed * parameters.spin
+
+onLoop(() => {
+  if (geometryRef.value?.attributes.position.array && geometryRef.value?.attributes.position.count) {
+    const positionArray = geometryRef.value.attributes.position.array
+    for (let i = 0; i < geometryRef.value.attributes.position.count; i++) {
+      const velocityX = velocityArray[i * 2]
+      const velocityY = velocityArray[i * 2 + 1]
+
+      positionArray[i * 3] += velocityX
+      positionArray[i * 3 + 1] -= velocityY
+
+      if (positionArray[i * 3] <= -area.value[0] / 2 || positionArray[i * 3] >= area.value[0] / 2) { positionArray[i * 3] = positionArray[i * 3] * -1 }
+      if (positionArray[i * 3 + 1] <= -area.value[1] / 2 || positionArray[i * 3 + 1] >= area.value[1] / 2) { positionArray[i * 3 + 1] = positionArray[i * 3 + 1] * -1 }
+    }
+    geometryRef.value.attributes.position.needsUpdate = true
+  }
 })
 </script>
+
 <template>
-  <TresPoints :position-y="1">
-    <TresBufferGeometry :position="[positions, 3]" :a-scale="[scales, 1]" :color="[colors, 3]"
-      :a-randomness="[randomness, 3]" />
-    <TresShaderMaterial v-bind="shader" />
+  <TresPoints :rotation-z="Math.PI">
+    <TresPointsMaterial :size="size" :color="color" :alpha-map="alphaMap" :map="map" :opacity="opacity"
+      :alpha-test="alphaTest" :depth-write="depthWrite" :transparent="transparent"
+      :size-attenuation="sizeAttenuation" />
+    <TresBufferGeometry ref="geometryRef" :position="[positionArray, 3]" :velocity="[velocityArray]" />
   </TresPoints>
 </template>

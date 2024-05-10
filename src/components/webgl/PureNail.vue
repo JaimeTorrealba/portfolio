@@ -9,8 +9,6 @@ defineProps({
 const nailRef = shallowRef(null)
 
 const { scene } = await useGLTF('/models/Pure_Nail.glb', { draco: true })
-const { scene: iron } = await useGLTF('/models/iron_chain.glb')
-const iron2 = iron.clone()
 
 watch(nailRef, (nail) => {
     nail.traverse((child) => {
@@ -30,10 +28,5 @@ watch(nailRef, (nail) => {
             :sequence-size="[[0.0, 0.0], [0.7, 1.0]]" :sequence-surface-distance="[[0.0, 0.0], [0.7, 1.0]]"
             :lifetime-sec="3.0" :size="2" :surface-distance="0.8" :mix-color="1.0" />
     </primitive>
-    <TresGroup  >
-        <!--  -->
-        <primitive :object="iron"  :position="[-6,-1,-4]" :rotation-z="Math.PI * 0.15" />
-        <primitive :object="iron2"  :position="[6,-1,-6]" :rotation-z="-Math.PI * 0.20" />
-    </TresGroup>
     <BakeShadows />
 </template>
