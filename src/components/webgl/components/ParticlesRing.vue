@@ -4,14 +4,14 @@ import { useRenderLoop } from '@tresjs/core'
 
 
 const props = defineProps({
-  size: { default: 0.2, },
+  size: { default: 0.25, },
   area: { default: () => [30, 30, 30], },
-  color: { default: 0xFFFFFF, },
+  color: { default: 0x333, },
   alphaTest: { default: 0.01, },
-  opacity: { default: 0.8, },
-  count: { default: 100, },
+  opacity: { default: 1, },
+  count: { default: 250, },
   speed: { default: 0.001, },
-  randomness: { default: 0.5, },
+  randomness: { default: 1, },
   depthWrite: { default: true, },
   transparent: { default: true, },
   sizeAttenuation: { default: true, },

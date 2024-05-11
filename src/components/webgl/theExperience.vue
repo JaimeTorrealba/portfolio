@@ -12,12 +12,13 @@ import {
 } from 'three'
 // COMPONENTS
 import LoadingScreen from '../misc/LoadingScreen.vue'
-import Floor from './theFloor.vue'
-import Nail from './PureNail.vue'
-import Chains from './TheChains.vue'
-import SpotLight from './SpotLight.vue'
-import ParticlesRing from './ParticlesRing.vue'
-import MouseParallaxCustom from './MouseParallax.vue'
+import Floor from './components/theFloor.vue'
+import Nail from './components/PureNail.vue'
+import Chains from './components/TheChains.vue'
+import SpotLight from './components/SpotLight.vue'
+import ParticlesRing from './components/ParticlesRing.vue'
+import MouseParallaxCustom from './components/MouseParallax.vue'
+import TheFire from './fire/TheFire.vue'
 
 const store = useMainStore()
 
@@ -72,6 +73,9 @@ const { map: startParticle } = await useTexture({ map: '/textures/startParticle.
     </Suspense>
     <Suspense>
       <Nail :scaleFactor="scaleFactor" />
+    </Suspense>
+    <Suspense>
+      <TheFire />
     </Suspense>
     <SpotLight />
     <TresAmbientLight color="#F5EBD4" :intensity="0.025" />
