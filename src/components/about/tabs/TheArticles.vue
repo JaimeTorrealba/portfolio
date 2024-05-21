@@ -2,7 +2,7 @@
 import { onMounted } from "vue";
 import { appear } from "@/utils/gsaps";
 import { gsap } from "gsap";
-
+import BaseLink from "@/components/common/BaseLink.vue";
 
 onMounted(() => {
     const master = gsap.timeline()
@@ -39,7 +39,7 @@ const spanishLinks = [
             <h4 class="py h3 articles-section-title">English post</h4>
             <ul class="listArticles">
                 <li v-for="link in englishLinks" :key="link.title">
-                    <a :href="link.href" target="_blank" rel="no-referrer">{{ link.title }}</a>
+                    <BaseLink :text="link.title" :href="link.href" />
                 </li>
             </ul>
         </nav>
@@ -47,7 +47,7 @@ const spanishLinks = [
             <h4 class="py h3 articles-section-title">Spanish post</h4>
             <ul class="listArticles">
                 <li v-for="link in spanishLinks" :key="link.title">
-                    <a :href="link.href" target="_blank" rel="no-referrer">{{ link.title }}</a>
+                    <BaseLink :text="link.title" :href="link.href" />
                 </li>
             </ul>
         </nav>
@@ -60,10 +60,9 @@ const spanishLinks = [
 }
 
 li {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
     text-indent: 1rem;
     list-style-type: disc;
-    text-decoration: underline;
 }
 
 .pb-l {

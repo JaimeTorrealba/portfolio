@@ -6,9 +6,9 @@ import { useRenderLoop } from '@tresjs/core'
 const props = defineProps({
   size: { default: 0.25, },
   area: { default: () => [30, 30, 30], },
-  color: { default: 0x333, },
+  color: { default: 0X111, },
   alphaTest: { default: 0.01, },
-  opacity: { default: 1, },
+  opacity: { default: 0.8, },
   count: { default: 250, },
   speed: { default: 0.001, },
   randomness: { default: 1, },

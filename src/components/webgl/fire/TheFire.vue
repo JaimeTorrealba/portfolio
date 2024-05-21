@@ -1,12 +1,10 @@
 <script setup>
-import { useRenderLoop, useTexture } from '@tresjs/core'
+import { useRenderLoop } from '@tresjs/core'
 import { Vector4, Color, Matrix4, Vector3 } from 'three'
 import vertex from './vertex.glsl'
 import fragment from './fragment.glsl'
 
-const { map: fireTex } = await useTexture({
-    map: '/textures/Fire.png'
-})
+const props = defineProps(['texture'])
 
 const fireShader = {
     defines: {
@@ -14,7 +12,7 @@ const fireShader = {
         OCTIVES: '3'
     },
     uniforms: {
-        fireTex: { type: 't', value: fireTex },
+        fireTex: { type: 't', value: props.texture },
         color: { type: 'c', value: new Color(0xeeeeee) },
         time: { type: 'f', value: 0.0 },
         seed: { type: 'f', value: Math.random() * 19.19 },

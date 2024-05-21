@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
 import { TresCanvas, useTexture } from '@tresjs/core'
-import { GlobalAudio } from '@tresjs/cientos'
+import { GlobalAudio, useGLTF } from '@tresjs/cientos'
 import { useWindowSize } from '@vueuse/core'
 import { useMainStore } from '@/stores'
 import { perfectWidthResolution } from '@/constants'
@@ -15,7 +15,7 @@ import LoadingScreen from '../misc/LoadingScreen.vue'
 import Floor from './components/theFloor.vue'
 import Nail from './components/PureNail.vue'
 import Chains from './components/TheChains.vue'
-import SpotLight from './components/SpotLight.vue'
+import TheLights from './components/TheLights.vue'
 import ParticlesRing from './components/ParticlesRing.vue'
 import MouseParallaxCustom from './components/MouseParallax.vue'
 import TheFire from './fire/TheFire.vue'
@@ -53,7 +53,25 @@ watch(cameraRef, camera => {
 const { width } = useWindowSize()
 const scaleFactor = computed(() => Math.min(Math.max(width.value / perfectWidthResolution, 0.75), 1.10))
 
+
+// Loads
+
 const { map: startParticle } = await useTexture({ map: '/textures/startParticle.png' })
+
+const { map: fireTex } = await useTexture({
+    map: '/textures/Fire.png'
+})
+
+const floorMap = await useTexture({
+    map: '/textures/floor/floor.jpg',
+    normalMap: '/textures/floor/floor_nor.jpg',
+    roughnessMap: '/textures/floor/floor_rough.jpg',
+    displacementMap: '/textures/floor/floor_disp.jpg',
+})
+
+const { scene } = await useGLTF('/models/Pure_Nail.glb', { draco: true })
+
+const { scene: iron } = await useGLTF('/models/iron_chain.glb')
 
 </script>
 <template>
@@ -65,21 +83,12 @@ const { map: startParticle } = await useTexture({ map: '/textures/startParticle.
     <Suspense>
       <GlobalAudio ref="music" src="/assets/What_Dwells_Beneath.wav" :volume="0.5" :loop="true" />
     </Suspense>
-    <Suspense>
-      <Floor :scaleFactor="scaleFactor" />
-    </Suspense>
-    <Suspense>
-      <Chains />
-    </Suspense>
-    <Suspense>
-      <Nail :scaleFactor="scaleFactor" />
-    </Suspense>
-    <Suspense>
-      <TheFire />
-    </Suspense>
-    <SpotLight />
-    <TresAmbientLight color="#F5EBD4" :intensity="0.025" />
+      <Floor :textures="floorMap" />
+      <Chains :model="iron" />
+      <Nail :model="scene" :scaleFactor="scaleFactor" />
+      <TheFire :texture="fireTex" />
     <ParticlesRing :scaleFactor="scaleFactor" :alphaMap="startParticle" />
+    <TheLights />
   </TresCanvas>
 </template>
 <style scoped>

@@ -4,6 +4,7 @@ import { appear } from "@/utils/gsaps";
 import { gsap } from "gsap";
 import { AccordionContent, AccordionHeader, AccordionItem, AccordionRoot, AccordionTrigger } from 'radix-vue'
 import Chevron from '@/assets/icons/ChevronIcon.vue'
+import BaseLink from "@/components/common/BaseLink.vue";
 
 
 
@@ -70,7 +71,7 @@ const accordionItems = [
                         <nav class="AccordionContentText">
                             <ul>
                                 <li v-for="link in item.content" :key="link.title">
-                                    <a :href="link.href" target="_blank" rel="no-referrer">{{ link.title }}</a>
+                                    <BaseLink :text="link.title" :href="link.href" />
                                 </li>
                             </ul>
                         </nav>
@@ -87,15 +88,13 @@ const accordionItems = [
 }
 
 li {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
     text-indent: 1rem;
     list-style-type: disc;
-    text-decoration: underline;
 }
 
 .pb-l {
     padding-bottom: 2rem;
-
 }
 
 /* reset */
