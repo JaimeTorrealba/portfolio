@@ -81,7 +81,7 @@ const { scene: iron } = await useGLTF('/models/iron_chain.glb')
     <TresFog color="#111" near="8" far="50" />
     <MouseParallaxCustom :ease="1" :factor="1" />
     <Suspense>
-      <GlobalAudio ref="music" src="/assets/What_Dwells_Beneath.wav" :volume="0.5" :loop="true" />
+      <GlobalAudio ref="music" src="/assets/Kingdom's Edge.mp3" :volume="0.5" :loop="true" />
     </Suspense>
       <Floor :textures="floorMap" />
       <Chains :model="iron" />
