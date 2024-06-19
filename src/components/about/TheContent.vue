@@ -1,18 +1,22 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useWindowSize } from '@vueuse/core'
+import { gsap } from "gsap";
 import SignatureJT from '@/assets/icons/SignatureJT.vue'
+import { appear } from "@/utils/gsaps";
+// COMPONENTS
 import Values from './tabs/TheValues.vue'
 import Articles from './tabs/TheArticles.vue'
 import OSS from './tabs/TheOSS.vue'
 import Links from './tabs/TheLinks.vue'
 import Languages from './tabs/TheLanguages.vue'
 import Hobbies from './tabs/TheHobbies.vue'
-import { appear } from "@/utils/gsaps";
-import { gsap } from "gsap";
 
 const imgSize = 48
 
 const current = ref('Values')
+const { width } = useWindowSize()
+const isDesktop = computed(() => width.value > 1024)
 
 const handleComponents = (component) => {
     current.value = component
@@ -76,7 +80,7 @@ onMounted(() => {
                 </nav>
             </div>
             <div class="sticky-image">
-                <div class="py-s flex flex-center relative">
+                <div class="py-s flex flex-center relative" v-if="isDesktop">
                     <img src="/img/Foto_Perfil.jpg" width="50%" class="img-perfil" id="imgAbout" />
                     <div class="icon-position">
                         <SignatureJT />

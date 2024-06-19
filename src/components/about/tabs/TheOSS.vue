@@ -19,6 +19,7 @@ const maintainer = [
 
 const libraries = [
     { title: 'Creative-lab', href: 'https://github.com/JaimeTorrealba/creative-lab' },
+    { title: 'Tres-path-tracing', href: 'https://github.com/Tresjs/path-tracing' },
     { title: 'Tres FPS Controls', href: 'https://github.com/JaimeTorrealba/tres-fps-controls' },
     { title: 'Portfolio', href: 'https://github.com/JaimeTorrealba/portfolio' },
     { title: 'vScale', href: 'https://github.com/JaimeTorrealba/vScale' },
