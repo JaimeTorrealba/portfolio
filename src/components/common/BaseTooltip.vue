@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TooltipArrow, TooltipContent, TooltipPortal, TooltipProvider, TooltipRoot, TooltipTrigger } from 'radix-vue'
+import { TooltipContent, TooltipPortal, TooltipProvider, TooltipRoot, TooltipTrigger } from 'radix-vue'
 
 defineProps({
     Text: {
@@ -17,7 +17,7 @@ defineProps({
                 <slot />
             </TooltipTrigger>
             <TooltipPortal>
-                <TooltipContent as-child  :side-offset="1">
+                <TooltipContent as-child :side-offset="1">
                     <span class="helper-tooltip">{{ Text }}</span>
                 </TooltipContent>
             </TooltipPortal>
@@ -25,7 +25,10 @@ defineProps({
     </TooltipProvider>
 </template>
 <style scoped>
-.helper-tooltip{
+.helper-tooltip {
     color: var(--gold);
+    background-color: rgba(1, 1, 1);
+    border-radius: 0.25rem;
+    padding: 0.5rem;
 }
 </style>
