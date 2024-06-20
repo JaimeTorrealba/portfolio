@@ -11,7 +11,7 @@ gsap.registerPlugin(Draggable, InertiaPlugin);
 onMounted(() => {
     const master = gsap.timeline()
     master.add(appear('#headValues *', { delay: 0, stagger: 0.1 }))
-    master.add(appear('.carousel', { delay: 0 }), "-=0.25")
+    master.add(appear('.carousel', { delay: 0, y:0 }), "-=0.25")
     const slides = gsap.utils.toArray(".carousel li");
     const slidesCount = slides.length;
     const slideHeight = slides[0].offsetHeight;

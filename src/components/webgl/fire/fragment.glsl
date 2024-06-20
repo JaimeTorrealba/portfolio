@@ -8,6 +8,7 @@
     uniform float magnitude;
     uniform float lacunarity;
     uniform float gain;
+    uniform float xPos;
 
     uniform sampler2D fireTex;
 
@@ -139,7 +140,7 @@
     }
 
     void main() {
-    vec3 newWorldPos = vec3(vWorldPos.x +0.10 , vWorldPos.y+0.5, vWorldPos.z);
+    vec3 newWorldPos = vec3(vWorldPos.x + xPos , vWorldPos.y+0.5, vWorldPos.z);
     vec3 rayPos = newWorldPos;
     vec3 rayDir = normalize(rayPos - cameraPosition);
     float rayLen = 0.0288 * length(scale.xyz);

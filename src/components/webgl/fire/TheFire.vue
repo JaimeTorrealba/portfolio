@@ -21,7 +21,32 @@ const fireShader = {
         noiseScale: { type: 'v4', value: new Vector4(1, 2, 1, 0.3) },
         magnitude: { type: 'f', value: 2.3 },
         lacunarity: { type: 'f', value: 1.0 },
-        gain: { type: 'f', value: 1.0 }
+        gain: { type: 'f', value: 1.0 },
+        xPos: { type: 'f', value: +1.0 }
+    },
+    vertexShader: vertex,
+    fragmentShader: fragment,
+    transparent: true,
+    depthWrite: false,
+    depthTest: false
+}
+const fireShader2 = {
+    defines: {
+        ITERATIONS: '20',
+        OCTIVES: '3'
+    },
+    uniforms: {
+        fireTex: { type: 't', value: props.texture },
+        color: { type: 'c', value: new Color(0xeeeeee) },
+        time: { type: 'f', value: 0.0 },
+        seed: { type: 'f', value: Math.random() * 2 },
+        invModelMatrix: { type: 'm4', value: new Matrix4() },
+        scale: { type: 'v3', value: new Vector3(1, 1, 1) },
+        noiseScale: { type: 'v4', value: new Vector4(1, 2, 1, 0.3) },
+        magnitude: { type: 'f', value: 2.5 },
+        lacunarity: { type: 'f', value: 1.0 },
+        gain: { type: 'f', value: 1.0 },
+        xPos: { type: 'f', value: -1 }
     },
     vertexShader: vertex,
     fragmentShader: fragment,
@@ -34,11 +59,16 @@ const { onLoop } = useRenderLoop()
 
 onLoop(() => {
     fireShader.uniforms.time.value += 0.01
+    fireShader2.uniforms.time.value += 0.0125
 })
 </script>
 <template>
-    <TresMesh :position="[-0.18, -0.5, 0]">
+    <TresMesh :position="[-1, -0.5, 0]">
         <TresBoxGeometry :args="[1, 1, 1]" />
         <TresShaderMaterial v-bind="fireShader" />
+    </TresMesh>
+    <TresMesh :position="[1, -0.5, 0]">
+        <TresBoxGeometry :args="[1, 1, 1]" />
+        <TresShaderMaterial v-bind="fireShader2" />
     </TresMesh>
 </template>

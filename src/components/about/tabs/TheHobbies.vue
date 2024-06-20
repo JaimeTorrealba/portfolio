@@ -13,6 +13,7 @@ onMounted(() => {
     master.from('.img-hobby', {x: -100, y : 0, stagger: 0.1, duration: 1, opacity: 0, ease: 'power2.out'}, '<')
 })
 
+// from https://svg.io/
 const hobbies = [
     { src: '/img/hobbies/beer.svg', alt: 'Beer hobbie', text: 'Brewing!' },
     { src: '/img/hobbies/cook.svg', alt: 'cook hobbie', text: 'Cooking, mostly Italian' },
