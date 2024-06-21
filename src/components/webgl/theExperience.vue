@@ -1,15 +1,18 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { TresCanvas, useTexture } from '@tresjs/core'
 import { GlobalAudio, useGLTF } from '@tresjs/cientos'
 import { useWindowSize } from '@vueuse/core'
 import { useMainStore } from '@/stores'
 import { perfectWidthResolution } from '@/constants'
 import {
-  BasicShadowMap,
+  PCFSoftShadowMap,
   SRGBColorSpace,
-  NoToneMapping,
+  ACESFilmicToneMapping,
 } from 'three'
+import { gsap } from "gsap";
+
 // COMPONENTS
 import LoadingScreen from '../misc/LoadingScreen.vue'
 import Floor from './components/theFloor.vue'
@@ -21,20 +24,20 @@ import MouseParallaxCustom from './components/MouseParallax.vue'
 import TheFire from './fire/TheFire.vue'
 
 const store = useMainStore()
-
+const routeInstance = useRoute()
 const music = ref()
-
-watch(music, (_music) => {
-  store.musicInstance = _music.sound
-})
+const parallaxFactor = ref(1)
 
 const gl = {
   clearColor: '#111',
   shadows: true,
   alpha: false,
-  shadowMapType: BasicShadowMap,
+  shadowMapType: PCFSoftShadowMap,
   outputColorSpace: SRGBColorSpace,
-  toneMapping: NoToneMapping,
+  toneMapping: ACESFilmicToneMapping,
+  toneMappingExposure: 1.5,
+  antialias: true,
+
 }
 // Components
 //debug
@@ -49,6 +52,27 @@ watch(cameraRef, camera => {
   camera.updateProjectionMatrix()
 })
 
+watch(music, (_music) => {
+  store.musicInstance = _music.sound
+})
+
+watch(() => routeInstance.name, () => {
+  if (routeInstance.name === 'AboutMe') {
+    gsap.to(cameraRef.value.position, { duration: 1.5, y: 0.5, z: 10, ease: 'power2.out', onUpdate: () => {
+      cameraRef.value.updateProjectionMatrix()
+      cameraRef.value.lookAt(0, 3.5, 0)
+    } })
+    parallaxFactor.value = 0.25
+  } else {
+    if(!cameraRef.value?.position) return
+    gsap.to(cameraRef.value.position, { duration: 1, y: 3.5, z: 25, ease: 'power2.out', onUpdate: () => {
+      cameraRef.value.updateProjectionMatrix()
+      cameraRef.value.lookAt(0, 3.5, 0)
+    } })
+    parallaxFactor.value = 1
+  }
+})
+
 //responsive
 const { width } = useWindowSize()
 const scaleFactor = computed(() => Math.min(Math.max(width.value / perfectWidthResolution, 0.75), 1.10))
@@ -59,14 +83,14 @@ const scaleFactor = computed(() => Math.min(Math.max(width.value / perfectWidthR
 const { map: startParticle } = await useTexture({ map: '/textures/startParticle.png' })
 
 const { map: fireTex } = await useTexture({
-    map: '/textures/Fire.png'
+  map: '/textures/Fire.png'
 })
 
 const floorMap = await useTexture({
-    map: '/textures/floor/floor.jpg',
-    normalMap: '/textures/floor/floor_nor.jpg',
-    roughnessMap: '/textures/floor/floor_rough.jpg',
-    displacementMap: '/textures/floor/floor_disp.jpg',
+  map: '/textures/floor/floor.jpg',
+  normalMap: '/textures/floor/floor_nor.jpg',
+  roughnessMap: '/textures/floor/floor_rough.jpg',
+  displacementMap: '/textures/floor/floor_disp.jpg',
 })
 
 const { scene } = await useGLTF('/models/Pure_Nail.glb', { draco: true })
@@ -79,14 +103,14 @@ const { scene: iron } = await useGLTF('/models/iron_chain.glb')
   <TresCanvas v-bind="gl" window-size class="canvas-styles">
     <TresPerspectiveCamera ref="cameraRef" :position="[0, 3.5, 25]" :fov="30" />
     <TresFog color="#111" near="8" far="50" />
-    <MouseParallaxCustom :ease="1" :factor="1" />
+    <MouseParallaxCustom :ease="1" :factor="parallaxFactor" />
     <Suspense>
       <GlobalAudio ref="music" src="/assets/Kingdom's Edge.mp3" :volume="0.25" :loop="true" />
     </Suspense>
-      <Floor :textures="floorMap" />
-      <Chains :model="iron" />
-      <Nail :model="scene" :scaleFactor="scaleFactor" />
-      <TheFire :texture="fireTex" />
+    <Floor :textures="floorMap" />
+    <Chains :model="iron" />
+    <Nail :model="scene" :scaleFactor="scaleFactor" />
+    <TheFire :texture="fireTex" />
     <ParticlesRing :scaleFactor="scaleFactor" :alphaMap="startParticle" />
     <TheLights />
   </TresCanvas>

@@ -10,7 +10,7 @@ onMounted(() => {
     const master = gsap.timeline()
     master.add(appear('#headValues *', { delay: 0, stagger: 0.1 }))
     master.from('.hex-grid__content', {x: 100, y : 0, stagger: 0.1, duration: 1, opacity: 0, ease: 'power2.out'}, '-=0.75')
-    master.from('.img-hobby', {x: -100, y : 0, stagger: 0.1, duration: 1, opacity: 0, ease: 'power2.out'}, '<')
+    master.from('.img-hobby', {x: 100, y : 0, stagger: 0.1, duration: 1, opacity: 0, ease: 'power2.out'}, '<')
 })
 
 // from https://svg.io/

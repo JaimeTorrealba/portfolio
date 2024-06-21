@@ -1,23 +1,20 @@
 <script setup>
 import { computed, ref, toRefs, watch } from 'vue'
 import { useRenderLoop, useTresContext } from '@tresjs/core'
-import { useElementSize, useMouse, useWindowSize } from '@vueuse/core'
+import { useMouse, useWindowSize } from '@vueuse/core'
 
 const props = defineProps({
     disabled: Boolean,
     factor: { type: Number, default: 5 },
     ease: { type: Number, default: 1 },
-    local: { type: Boolean, default: false },
 })
 
-const { camera, renderer } = useTresContext()
+const { camera } = useTresContext()
 
-const { disabled, factor, ease, local } = toRefs(props)
+const { disabled, factor, ease } = toRefs(props)
 
 const { x } = useMouse()
-const { width } = local.value
-    ? useElementSize(renderer.value.domElement)
-    : useWindowSize()
+const { width } = useWindowSize()
 
 const cameraGroupRef = ref()
 
@@ -40,6 +37,12 @@ onLoop(({ delta }) => {
 watch(
     () => cameraGroupRef.value,
     value => value?.add(camera.value),
+)
+watch(
+    factor, (value) => {
+        console.log('jaime ~ value:', value);
+        
+    }
 )
 </script>
 

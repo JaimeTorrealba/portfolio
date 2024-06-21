@@ -21,7 +21,8 @@ onMounted(() => {
 <template>
     <main class="main-grid">
         <div>
-            <h1 class="h1 bloom-effect" id="aboutTitle">About me</h1>
+            <h1 class="h1 bloom-effect" id="aboutTitle">
+                About me</h1>
             <div class="flex flex-center">
                 <DividerSvg />
             </div>
