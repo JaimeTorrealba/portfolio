@@ -17,7 +17,7 @@ setDefaultTextures(props.textures)
 </script>
 <template>
     <TresMesh :position-y="-0.25" :rotate-x="Math.PI * -0.5" receive-shadow name="Floor">
-        <TresPlaneGeometry :args="[30, 30, 100, 100]" />
+        <TresPlaneGeometry :args="[40, 40, 100, 100]" />
         <TresMeshStandardMaterial v-bind="textures" :normal-scale="1" :displacement-scale="0.5"  />
     </TresMesh>
 </template>

@@ -13,7 +13,7 @@
   "dependencies": {
     "@formkit/vue": "^1.6.2",
     "@tresjs/cientos": "^3.8.0",
-    "@tresjs/core": "^3.8.1",
+    "@tresjs/core": "^4.0.2",
     "@vueuse/core": "^10.9.0",
     "gsap": "npm:@gsap/shockingly@^3.12.5",
     "pinia": "^2.1.7",

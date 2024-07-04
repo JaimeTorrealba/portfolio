@@ -13,12 +13,13 @@ const { camera } = useTresContext()
 
 const { disabled, factor, ease } = toRefs(props)
 
-const { x } = useMouse()
-const { width } = useWindowSize()
+const { x, y } = useMouse()
+const { width, height } = useWindowSize()
 
 const cameraGroupRef = ref()
 
 const cursorX = computed(() => (x.value / width.value - 0.5) * factor.value)
+const cursorY = computed(() => -1 * (y.value / height.value - 0.5) * factor.value)
 
 const { onLoop } = useRenderLoop()
 
@@ -32,17 +33,15 @@ onLoop(({ delta }) => {
     }
     cameraGroupRef.value.position.x
         += (cursorX.value - cameraGroupRef.value.position.x) * ease.value * delta
+    cameraGroupRef.value.position.y
+        += (cursorY.value - cameraGroupRef.value.position.y) * ease.value * delta
+
+    camera.value.lookAt(0, 3.5, 0)
 })
 
 watch(
     () => cameraGroupRef.value,
     value => value?.add(camera.value),
-)
-watch(
-    factor, (value) => {
-        console.log('jaime ~ value:', value);
-        
-    }
 )
 </script>
 

@@ -19,4 +19,5 @@ watch(nailRef, (nail) => {
 <template>
     <primitive ref="nailRef" name="nail" :scale="scaleFactor * 0.25" :position="[0, 2.5 * scaleFactor, 3]"
         :object="model" />
+
 </template>

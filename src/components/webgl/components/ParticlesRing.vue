@@ -11,7 +11,7 @@ const props = defineProps({
   opacity: { default: 0.8, },
   count: { default: 250, },
   speed: { default: 0.001, },
-  randomness: { default: 1, },
+  randomness: { default: 50, },
   depthWrite: { default: true, },
   transparent: { default: true, },
   sizeAttenuation: { default: true, },

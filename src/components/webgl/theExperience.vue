@@ -21,12 +21,12 @@ import Chains from './components/TheChains.vue'
 import TheLights from './components/TheLights.vue'
 import ParticlesRing from './components/ParticlesRing.vue'
 import MouseParallaxCustom from './components/MouseParallax.vue'
-import TheFire from './fire/TheFire.vue'
+import TheMouse from './components/TheMouse.vue'
 
 const store = useMainStore()
 const routeInstance = useRoute()
 const music = ref()
-const parallaxFactor = ref(1)
+const parallaxFactor = ref(2)
 
 const gl = {
   clearColor: '#111',
@@ -47,7 +47,6 @@ const gl = {
 //modifiers
 const cameraRef = ref()
 watch(cameraRef, camera => {
-  camera.lookAt(0, 3.5, 0)
   camera.setFocalLength(45)
   camera.updateProjectionMatrix()
 })
@@ -58,18 +57,22 @@ watch(music, (_music) => {
 
 watch(() => routeInstance.name, () => {
   if (routeInstance.name === 'AboutMe') {
-    gsap.to(cameraRef.value.position, { duration: 1.5, y: 0.5, z: 10, ease: 'power2.out', onUpdate: () => {
-      cameraRef.value.updateProjectionMatrix()
-      cameraRef.value.lookAt(0, 3.5, 0)
-    } })
+    gsap.to(cameraRef.value.position, {
+      duration: 1.5, y: 0.5, z: 10, ease: 'power2.out', onUpdate: () => {
+        cameraRef.value.updateProjectionMatrix()
+        cameraRef.value.lookAt(0, 3.5, 0)
+      }
+    })
     parallaxFactor.value = 0.25
   } else {
-    if(!cameraRef.value?.position) return
-    gsap.to(cameraRef.value.position, { duration: 1, y: 3.5, z: 25, ease: 'power2.out', onUpdate: () => {
-      cameraRef.value.updateProjectionMatrix()
-      cameraRef.value.lookAt(0, 3.5, 0)
-    } })
-    parallaxFactor.value = 1
+    if (!cameraRef.value?.position) return
+    gsap.to(cameraRef.value.position, {
+      duration: 1, y: 3.5, z: 25, ease: 'power2.out', onUpdate: () => {
+        cameraRef.value.updateProjectionMatrix()
+        cameraRef.value.lookAt(0, 3.5, 0)
+      }
+    })
+    parallaxFactor.value = 2
   }
 })
 
@@ -81,10 +84,6 @@ const scaleFactor = computed(() => Math.min(Math.max(width.value / perfectWidthR
 // Loads
 
 const { map: startParticle } = await useTexture({ map: '/textures/startParticle.png' })
-
-const { map: fireTex } = await useTexture({
-  map: '/textures/Fire.png'
-})
 
 const floorMap = await useTexture({
   map: '/textures/floor/floor.jpg',
@@ -102,7 +101,7 @@ const { scene: iron } = await useGLTF('/models/iron_chain.glb')
   <LoadingScreen />
   <TresCanvas v-bind="gl" window-size class="canvas-styles">
     <TresPerspectiveCamera ref="cameraRef" :position="[0, 3.5, 25]" :fov="30" />
-    <TresFog color="#111" near="8" far="50" />
+    <TresFog color="#111" near="8" far="40" />
     <MouseParallaxCustom :ease="1" :factor="parallaxFactor" />
     <Suspense>
       <GlobalAudio ref="music" src="/assets/Kingdom's Edge.mp3" :volume="0.25" :loop="true" />
@@ -110,13 +109,13 @@ const { scene: iron } = await useGLTF('/models/iron_chain.glb')
     <Floor :textures="floorMap" />
     <Chains :model="iron" />
     <Nail :model="scene" :scaleFactor="scaleFactor" />
-    <TheFire :texture="fireTex" />
     <ParticlesRing :scaleFactor="scaleFactor" :alphaMap="startParticle" />
     <TheLights />
+    <TheMouse :scaleFactor="scaleFactor"  />
   </TresCanvas>
 </template>
 <style scoped>
 .canvas-styles {
-  z-index: -10;
+  z-index: 0;
 }
 </style>
