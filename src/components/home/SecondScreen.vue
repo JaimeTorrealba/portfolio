@@ -1,12 +1,19 @@
 <script setup>
-import { nextTick, watchEffect } from 'vue';
+import { nextTick, watchEffect, computed, ref } from 'vue';
 import { gsap } from 'gsap';
 import { useMainStore } from "@/stores";
+import { useSettingStore } from "@/stores/settings";
+import { breakpoints } from "@/utils/constants";
+import { useMouse, useWindowSize } from "@vueuse/core";
 
 const props = defineProps({
     firstScreen: { required: true, type: Boolean },
 })
 const store = useMainStore()
+const settingStore = useSettingStore()
+const { sourceType } = useMouse()
+const { width } = useWindowSize()
+const isLargeScreen = computed(() => width.value >= breakpoints.TABLET)
 
 const comingFromSide = (node, x,) => {
     gsap.from(node, {
@@ -35,18 +42,38 @@ watchEffect(() => {
     }
 })
 
+
+const menuItems = [
+    // { name: 'Projects', path: '/projects' },
+    { name: 'About me', path: '/about-me' },
+    { name: 'Contact me', path: '/ContactMe' },
+    { name: 'Settings', path: '/settings' },
+    { name: 'Exit', path: '/' },
+]
+
+const isActive = ref(0)
+
+const activate = (index) => {
+    if (isLargeScreen.value && sourceType.value === 'mouse') {
+        isActive.value = index // not used yet, but soon
+        // sidebarStore.activeLink = index
+        settingStore.hoverElement()
+    }
+}
+
+const checkLasItem = () => {
+    if(isActive.value === menuItems.length - 1){
+        store.showFirstPage = true
+    }
+}
 </script>
 <template>
     <nav class="content-v2">
         <ul class="flex flex-column flex-center-column">
-            <li class="menu-items bloom-effect-tiny line-through"><router-link to="/projects"> Projects </router-link>
+            <li class="menu-items bloom-effect-tiny" v-for="({ name, path }, index) in menuItems" :key="name"
+                @mouseenter="activate(index)">
+                <router-link :to="path" @click="checkLasItem"> {{ name }} </router-link>
             </li>
-            <li class="menu-items bloom-effect-tiny"><router-link to="/about-me"> About me </router-link>
-            </li>
-            <li class="menu-items bloom-effect-tiny"><router-link to="/ContactMe"> Contact me </router-link></li>
-            <li class="menu-items bloom-effect-tiny line-through"><router-link to="/settings"> Settings </router-link>
-            </li>
-            <li class="menu-items bloom-effect-tiny pointer" @click="$emit('firstScreen', true)"> Exit </li>
         </ul>
     </nav>
 </template>
@@ -72,5 +99,4 @@ watchEffect(() => {
 .line-through {
     text-decoration: line-through;
 }
-
 </style>

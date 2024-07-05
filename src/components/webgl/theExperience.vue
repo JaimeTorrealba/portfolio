@@ -4,14 +4,16 @@ import { useRoute } from 'vue-router'
 import { TresCanvas, useTexture } from '@tresjs/core'
 import { GlobalAudio, useGLTF } from '@tresjs/cientos'
 import { useWindowSize } from '@vueuse/core'
-import { useMainStore } from '@/stores'
-import { perfectWidthResolution } from '@/constants'
 import {
   PCFSoftShadowMap,
   SRGBColorSpace,
   ACESFilmicToneMapping,
 } from 'three'
 import { gsap } from "gsap";
+// Internals
+import { useMainStore } from '@/stores'
+import { useSettingStore } from "@/stores/settings";
+import { perfectWidthResolution } from '@/constants'
 
 // COMPONENTS
 import LoadingScreen from '../misc/LoadingScreen.vue'
@@ -23,10 +25,12 @@ import ParticlesRing from './components/ParticlesRing.vue'
 import MouseParallaxCustom from './components/MouseParallax.vue'
 import TheMouse from './components/TheMouse.vue'
 
+
+const settingStore = useSettingStore()
 const store = useMainStore()
 const routeInstance = useRoute()
 const music = ref()
-const parallaxFactor = ref(2)
+const parallaxFactor = ref(3)
 
 const gl = {
   clearColor: '#111',
@@ -72,7 +76,7 @@ watch(() => routeInstance.name, () => {
         cameraRef.value.lookAt(0, 3.5, 0)
       }
     })
-    parallaxFactor.value = 2
+    parallaxFactor.value = 3
   }
 })
 
@@ -104,7 +108,7 @@ const { scene: iron } = await useGLTF('/models/iron_chain.glb')
     <TresFog color="#111" near="8" far="40" />
     <MouseParallaxCustom :ease="1" :factor="parallaxFactor" />
     <Suspense>
-      <GlobalAudio ref="music" src="/assets/Kingdom's Edge.mp3" :volume="0.25" :loop="true" />
+      <GlobalAudio ref="music" src="/assets/Kingdom's Edge.mp3" :volume="settingStore.environmentVolume" :loop="true" />
     </Suspense>
     <Floor :textures="floorMap" />
     <Chains :model="iron" />

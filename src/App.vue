@@ -11,6 +11,7 @@ const store = useMainStore()
 </script>
 
 <template>
+  <h1 id="HKText" class="h2 bloom-effect-tiny">App</h1>
   <Suspense>
     <theExperience />
   </Suspense>
@@ -25,6 +26,15 @@ const store = useMainStore()
   </router-view>
 </template>
 <style scoped>
+#HKText {
+  position: fixed;
+  top: 1%;
+  left: 50%;
+  z-index: 1000;
+  color: white;
+  font-size: 1.5rem;
+}
+
 .version {
   position: fixed;
   bottom: 1%;

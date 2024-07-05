@@ -28,6 +28,7 @@ const libraries = [
 
 const contributions = [
     { title: 'ThreeJs', href: 'https://github.com/mrdoob/three.js' },
+    { title: 'vuexyz', href: 'https://github.com/vuexyz/vuexyz' },
     { title: 'vue-telescope-analyzer', href: 'https://github.com/nuxtlabs/vue-telescope-analyzer' },
     { title: 'ThreeJs', href: 'https://github.com/FarazzShaikh/THREE-CustomShaderMaterial' },
     { title: 'THREE-CustomShaderMateria', href: 'https://github.com/RenaudRohlinger/stats-gl' },

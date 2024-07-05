@@ -15,6 +15,7 @@
     "@tresjs/cientos": "^3.8.0",
     "@tresjs/core": "^4.0.2",
     "@vueuse/core": "^10.9.0",
+    "@vueuse/sound": "^2.0.1",
     "gsap": "npm:@gsap/shockingly@^3.12.5",
     "pinia": "^2.1.7",
     "radix-vue": "^1.7.3",
