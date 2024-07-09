@@ -34,7 +34,9 @@ const aboutComponents = {
 onMounted(() => {
     const master = gsap.timeline()
     master.add(appear('#aboutButtons *', { delay: 0, stagger: 0.075, y:0 }))
-    master.add(appear('#imgAbout', { delay: 0, stagger: 0.1 }), '<')
+    if(isDesktop.value){
+        master.add(appear('#imgAbout', { delay: 0, stagger: 0.1 }), '<')
+    }
 })
 </script>
 <template>

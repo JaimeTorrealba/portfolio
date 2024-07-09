@@ -2,15 +2,43 @@
 import { ref } from 'vue'
 import { useLoop } from '@tresjs/core'
 import { gsap } from 'gsap'
+import { useMainStore } from '@/stores'
 import fragment from '../shaders/mouse_circle/fragment.glsl'
 import vertex from '../shaders/mouse_circle/vertex.glsl'
 
-// shader animation
-// click interaction
-// move fire component and his shader
+// TODO click interaction
+// TODO border in fragment
+// TODO showFirstPage have problem needs reactivity
+
 defineProps({
     scaleFactor: Number,
+    route: Object,
 })
+
+const store = useMainStore()
+const isAnimating = ref(false)
+
+const ShowLetters = () => {
+    if (isAnimating.value) return
+    textPromise()
+}
+
+const textPromise = async () => {
+    isAnimating.value = true
+    // await new Promise((resolve) => {
+    //     gsap.from('#HKText', {
+    //         x: 0,
+    //         y: -10,
+    //         duration: 0.5,
+    //         ease: 'elastic',
+    //         onComplete: () => {
+    //             isAnimating.value = false
+    //             return resolve
+    //         }
+    //     })
+    // })
+
+}
 
 const triangleVertices = new Float32Array([
     0, -0.577, 0, // v0
@@ -46,7 +74,6 @@ const onLeaveGsap = (el, done) => {
     })
 }
 
-
 const onEnter = (e) => {
     const body = document.getElementsByTagName("BODY")[0]
     body.style.cursor = 'none'
@@ -68,13 +95,13 @@ onBeforeRender(({ elapsed }) => {
 })
 </script>
 <template>
-    <TresMesh :position="[0, -0.5, 5]" :visible="false" @pointer-enter="onEnter" @pointer-leave="onLeave"
-        :scale="scaleFactor * 0.25">
+    <TresMesh v-if="store.showFirstPage" :position="[0, -0.5, 5]" :visible="false" @pointer-enter="onEnter"
+        @pointer-leave="onLeave" @click="() => ShowLetters()" :scale="scaleFactor * 0.25">
         <TresBufferGeometry :position="[triangleVertices, 3]" />
         <TresMeshBasicMaterial color="red" />
     </TresMesh>
     <Transition :css="false" @enter="onEnterGsap" @leave="onLeaveGsap">
-        <TresMesh ref="circleRef" :position="[0, 2.5, 7]" v-if="showCircle" @click="ShowLetters()">
+        <TresMesh ref="circleRef" :position="[0, 2.5, 7]" v-if="showCircle">
             <TresCircleGeometry :args="[0.15, 16]" />
             <TresShaderMaterial v-bind="mouseShader" />
         </TresMesh>

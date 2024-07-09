@@ -8,10 +8,10 @@ const store = useMainStore()
 
 // TODO transition in loading screen
 // TODO transition in content about and mobile
+// TODO eliminar radix
 </script>
 
 <template>
-  <h1 id="HKText" class="h2 bloom-effect-tiny">App</h1>
   <Suspense>
     <theExperience />
   </Suspense>

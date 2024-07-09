@@ -9,28 +9,27 @@ import {
   SRGBColorSpace,
   ACESFilmicToneMapping,
 } from 'three'
-import { gsap } from "gsap";
 // Internals
 import { useMainStore } from '@/stores'
 import { useSettingStore } from "@/stores/settings";
 import { perfectWidthResolution } from '@/constants'
-
+import * as camMotion from './utils/CameraAnimation'
 // COMPONENTS
 import LoadingScreen from '../misc/LoadingScreen.vue'
 import Floor from './components/theFloor.vue'
 import Nail from './components/PureNail.vue'
 import Chains from './components/TheChains.vue'
-import TheLights from './components/TheLights.vue'
-import ParticlesRing from './components/ParticlesRing.vue'
-import MouseParallaxCustom from './components/MouseParallax.vue'
+import TheEnvironment from './components/TheEnvironment.vue'
 import TheMouse from './components/TheMouse.vue'
 
 
 const settingStore = useSettingStore()
 const store = useMainStore()
-const routeInstance = useRoute()
+const route = useRoute()
 const music = ref()
-const parallaxFactor = ref(3)
+const bgMusic = "/assets/Kingdom's Edge.mp3"
+const cameraRef = ref()
+const parallaxFactor = ref(5)
 
 const gl = {
   clearColor: '#111',
@@ -41,15 +40,9 @@ const gl = {
   toneMapping: ACESFilmicToneMapping,
   toneMappingExposure: 1.5,
   antialias: true,
-
 }
-// Components
-//debug
-// import { useDebuggerStore } from '@/stores/debugger'
-// const store = useDebuggerStore()
 
 //modifiers
-const cameraRef = ref()
 watch(cameraRef, camera => {
   camera.setFocalLength(45)
   camera.updateProjectionMatrix()
@@ -59,24 +52,17 @@ watch(music, (_music) => {
   store.musicInstance = _music.sound
 })
 
-watch(() => routeInstance.name, () => {
-  if (routeInstance.name === 'AboutMe') {
-    gsap.to(cameraRef.value.position, {
-      duration: 1.5, y: 0.5, z: 10, ease: 'power2.out', onUpdate: () => {
-        cameraRef.value.updateProjectionMatrix()
-        cameraRef.value.lookAt(0, 3.5, 0)
-      }
-    })
+watch(() => route.name, () => {
+  if (route.name === 'AboutMe') {
+    camMotion.aboutViewAnimation(cameraRef.value)
     parallaxFactor.value = 0.25
-  } else {
+  } if (route.name === 'ContactMe') {
+    camMotion.contactViewPosition(cameraRef.value)
+  }
+  if (route.name === 'home') {
     if (!cameraRef.value?.position) return
-    gsap.to(cameraRef.value.position, {
-      duration: 1, y: 3.5, z: 25, ease: 'power2.out', onUpdate: () => {
-        cameraRef.value.updateProjectionMatrix()
-        cameraRef.value.lookAt(0, 3.5, 0)
-      }
-    })
-    parallaxFactor.value = 3
+    camMotion.originalPosition(cameraRef.value)
+    parallaxFactor.value = 5
   }
 })
 
@@ -84,9 +70,7 @@ watch(() => routeInstance.name, () => {
 const { width } = useWindowSize()
 const scaleFactor = computed(() => Math.min(Math.max(width.value / perfectWidthResolution, 0.75), 1.10))
 
-
 // Loads
-
 const { map: startParticle } = await useTexture({ map: '/textures/startParticle.png' })
 
 const floorMap = await useTexture({
@@ -99,23 +83,19 @@ const floorMap = await useTexture({
 const { scene } = await useGLTF('/models/Pure_Nail.glb', { draco: true })
 
 const { scene: iron } = await useGLTF('/models/iron_chain.glb')
-
 </script>
 <template>
   <LoadingScreen />
   <TresCanvas v-bind="gl" window-size class="canvas-styles">
     <TresPerspectiveCamera ref="cameraRef" :position="[0, 3.5, 25]" :fov="30" />
-    <TresFog color="#111" near="8" far="40" />
-    <MouseParallaxCustom :ease="1" :factor="parallaxFactor" />
     <Suspense>
-      <GlobalAudio ref="music" src="/assets/Kingdom's Edge.mp3" :volume="settingStore.environmentVolume" :loop="true" />
+      <GlobalAudio ref="music" :src="bgMusic" :volume="settingStore.environmentVolume" :loop="true" />
     </Suspense>
     <Floor :textures="floorMap" />
     <Chains :model="iron" />
     <Nail :model="scene" :scaleFactor="scaleFactor" />
-    <ParticlesRing :scaleFactor="scaleFactor" :alphaMap="startParticle" />
-    <TheLights />
-    <TheMouse :scaleFactor="scaleFactor"  />
+    <TheEnvironment :parallaxFactor="parallaxFactor" :startParticle="startParticle" />
+    <TheMouse :route="route" :scaleFactor="scaleFactor" />
   </TresCanvas>
 </template>
 <style scoped>
