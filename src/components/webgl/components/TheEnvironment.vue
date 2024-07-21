@@ -22,4 +22,5 @@ onBeforeRender(() => {
         <TresAmbientLight color="#F5EBD4" :intensity="0.05" />
         <TresSpotLight ref="spotLightRef" cast-shadow color="#F5EBD4" :intensity="12" :penumbra="1"
                 :angle="Math.PI * 0.4" :decay="1.25" :position="[-4, 10, 4]" />
+        <TresPointLight color="#F5EBD4" :intensity="5" :position="[0, 7, -2]" />
 </template>

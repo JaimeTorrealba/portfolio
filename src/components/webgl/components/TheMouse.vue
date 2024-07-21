@@ -6,7 +6,6 @@ import { useMainStore } from '@/stores'
 import fragment from '../shaders/mouse_circle/fragment.glsl'
 import vertex from '../shaders/mouse_circle/vertex.glsl'
 
-// TODO click interaction
 // TODO border in fragment
 // TODO showFirstPage have problem needs reactivity
 
@@ -16,29 +15,6 @@ defineProps({
 })
 
 const store = useMainStore()
-const isAnimating = ref(false)
-
-const ShowLetters = () => {
-    if (isAnimating.value) return
-    textPromise()
-}
-
-const textPromise = async () => {
-    isAnimating.value = true
-    // await new Promise((resolve) => {
-    //     gsap.from('#HKText', {
-    //         x: 0,
-    //         y: -10,
-    //         duration: 0.5,
-    //         ease: 'elastic',
-    //         onComplete: () => {
-    //             isAnimating.value = false
-    //             return resolve
-    //         }
-    //     })
-    // })
-
-}
 
 const triangleVertices = new Float32Array([
     0, -0.577, 0, // v0
@@ -55,6 +31,7 @@ const mouseShader = {
 }
 
 const showCircle = ref(false)
+const hasAllWords = ref(false)
 const circleRef = ref(false)
 
 const onEnterGsap = (el, done) => {
@@ -76,8 +53,13 @@ const onLeaveGsap = (el, done) => {
 
 const onEnter = (e) => {
     const body = document.getElementsByTagName("BODY")[0]
-    body.style.cursor = 'none'
-    showCircle.value = true
+    if(hasAllWords.value) {
+        body.style.cursor = ''
+        showCircle.value = false
+    } else {
+        body.style.cursor = 'none'
+        showCircle.value = true
+    }
     if (!circleRef.value) return
     circleRef.value.position.x = e.point.x
     circleRef.value.position.y = e.point.y
@@ -86,6 +68,16 @@ const onLeave = () => {
     const body = document.getElementsByTagName("BODY")[0]
     body.style.cursor = "";
     showCircle.value = false
+}
+
+const ShowLetters = () => {
+    const numberWords = 7
+    // number of words, should be fixed
+    if(store.HKWordsIndex === numberWords -1) {
+        hasAllWords.value = true
+        return
+    }
+    store.HKWordsIndex++
 }
 
 const { onBeforeRender } = useLoop()
