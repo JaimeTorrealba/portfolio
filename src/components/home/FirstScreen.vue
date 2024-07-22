@@ -19,6 +19,8 @@ const onHover = (isHover) => {
     const icon = document.getElementById('YogSothoth')
     const cls1 = gsap.utils.toArray(icon.querySelectorAll('.cls-1'))
     const cls2 = gsap.utils.toArray(icon.querySelectorAll('.cls-2'))
+    gsap.set(cls1, { fill: '#ccc', duration: 0.3 })
+    gsap.set(cls2, { fill: '#b2b2b2', duration: 0.3 })
     if (isHover) {
         gsap.to(cls1, { fill: '#e4e4e4', duration: 0.3 })
         gsap.to(cls2, { fill: '#333', duration: 0.3 })

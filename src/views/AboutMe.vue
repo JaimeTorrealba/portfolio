@@ -32,13 +32,6 @@ onMounted(() => {
                 <button class="button-back pointer" @click="router.back()">
                     <CloseIcon />
                 </button>
-                <div class="flex flex-center py-l">
-                    <p class="text-center principal-about-text" id="aboutText">
-                        I’m very pasionate about good quality coding, beautiful desings and help people. I formed myself
-                        as a front-end developer, but I discover the beautiful of creating amazing experiences for final
-                        users.
-                    </p>
-                </div>
                 <TheContent />
             </div>
         </div>
@@ -58,11 +51,6 @@ onMounted(() => {
     top: 2%;
     right: 1%;
     border-radius: 4px;
-}
-
-.principal-about-text {
-    font-size: 1.25rem;
-    line-height: 1.5;
 }
 
 .custom-padding-about {

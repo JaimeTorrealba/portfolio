@@ -40,6 +40,13 @@ onMounted(() => {
 })
 </script>
 <template>
+    <div class="flex flex-center py-l">
+        <p class="text-center principal-about-text" id="aboutText">
+            I’m very pasionate about good quality coding, beautiful desings and help people. I formed myself
+            as a front-end developer, but I discover the beautiful of creating amazing experiences for final
+            users.
+        </p>
+    </div>
     <div class="twoColumns">
         <section class="flex flex-center column1">
             <Transition name="fade" mode="out-in">
@@ -93,6 +100,10 @@ onMounted(() => {
     </div>
 </template>
 <style scoped>
+.principal-about-text {
+    font-size: 1.25rem;
+    line-height: 1.5;
+}
 .twoColumns {
     display: grid;
     grid-template-columns: 1fr 0.75fr;

@@ -52,6 +52,7 @@ const onLeaveGsap = (el, done) => {
 }
 
 const onEnter = (e) => {
+    if (!store.showFirstPage) return
     const body = document.getElementsByTagName("BODY")[0]
     if(hasAllWords.value) {
         body.style.cursor = ''
@@ -87,7 +88,7 @@ onBeforeRender(({ elapsed }) => {
 })
 </script>
 <template>
-    <TresMesh v-if="store.showFirstPage" :position="[0, -0.5, 5]" :visible="false" @pointer-enter="onEnter"
+    <TresMesh :position="[0, -0.5, 5]" :visible="false" @pointer-enter="onEnter"
         @pointer-leave="onLeave" @click="() => ShowLetters()" :scale="scaleFactor * 0.25">
         <TresBufferGeometry :position="[triangleVertices, 3]" />
         <TresMeshBasicMaterial color="red" />

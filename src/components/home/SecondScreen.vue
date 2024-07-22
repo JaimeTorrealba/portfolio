@@ -44,10 +44,10 @@ watchEffect(() => {
 
 
 const menuItems = [
-    // { name: 'Projects', path: '/projects' },
+    { name: 'Soon', path: '/resume' },
     { name: 'About me', path: '/about-me' },
     { name: 'Contact me', path: '/ContactMe' },
-    { name: 'Settings', path: '/settings' },
+    { name: 'Soon', path: '/settings' },
     { name: 'Exit', path: '/' },
 ]
 

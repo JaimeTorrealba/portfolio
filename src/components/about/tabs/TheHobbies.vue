@@ -16,14 +16,15 @@ onMounted(() => {
 // from https://svg.io/
 const hobbies = [
     { src: '/img/hobbies/beer.svg', alt: 'Beer hobbie', text: 'Brewing!' },
-    { src: '/img/hobbies/cook.svg', alt: 'cook hobbie', text: 'Cooking, mostly Italian' },
-    { src: '/img/hobbies/dance.svg', alt: 'dance hobbie', text: 'When I was young I did breakdance' },
-    { src: '/img/hobbies/travel.svg', alt: 'travel hobbie', text: 'My truly passion travel' },
-    { src: '/img/hobbies/chess.svg', alt: 'chess hobbie', text: 'My addiction chess' },
+    { src: '/img/hobbies/cook.svg', alt: 'cook hobbie', text: 'Cooking. mostly Italian' },
+    { src: '/img/hobbies/dance.svg', alt: 'dance hobbie', text: 'To dance. Time ago I did breakdance' },
+    { src: '/img/hobbies/chess.svg', alt: 'chess hobbie', text: 'Chess. My addiction' },
     { src: '/img/hobbies/coding.svg', alt: 'coding hobbie', text: 'Creative code' },
-    { src: '/img/hobbies/read.svg', alt: 'read hobbie', text: 'To read good books' },
-    // Trekking
+    { src: '/img/hobbies/read.svg', alt: 'read hobbie', text: 'To read. good books' },
+    { src: '/img/hobbies/travel.svg', alt: 'travel hobbie', text: 'To travel. My truly passion' },
+    { src: '/img/hobbies/trekking.svg', alt: 'trekking hobbie', text: 'Trekking. Nature contact' },
     // OSS
+    // boardgames
 ]
 </script>
 <template>
