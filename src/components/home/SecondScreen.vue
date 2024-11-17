@@ -45,7 +45,7 @@ watchEffect(() => {
 
 const menuItems = [
     { name: 'Soon', path: '/resume' },
-    { name: 'About me', path: '/about-me' },
+    { name: 'Soon', path: '/about-mess' }, // disabled for now
     { name: 'Contact me', path: '/ContactMe' },
     { name: 'Soon', path: '/settings' },
     { name: 'Exit', path: '/' },
