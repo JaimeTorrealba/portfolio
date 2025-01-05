@@ -32,8 +32,8 @@ const handleMusic = () => {
     box-shadow: inset 0 0 4px 1.5px rgba(1, 1, 1, 0.5);
     fill: #111;
     border: none;
-    padding: 0.25rem;
-    border-radius: 4px;
+    padding: 0.5rem;
+    border-radius: 50%;
 }
 
 music-button:hover {

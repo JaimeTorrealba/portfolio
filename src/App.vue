@@ -12,27 +12,29 @@ const store = useMainStore()
 </script>
 
 <template>
+  <router-view v-slot="{ Component }">
+    <main class="container">
+      <transition name="fade">
+        <component :is="Component" />
+      </transition>
+    </main>
+  </router-view>
   <Suspense>
     <theExperience />
   </Suspense>
-  <!-- <MusicButton v-if="store.finishLoading && !store.showFirstPage" />
+  <MusicButton v-if="store.finishLoading" />
   <div class="version" v-if="store.finishLoading">
     <pre>Version 3.1.0</pre>
   </div>
-  <router-view v-slot="{ Component }">
-    <transition name="fade">
-      <component :is="Component" />
-    </transition>
-  </router-view> -->
+
 </template>
-<style scoped>
-#HKText {
-  position: fixed;
-  top: 1%;
-  left: 50%;
-  z-index: 1000;
-  color: white;
-  font-size: 1.5rem;
+<style>
+.container {
+  display: grid;
+  min-block-size: 100vb;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(12, auto);
+  gap: 0.5rem;
 }
 
 .version {

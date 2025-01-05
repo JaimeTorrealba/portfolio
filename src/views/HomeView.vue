@@ -1,36 +1,96 @@
 <script setup>
+import { watchEffect, nextTick } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { gsap } from "gsap";
 import { useMainStore } from "@/stores";
-import FirstScreen from '@/components/home/FirstScreen.vue'
-import SecondScreen from '@/components/home/SecondScreen.vue'
+import { showText, appear } from "@/utils/gsaps.js";
+import YogSothothIcon from "@/assets/icons/YogSothothIcon.vue";
 
 const store = useMainStore()
+const router = useRouter()
+const route = useRoute()
 
-const handleNextScreen = (e) => {
-  store.showFirstPage = e
-  if (!e) {
-    store.musicInstance.play()
+const goToMain = () => router.push('/main')
+
+const onHover = (isHover) => {
+  const icon = document.getElementById('YogSothothID')
+  const cls1 = gsap.utils.toArray(icon.querySelectorAll('.cls-1'))
+  const cls2 = gsap.utils.toArray(icon.querySelectorAll('.cls-2'))
+  gsap.set(cls1, { fill: '#ccc', duration: 0.3 })
+  gsap.set(cls2, { fill: '#b2b2b2', duration: 0.3 })
+  if (isHover) {
+    gsap.to(cls1, { fill: '#e4e4e4', duration: 0.3 })
+    gsap.to(cls2, { fill: '#333', duration: 0.3 })
+  } else {
+    gsap.to(cls1, { fill: '#ccc', duration: 0.3 })
+    gsap.to(cls2, { fill: '#b2b2b2', duration: 0.3 })
   }
-
 }
+
+const playAnimation = async () => {
+  await nextTick()
+  const master = gsap.timeline()
+  master.add(showText('#HomeTitle', { delay: 0 }, 'void'))
+  master.add(showText('#HomeDescription', {}, 'void'), '-=1')
+  master.add(appear('#ExploreButton'), '-=1')
+  expandLine()
+}
+
+watchEffect(async () => {
+  if (store.finishLoading && route.name === 'Home') {
+    playAnimation()
+  }
+})
+
+const expandLine = () => {
+  const line = document.querySelector('.left-line-home')
+  gsap.to(line, { duration: 1, height: '92%', opacity: 0.5, ease: 'power2.out', delay: 1.25 })
+}
+
+
 </script>
 
 <template>
-  <main class="container">
-    <Transition name="fade" mode="out-in">
-      <FirstScreen @first-screen="handleNextScreen" :firstScreen="store.showFirstPage" v-if="store.showFirstPage" />
-    </Transition>
-    <Transition name="fade" mode="out-in">
-      <SecondScreen @first-screen="handleNextScreen" :firstScreen="store.showFirstPage" v-if="!store.showFirstPage" />
-    </Transition>
-  </main>
+  <section class="content-v1 flex flex-column relative" v-show="store.finishLoading">
+    <div class="px-l">
+      <h1 class="h1-large bloom-effect-tiny pa-s" id="HomeTitle">Jaime <br />
+        Torrealba</h1>
+      <h2 class="h2 bloom-effect-tiny  pa-s" id="HomeDescription">Creative developer</h2>
+    </div>
+    <div></div>
+    <div class="pa-s" id="ExploreButton" @click="goToMain">
+      <button class="outline-button explore-button-padding flex flex-center-column" 
+        @mouseenter="onHover(true)" @mouseleave="onHover(false)">Explore
+        <YogSothothIcon />
+      </button>
+    </div>
+    <div class="left-line-home"></div>
+  </section>
 </template>
 <style scoped>
-.container {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
-  gap: 0px 0px;
-  grid-auto-flow: row;
+.content-v1 {
+  grid-column-start: 2;
+  grid-column-end: 12;
+  grid-row-start: 2;
+  grid-row-end: 12;
+  height: 90vh;
+  padding: 2rem;
+  justify-content: space-between;
+}
+
+.left-line-home {
+  position: absolute;
+  left: 0%;
+  top: 5%;
+  transform: translateY(-0%);
+  opacity: 1;
+  width: 1px;
+  height: 0;
+  background-color: #f7f7f7;
+}
+
+.explore-button-padding {
+  padding-inline: 2rem;
 }
 
 .fade-enter-active,

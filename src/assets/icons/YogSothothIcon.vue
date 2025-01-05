@@ -1,5 +1,5 @@
 <template>
-    <svg id="YogSothoth" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" width="48">
+    <svg id="YogSothothID" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" width="48">
         <path class="cls-1"
             d="M68.23,69.21a7.69,7.69,0,1,0,7.68,7.69A7.69,7.69,0,0,0,68.23,69.21Zm.3,11.56h-.12a2,2,0,0,1-2-1.88l-.19-3.19a2,2,0,0,1,1.88-2.11,2,2,0,0,1,2.11,1.88l.19,3.19A2,2,0,0,1,68.53,80.77Z" />
         <path class="cls-1"

@@ -2,7 +2,7 @@
 import { ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { TresCanvas, useTexture } from '@tresjs/core'
-import { GlobalAudio, useGLTF, MouseParallax } from '@tresjs/cientos'
+import { GlobalAudio, useGLTF } from '@tresjs/cientos'
 import { useWindowSize } from '@vueuse/core'
 import {
   PCFSoftShadowMap,
@@ -89,7 +89,6 @@ const { scene: iron } = await useGLTF('/models/iron_chain.glb')
     <Suspense>
       <GlobalAudio ref="music" :src="bgMusic" :volume="settingStore.environmentVolume" :loop="true" />
     </Suspense>
-    <MouseParallax />
     <Floor :textures="floorMap" />
     <Chains :model="iron" />
     <Nail :model="scene" :scaleFactor="scaleFactor" />
@@ -98,6 +97,6 @@ const { scene: iron } = await useGLTF('/models/iron_chain.glb')
 </template>
 <style scoped>
 .canvas-styles {
-  z-index: 0;
+  z-index: -10;
 }
 </style>

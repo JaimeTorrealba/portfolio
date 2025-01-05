@@ -36,13 +36,13 @@
 
 /* //small */
 
-.margin-small {
+.ma-s {
     margin: var(--s-small);
 }
-.margin-small-x {
+.mx-s {
     margin: 0 var(--s-small);
 }
-.margin-small-y {
+.my-s {
     margin: var(--s-small) 0;
 }
 

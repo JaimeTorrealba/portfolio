@@ -1,25 +1,35 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import { useMainStore } from '@/stores'
-
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'Home',
       component: HomeView
     },
+    // {
+    //   path: '/about-me',
+    //   name: 'AboutMe',
+    //   component: () => import('../views/AboutMe.vue')
+    // },
     {
-      path: '/about-me',
-      name: 'AboutMe',
-      component: () => import('../views/AboutMe.vue')
-    },
-    {
-      path: '/ContactMe',
-      name: 'ContactMe',
-      component: () => import('../views/ContactMe.vue')
+      path: '/main',
+      name: 'Main',
+      component: () => import('../views/MainView.vue'),
+      children:[
+        {
+          path: 'articles',
+          name: 'Articles',
+          component: () => import('../views/main/ArticlesView.vue')
+        },
+        {
+          path: 'ContactMe',
+          name: 'ContactMe',
+          component: () => import('../views/ContactMe.vue')
+        },
+      ]
     },
     {
       path: '/success/:name',
@@ -28,16 +38,6 @@ const router = createRouter({
     },
     { path: '/:pathMatch(.*)*', name: 'NotFound', component: () => import('../views/NotFound.vue') }
   ]
-})
-
-router.beforeEach((to) => {
-const store = useMainStore()
-
-  if (store.showFirstPage && to.path !== '/') {
-    return '/'
-  } else {
-    return true
-  }
 })
 
 export default router
