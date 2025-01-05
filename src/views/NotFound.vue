@@ -27,7 +27,7 @@ onMounted(() => {
             </div>
             <Tsathoggua />
             <div id="NotFoundButton">
-                <RouterLink to="/" class="outline-button">
+                <RouterLink to="/main" class="outline-button">
                     Go back home
                 </RouterLink>
             </div>

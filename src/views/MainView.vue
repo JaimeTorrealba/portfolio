@@ -1,14 +1,18 @@
 <script setup>
-import { nextTick, watchEffect } from 'vue';
+import { nextTick, watchEffect, computed } from 'vue';
 import { gsap } from 'gsap';
-import { RouterLink, RouterView, useRoute } from 'vue-router';
+import { useWindowSize } from '@vueuse/core'
 import { useMainStore } from '@/stores';
+import { useCustomRouterFn } from "@/composables/routers.js";
+import { lg } from '@/constants'
+console.log('jaime ~ lg:', lg);
 // import { useSettingStore } from "@/stores/settings";
 // import { breakpoints } from "@/utils/constants";
 // import { useMouse, useWindowSize } from "@vueuse/core";
 
 const store = useMainStore()
-const route = useRoute()
+const { width } = useWindowSize()
+const { checkRoute } = useCustomRouterFn()
 
 // Animations
 // improve this section
@@ -34,7 +38,7 @@ const playAnimation = async () => {
 }
 
 watchEffect(() => {
-    if (store.finishLoading && route.name === 'Main') {
+    if (store.finishLoading && checkRoute('Main')) {
         playAnimation()
     }
 })
@@ -42,15 +46,23 @@ watchEffect(() => {
 const menuItems = [
   //{ name: 'Soon', path: '/resume' },
   //{ name: 'Soon', path: '/about-mess' }, // disabled for now
-  { name: 'Projects', path: '/projects' },
+  { name: 'Projects', path: '/main/projects' },
   { name: 'Articles', path: '/main/articles' },
-  { name: 'Open source', path: '/oss' },
+  { name: 'Open source', path: '/main/oss' },
   { name: 'Contact me', path: '/main/ContactMe' },
   { name: 'Exit', path: '/' },
   //{ name: 'Soon', path: '/settings' },
 ]
 
-// Sounds
+const showNavBar = computed(() => {
+  if (checkRoute('Main')) {
+    return true
+  } else {
+    return width.value > lg
+  }
+})
+
+// SOUNDS
 // const settingStore = useSettingStore()
 // const { sourceType } = useMouse()
 // const { width } = useWindowSize()
@@ -67,7 +79,7 @@ const menuItems = [
 </script>
 
 <template>
-  <nav class="content-v2">
+  <nav class="content-v2" v-if="showNavBar">
     <ul class="flex flex-column ">
       <li class="my-s bloom-effect-tiny" v-for="({ name, path }) in menuItems" :key="name">
         <span class="menu-items">
@@ -101,6 +113,12 @@ const menuItems = [
   grid-column-end: 13;
   grid-row-start: 2;
   grid-row-end: 12;
+  @media screen and (max-width: 1024px) {
+    grid-column-start: 2;
+    grid-column-end: 12;
+    grid-row-start: 2;
+    grid-row-end: 12;
+  }
 }
 
 .menu-items {

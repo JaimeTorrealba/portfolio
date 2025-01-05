@@ -1,16 +1,15 @@
 <script setup>
 import { watchEffect, nextTick } from "vue";
-import { useRouter, useRoute } from "vue-router";
 import { gsap } from "gsap";
 import { useMainStore } from "@/stores";
+import { useCustomRouterFn } from "@/composables/routers.js";
 import { showText, appear } from "@/utils/gsaps.js";
 import YogSothothIcon from "@/assets/icons/YogSothothIcon.vue";
 
 const store = useMainStore()
-const router = useRouter()
-const route = useRoute()
+const { goToMain: _goToMain, checkRoute } = useCustomRouterFn()
 
-const goToMain = () => router.push('/main')
+const goToMain = () => _goToMain()
 
 const onHover = (isHover) => {
   const icon = document.getElementById('YogSothothID')
@@ -37,7 +36,7 @@ const playAnimation = async () => {
 }
 
 watchEffect(async () => {
-  if (store.finishLoading && route.name === 'Home') {
+  if (store.finishLoading && checkRoute('Home')) {
     playAnimation()
   }
 })

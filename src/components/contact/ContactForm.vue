@@ -1,10 +1,9 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import CloseIcon from '@/assets/icons/CloseIcon.vue'
 
-const router = useRouter()
 const error = ref(null)
+const router = useRouter()
 
 function encode(data) {
     return Object.keys(data)
@@ -32,10 +31,6 @@ const handleSubmit = (e) => {
 
 </script>
 <template>
-    <div class="form-container bloom-effect-layout">
-        <button class="button-back pointer" @click="router.back()">
-            <CloseIcon />
-        </button>
         <FormKit type="form" netlify data-netlify="true" data-netlify-honeypot="bot-field" @submit="handleSubmit"
             :config="{ validationVisibility: 'submit' }" method="POST" name="contactMe" submit-label="Send"
             :submit-attrs="{
@@ -66,24 +61,8 @@ const handleSubmit = (e) => {
         <pre v-show="error">
             {{ error }}
         </pre>
-    </div>
 </template>
 <style>
-.form-container {
-    outline: 1px solid #f7f7f7;
-    border-radius: 2px;
-    padding: 2rem 1rem;
-    background-color: rgba(1, 1, 1, 0.75);
-    position: relative;
-}
-
-.button-back {
-    position: absolute;
-    top: 2%;
-    right: 2.5%;
-    border-radius: 4px;
-}
-
 .input-form {
     border: 1px solid #e4e4e4;
     border-radius: 4px;
