@@ -3,7 +3,6 @@ import { RouterView } from 'vue-router'
 import { useMainStore } from '@/stores'
 import theExperience from '@/components/webgl/theExperience.vue'
 import MusicButton from '@/components/common/MusicButton.vue';
-import WordsHK from '@/components/misc/WordsHK.vue'
 
 const store = useMainStore()
 
@@ -13,11 +12,10 @@ const store = useMainStore()
 </script>
 
 <template>
-  <WordsHK :wordsIndex="store.HKWordsIndex" />
   <Suspense>
     <theExperience />
   </Suspense>
-  <MusicButton v-if="store.finishLoading && !store.showFirstPage" />
+  <!-- <MusicButton v-if="store.finishLoading && !store.showFirstPage" />
   <div class="version" v-if="store.finishLoading">
     <pre>Version 3.1.0</pre>
   </div>
@@ -25,7 +23,7 @@ const store = useMainStore()
     <transition name="fade">
       <component :is="Component" />
     </transition>
-  </router-view>
+  </router-view> -->
 </template>
 <style scoped>
 #HKText {

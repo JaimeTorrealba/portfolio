@@ -2,7 +2,7 @@
 import { ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { TresCanvas, useTexture } from '@tresjs/core'
-import { GlobalAudio, useGLTF } from '@tresjs/cientos'
+import { GlobalAudio, useGLTF, MouseParallax } from '@tresjs/cientos'
 import { useWindowSize } from '@vueuse/core'
 import {
   PCFSoftShadowMap,
@@ -20,8 +20,6 @@ import Floor from './components/theFloor.vue'
 import Nail from './components/PureNail.vue'
 import Chains from './components/TheChains.vue'
 import TheEnvironment from './components/TheEnvironment.vue'
-import TheMouse from './components/TheMouse.vue'
-
 
 const settingStore = useSettingStore()
 const store = useMainStore()
@@ -91,11 +89,11 @@ const { scene: iron } = await useGLTF('/models/iron_chain.glb')
     <Suspense>
       <GlobalAudio ref="music" :src="bgMusic" :volume="settingStore.environmentVolume" :loop="true" />
     </Suspense>
+    <MouseParallax />
     <Floor :textures="floorMap" />
     <Chains :model="iron" />
     <Nail :model="scene" :scaleFactor="scaleFactor" />
     <TheEnvironment :parallaxFactor="parallaxFactor" :startParticle="startParticle" />
-    <TheMouse :route="route" :scaleFactor="scaleFactor" />
   </TresCanvas>
 </template>
 <style scoped>
