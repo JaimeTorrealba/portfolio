@@ -17,6 +17,10 @@
   justify-content: space-evenly;
 }
 
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
 .relative {
     position: relative;
 }

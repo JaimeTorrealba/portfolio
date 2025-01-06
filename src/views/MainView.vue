@@ -5,7 +5,6 @@ import { useWindowSize } from '@vueuse/core'
 import { useMainStore } from '@/stores';
 import { useCustomRouterFn } from "@/composables/routers.js";
 import { lg } from '@/constants'
-console.log('jaime ~ lg:', lg);
 // import { useSettingStore } from "@/stores/settings";
 // import { breakpoints } from "@/utils/constants";
 // import { useMouse, useWindowSize } from "@vueuse/core";
@@ -89,7 +88,7 @@ const showNavBar = computed(() => {
       </li>
     </ul>
   </nav>
-  <section class="content-subpages debug">
+  <section class="content-subpages">
     <router-view />
   </section>
 </template>
@@ -110,7 +109,7 @@ const showNavBar = computed(() => {
 
 .content-subpages{
   grid-column-start: 4;
-  grid-column-end: 13;
+  grid-column-end: 12;
   grid-row-start: 2;
   grid-row-end: 12;
   @media screen and (max-width: 1024px) {

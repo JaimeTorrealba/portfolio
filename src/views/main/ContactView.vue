@@ -3,11 +3,8 @@ import { onMounted } from 'vue'
 import { gsap } from 'gsap'
 import RRSS from '@/components/contact/RRSS.vue'
 import ContactForm from '@/components/contact/ContactForm.vue'
-import { useCustomRouterFn } from "@/composables/routers.js";
 import { showText } from '@/utils/gsaps.js'
-import CloseIcon from '@/assets/icons/CloseIcon.vue'
-
-const { goToMain } = useCustomRouterFn()
+import BackButton from '@/components/common/BackButton.vue'
 
 onMounted(() => {
   const master = gsap.timeline()
@@ -22,9 +19,7 @@ onMounted(() => {
 
 <template>
   <section class="contact-section bloom-effect-layout relative flex flex-column flex-evenly">
-    <button class="button-back pointer" @click="goToMain()">
-      <CloseIcon />
-    </button>
+    <BackButton />
     <div>
       <h1 class="h1 bloom-effect" id="contactTitle">Contact me</h1>
     </div>
@@ -45,12 +40,5 @@ onMounted(() => {
 
 .negative-margin {
   margin-bottom: -2rem;
-}
-
-.button-back {
-  position: absolute;
-  top: 2%;
-  right: 2.5%;
-  border-radius: 4px;
 }
 </style>

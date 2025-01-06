@@ -1,4 +1,14 @@
 /* UTILS */
+@font-face {
+  font-family: 'CascadiaCode';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: local('CascadiaCode'),
+      url('../fonts/CascadiaCode.woff2') format('woff');
+}
+
+
 .h1-large {
   font-size: var(--step-5);
 }
@@ -30,13 +40,16 @@
   position: relative;
 }
 
+.cascadian {
+  font-family: 'CascadiaCode';
+}
+
 .width-100{
   width: 100%;
 }
 
 .pointer{
   cursor: pointer;
-
 }
 
 /* COMPONENT */
