@@ -1,5 +1,5 @@
 <script setup>
-import { watchEffect, nextTick } from "vue";
+import { watchEffect } from "vue";
 import { gsap } from "gsap";
 import { useMainStore } from "@/stores";
 import { useCustomRouterFn } from "@/composables/routers.js";
@@ -27,14 +27,14 @@ const onHover = (isHover) => {
 }
 
 const playAnimation = async () => {
-  await nextTick()
   const master = gsap.timeline()
-  master.add(showText('#HomeTitle', { delay: 0 }, 'void'))
-  master.add(showText('#HomeDescription', {}, 'void'), '-=1')
-  master.add(appear('#ExploreButton'), '-=1')
+  master.add(showText('#HomeTitle'))
+  master.add(showText('#HomeDescription'), '-=0.5')
+  master.add(appear('#ExploreButton'), '-=0.5')
   expandLine()
 }
 
+playAnimation()
 watchEffect(async () => {
   if (store.finishLoading && checkRoute('Home')) {
     playAnimation()
@@ -45,25 +45,23 @@ const expandLine = () => {
   const line = document.querySelector('.left-line-home')
   gsap.to(line, { duration: 1, height: '92%', opacity: 0.5, ease: 'power2.out', delay: 1.25 })
 }
-
-
 </script>
 
 <template>
   <section class="content-v1 flex flex-column relative" v-show="store.finishLoading">
-    <div class="px-l">
+    <div class="px-l overflow-none">
       <h1 class="h1-large bloom-effect-tiny pa-s" id="HomeTitle">Jaime <br />
         Torrealba</h1>
       <h2 class="h2 bloom-effect-tiny  pa-s" id="HomeDescription">Creative developer</h2>
     </div>
     <div></div>
-    <div class="pa-s" id="ExploreButton" @click="goToMain">
+    <div class="pa-s opacity-none" id="ExploreButton" @click="goToMain">
       <button class="outline-button explore-button-padding flex flex-center-column" 
         @mouseenter="onHover(true)" @mouseleave="onHover(false)">Explore
         <YogSothothIcon />
       </button>
     </div>
-    <div class="left-line-home"></div>
+    <div class="left-line-home opacity-none"></div>
   </section>
 </template>
 <style scoped>

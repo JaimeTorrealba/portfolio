@@ -1,66 +1,23 @@
 import gsap from 'gsap'
-import { SplitText } from 'gsap/SplitText'
-import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin'
 
-gsap.registerPlugin(SplitText, DrawSVGPlugin)
-
-export const showText = (elem, options, className) => {
-  gsap.set(elem, { overflowY: 'hidden' }) // prevent fouc
-  const tl = gsap.timeline(),
-    mySplitText = new SplitText(elem, { type: 'lines', linesClass: className ?? 'line' }),
-    words = mySplitText.lines
-
-  return tl.from(words, {
-    yPercent: 300,
-    ease: options?.ease ?? 'Power3.out',
-    stagger: options?.stagger ?? 0.01,
-    duration: options?.duration ?? 1,
-    delay: options?.delay ?? 0.5,
-    ...options
-  })
-}
-
-export const showLongText = (elem, options) => {
-  gsap.set(elem, { overflowY: 'hidden' }) // prevent fouc
-  const tl = gsap.timeline(),
-    mySplitText = new SplitText(elem, { type: 'words', linesClass: 'line' }),
-    words = mySplitText.words
-  return tl.from(words, {
-    yPercent: 300,
-    ease: options?.ease ?? 'Power3.in',
-    stagger: options?.stagger ?? 0.01,
-    duration: options?.duration ?? 1,
-    delay: options?.delay ?? 0.5,
-    ...options
-  })
-}
-
-export const appear = (elem, options) => {
+export const showText = (elem) => {
   const tl = gsap.timeline()
+
   return tl.from(elem, {
-    y: options?.y ?? 50,
-    opacity: 0,
-    duration: options?.duration ?? 1,
-    delay: options?.delay ?? 1,
-    ...options
+    yPercent: 300,
+    ease: 'Power3.out',
+    stagger: 0.01,
+    duration: 1,
+    delay: 0,
   })
 }
 
-export const drawIllustration = (elem, options) => {
-  gsap.set(`${elem}`, { opacity: 1 }) // prevent fouc
-  gsap.set(`${elem} *`, { drawSVG: 0 })
-
-  return gsap
-    .timeline()
-    .to(`${elem} *`, {
-      drawSVG: true,
-      duration: 1,
-      ...options,
-      stagger: {
-        amount: 0.5,
-        from: 'center'
-      }
-    })
-    .from(`${elem} *`, { fill: 'transparent', duration: 0.15 })
-    .to(`${elem} *`, { stroke: '#e4e4e4' })
+export const appear = (elem) => {
+  const tl = gsap.timeline()
+  return tl.to(elem, {
+    y: 0,
+    opacity: 1,
+    duration: 1,
+    delay: 1,
+  })
 }

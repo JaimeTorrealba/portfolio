@@ -85,6 +85,13 @@
   border-radius: 50%;
 }
 
+.overflow-none{
+  overflow: hidden;
+}
+.opacity-none{
+  opacity: 0;
+}
+
 /* EFFECTS */
 
 .bloom-effect-title {

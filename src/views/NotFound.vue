@@ -10,7 +10,7 @@ const store = useMainStore()
 onMounted(() => {
     const master = gsap.timeline()
     master.add(showText('#NotFoundTitle', { delay: 0 }))
-    master.add(drawIllustration('#Tsathoggua'), '-=0.5')
+    //master.add(drawIllustration('#Tsathoggua'), '-=0.5')
     master.add(showText('#NotFoundText'), '<')
     appear('#NotFoundButton')
 })

@@ -16,7 +16,7 @@ const handleMusic = () => {
 </script>
 <template>
     <button class="music-button" @click="handleMusic">
-        <MusicOn v-if="!store.musicInstance.isPlaying" />
+        <MusicOn v-if="!store.musicInstance?.isPlaying" />
         <MusicOff v-else />
     </button>
 </template>

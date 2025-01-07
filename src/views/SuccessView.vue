@@ -14,7 +14,7 @@ const name = route.params.name
 onMounted(() => {
     const master = gsap.timeline()
     master.add(showText('#NotFoundTitle', { delay: 0 }))
-    master.add(drawIllustration('#Cthulga'), '-=0.5')
+    //master.add(drawIllustration('#Cthulga'), '-=0.5')
     master.add(showText('#successText'), '<')
     appear('#NotFoundButton')
 })

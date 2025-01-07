@@ -15,7 +15,7 @@ onMounted(() => {
     const master = gsap.timeline()
     master.add(showText('#aboutTitle', { delay: 0 }))
     master.add(showLongText('#aboutText', { stagger: 0.025, delay: 0 }), '<')
-    master.add(drawIllustration('#divider'), '<')
+    //master.add(drawIllustration('#divider'), '<')
 })
 </script>
 <template>
