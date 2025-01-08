@@ -5,7 +5,7 @@ defineProps({
 })
 </script>
 <template>
-    <li class="link py cascadian pointer">
+    <li class="link py-s Sentient pointer">
         <a class="flex flex-between flex-wrap " :href="item.href" target="_blank" rel="no-referrer">
             <div class="my-s">
                 <slot /> {{ item.title }}

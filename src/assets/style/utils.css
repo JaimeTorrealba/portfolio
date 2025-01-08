@@ -8,6 +8,23 @@
       url('../fonts/CascadiaCode.woff2') format('woff');
 }
 
+@font-face {
+  font-family: 'Sentient';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: local('Sentient'),
+      url('../fonts/Sentient-Regular.woff2') format('woff');
+}
+@font-face {
+  font-family: 'Sentient-Bold';
+  font-style: normal;
+  font-weight: bold;
+  font-display: swap;
+  src: local('Sentient'),
+      url('../fonts/Sentient-Bold.woff2') format('woff');
+}
+
 
 .h1-large {
   font-size: var(--step-5);
@@ -42,6 +59,12 @@
 
 .cascadian {
   font-family: 'CascadiaCode';
+}
+.Sentient {
+  font-family: 'Sentient';
+}
+.Sentient-Bold {
+  font-family: 'Sentient-Bold';
 }
 
 .width-100{

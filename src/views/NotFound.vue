@@ -2,32 +2,32 @@
 import { onMounted } from 'vue'
 import { gsap } from 'gsap'
 import { useMainStore } from '@/stores'
-import { showText, appear, drawIllustration } from '@/utils/gsaps.js'
+import { showText, appear } from '@/utils/gsaps.js'
 import Tsathoggua from '@/assets/icons/TsathogguaIcon.vue'
 
 const store = useMainStore()
 
 onMounted(() => {
     const master = gsap.timeline()
-    master.add(showText('#NotFoundTitle', { delay: 0 }))
-    //master.add(drawIllustration('#Tsathoggua'), '-=0.5')
-    master.add(showText('#NotFoundText'), '<')
-    appear('#NotFoundButton')
+    master.add(showText('#NotFoundTitle'))
+    master.add(showText('#NotFoundText'), '-=0.75')
+    master.add(appear('#TsathogguaID'), '<')
+    master.add(appear('#NotFoundButton'), '-=1.5')
 })
 
 </script>
 <template>
     <main class="overlay-bg" v-show="store.finishLoading">
         <section class="perfect-center">
-            <div>
-                <h1 class="h1-large bloom-effect-title h1 py-s title" id="NotFoundTitle">
+            <div class="overflow-none">
+                <h1 class="h1-large bloom-effect-title h1 py-s text-center" id="NotFoundTitle">
                     404
                 </h1>
                 <h2 class="bloom-effect py-s" id="NotFoundText">This page doesn’t exist or is under construction</h2>
             </div>
-            <Tsathoggua />
-            <div id="NotFoundButton">
-                <RouterLink to="/main" class="outline-button">
+            <Tsathoggua class="opacity-none" />
+            <div id="NotFoundButton" class="opacity-none">
+                <RouterLink to="/main" class="outline-button ">
                     Go back home
                 </RouterLink>
             </div>
@@ -41,8 +41,5 @@ onMounted(() => {
     min-height: 100vh;
     min-width: 100vw;
     background-color: transparent;
-}
-.title > .line {
-    padding: 2rem;
 }
 </style>

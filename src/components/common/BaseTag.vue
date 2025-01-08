@@ -4,7 +4,7 @@ defineProps({
 })
 </script>
 <template>
-    <code class="tag mx-s">{{ tag }}</code>
+    <code class="tag mx-s ">{{ tag }}</code>
 </template>
 <style scoped>
 .tag{

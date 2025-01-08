@@ -15,7 +15,7 @@ import { useSettingStore } from "@/stores/settings";
 import { perfectWidthResolution } from '@/constants'
 import * as camMotion from './utils/CameraAnimation'
 // COMPONENTS
-import LoadingScreen from '../misc/LoadingScreen.vue'
+import LoadingScreen from '../common/LoadingScreen.vue'
 import Floor from './components/theFloor.vue'
 import Nail from './components/PureNail.vue'
 import Chains from './components/TheChains.vue'

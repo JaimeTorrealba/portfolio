@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, watch } from 'vue';
+import { onMounted, watch, nextTick } from 'vue';
 import { gsap } from 'gsap'
 import { useProgress } from '@tresjs/cientos'
 import { useMainStore } from '@/stores'
@@ -15,7 +15,9 @@ watch(hasFinishLoading, (value) => {
     }
 })
 
-onMounted(() => {
+onMounted(async() => {
+    await nextTick()
+    console.log(gsap);
     gsap.from('#Azathoth', {
         duration: 1.5,
         opacity: 0,
@@ -48,7 +50,7 @@ onMounted(() => {
 
 </script>
 <template>
-    <Transition name="fade" mode="out-in">
+    <Transition mode="out-in">
         <div v-if="!hasFinishLoading" class="perfect-center">
             <div class="relative">
                 <div class="flex flex-center-column flex-column">

@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, watchEffect, computed } from 'vue';
+import { watchEffect, computed, nextTick } from 'vue';
 import { gsap } from 'gsap';
 import { useWindowSize } from '@vueuse/core'
 import { useMainStore } from '@/stores';
@@ -14,26 +14,16 @@ const { width } = useWindowSize()
 const { checkRoute } = useCustomRouterFn()
 
 // Animations
-// improve this section
-const comingFromSide = (node, x,) => {
-  gsap.from(node, {
-    duration: 0.5,
-    x,
-    opacity: 0,
-    ease: 'power1.inOut',
-  });
-};
-
-const playAnimation = async () => {
+const playAnimation = async() => {
   await nextTick()
   const menuItems = gsap.utils.toArray(".menu-items")
-  menuItems.forEach((item, index) => {
-    if (index % 2 === 0) {
-      comingFromSide(item, -100)
-    } else {
-      comingFromSide(item, 100)
-    }
-  })
+  gsap.from(menuItems, {
+    duration: 0.5,
+    filter: 'blur(10px)',
+    opacity: 0,
+    stagger: 0.1,
+    ease: 'power3.in',
+  });
 }
 
 watchEffect(() => {
@@ -81,9 +71,9 @@ const showNavBar = computed(() => {
   <nav class="content-v2" v-if="showNavBar">
     <ul class="flex flex-column ">
       <li class="my-s bloom-effect-tiny" v-for="({ name, path }) in menuItems" :key="name">
-        <span class="menu-items">
+        <p class="menu-items">
           <router-link :to="path"> {{ name }} </router-link>
-        </span>
+        </p>
         <!-- @mouseenter="activate(index)" -->
       </li>
     </ul>
@@ -121,7 +111,6 @@ const showNavBar = computed(() => {
 }
 
 .menu-items {
-  margin: 0.5rem;
   font-size: var(--step-0);
   transition: transform 0.3s;
 }

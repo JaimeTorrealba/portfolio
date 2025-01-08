@@ -12,6 +12,9 @@ const store = useMainStore()
 </script>
 
 <template>
+  <Suspense>
+    <theExperience />
+  </Suspense>
   <router-view v-slot="{ Component }">
     <main class="container">
       <transition name="fade">
@@ -19,9 +22,6 @@ const store = useMainStore()
       </transition>
     </main>
   </router-view>
-  <Suspense>
-    <theExperience />
-  </Suspense>
   <MusicButton v-if="store.finishLoading" />
   <div class="version" v-if="store.finishLoading">
     <pre>Version 3.1.0</pre>

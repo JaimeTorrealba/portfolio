@@ -1,5 +1,5 @@
 <script setup>
-import { watchEffect } from "vue";
+import { nextTick, watchEffect } from "vue";
 import { gsap } from "gsap";
 import { useMainStore } from "@/stores";
 import { useCustomRouterFn } from "@/composables/routers.js";
@@ -26,25 +26,27 @@ const onHover = (isHover) => {
   }
 }
 
+const expandLine = () => {
+  const line = document.querySelector('.left-line-home')
+  gsap.to(line, { duration: 1, height: '92%', opacity: 0.5, ease: 'power2.out', delay: 1.25 })
+}
+
 const playAnimation = async () => {
+  await nextTick()
   const master = gsap.timeline()
   master.add(showText('#HomeTitle'))
   master.add(showText('#HomeDescription'), '-=0.5')
+  master.add(expandLine())
   master.add(appear('#ExploreButton'), '-=0.5')
-  expandLine()
 }
 
-playAnimation()
-watchEffect(async () => {
+watchEffect(() => {
   if (store.finishLoading && checkRoute('Home')) {
     playAnimation()
   }
 })
 
-const expandLine = () => {
-  const line = document.querySelector('.left-line-home')
-  gsap.to(line, { duration: 1, height: '92%', opacity: 0.5, ease: 'power2.out', delay: 1.25 })
-}
+
 </script>
 
 <template>

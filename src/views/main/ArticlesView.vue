@@ -9,16 +9,17 @@ const { width } = useWindowSize()
 const showEs = ref(false)
 </script>
 <template>
-    <section class="flex flex-column flex-between full-height relative">
-        <BackButton />
-        <div class="section" v-show="!showEs">
+    <section class="flex flex-column flex-evenly full-height relative">
+        <div class="section relative" v-show="!showEs">
+            <BackButton v-if="width < 768" />
             <EnArticles>
                 <div class="flex flex-center">
                     <button v-show="width < 768" class="showButton" @click="showEs = true">See articles in Spanish</button>
                 </div>
             </EnArticles>
         </div>
-        <div class="section" v-show="width > 768 || showEs">
+        <div class="section relative" v-show="width > 768 || showEs">
+            <BackButton v-if="width < 768" />
             <EsArticles>
                 <div class="flex flex-center">
                     <button v-show="width < 768" class="showButton" @click="showEs = false">Ver posts en Ingles</button>
@@ -30,7 +31,6 @@ const showEs = ref(false)
 <style scoped>
 .full-height {
     height: 100%;
-    gap: 3rem;
     border-radius: 16px;
 }
 

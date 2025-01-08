@@ -15,7 +15,6 @@ export const showText = (elem) => {
 export const appear = (elem) => {
   const tl = gsap.timeline()
   return tl.to(elem, {
-    y: 0,
     opacity: 1,
     duration: 1,
     delay: 1,

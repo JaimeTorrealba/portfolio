@@ -36,10 +36,10 @@ const items = [
 ]
 </script>
 <template>
-    <h1 class="h2 text-center py-l cascadian">Articles English</h1>
+    <h1 class="h2 text-center py-l Sentient-Bold">Articles English</h1>
     <ul class="max-width">
         <BaseListItem v-for="item in items" :item="item" :key="item.title">
-            <code class="px-s">
+            <code class="px-s cascadian">
                 {{ item.date }} -
             </code>
         </BaseListItem>
