@@ -5,7 +5,7 @@ import TwitterIcon from '@/assets/icons/TwitterIcon.vue'
 import GithubIcon from '@/assets/icons/GithubIcon.vue'
 import LinkedinIcon from '@/assets/icons/LinkedinIcon.vue'
 import CodepenIcon from '@/assets/icons/CodepenIcon.vue'
-import BlueSkyIcon from '@/assets/icons/BlueSkyIcon.vue'
+import BlueSkyIcon from '@/assets/icons/BlueskyIcon.vue'
 
 onMounted(() => {
    gsap.from('.icon-container', {
