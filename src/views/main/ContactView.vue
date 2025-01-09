@@ -21,7 +21,7 @@ onMounted(() => {
   <section class="contact-section bloom-effect-layout relative flex flex-column flex-evenly">
     <BackButton />
     <div>
-      <h1 class="h1 bloom-effect" id="contactTitle">Contact me</h1>
+      <h1 class="h1 bloom-effect text-center Sentient" id="contactTitle">Contact me</h1>
     </div>
     <div class="flex flex-center">
       <ContactForm id="form-id" />

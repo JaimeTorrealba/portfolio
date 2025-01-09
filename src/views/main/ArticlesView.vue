@@ -10,21 +10,22 @@ const showEs = ref(false)
 </script>
 <template>
     <section class="flex flex-column flex-evenly full-height relative">
-        <div class="section relative" v-show="!showEs">
-            <BackButton v-if="width < 768" />
+        <div class="section bloom-effect-layout relative" v-show="!showEs">
+            <BackButton />
             <EnArticles>
                 <div class="flex flex-center">
-                    <button v-show="width < 768" class="showButton" @click="showEs = true">See articles in Spanish</button>
+                    <button v-show="width < 768" class="showButton" @click="showEs = true">See articles in
+                        Spanish</button>
                 </div>
             </EnArticles>
         </div>
-        <div class="section relative" v-show="width > 768 || showEs">
-            <BackButton v-if="width < 768" />
+        <div class="section relative bloom-effect-layout" v-show="width > 768 || showEs">
+            <BackButton />
             <EsArticles>
                 <div class="flex flex-center">
                     <button v-show="width < 768" class="showButton" @click="showEs = false">Ver posts en Ingles</button>
                 </div>
-                </EsArticles>
+            </EsArticles>
         </div>
     </section>
 </template>
@@ -40,6 +41,7 @@ const showEs = ref(false)
     padding: 2rem 1rem;
     margin-right: 0.5rem;
     overflow-y: auto;
+    max-width: 1200px;
 }
 
 .showButton {

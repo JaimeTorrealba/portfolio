@@ -20,9 +20,19 @@ const router = createRouter({
       component: () => import('../views/MainView.vue'),
       children:[
         {
+          path: 'projects',
+          name: 'Projects',
+          component: () => import('../views/main/ProjectsView.vue')
+        },
+        {
           path: 'articles',
           name: 'Articles',
           component: () => import('../views/main/ArticlesView.vue')
+        },
+        {
+          path: 'oss',
+          name: 'OSS',
+          component: () => import('../views/main/OSS.vue')
         },
         {
           path: 'ContactMe',

@@ -36,8 +36,10 @@ const menuItems = [
   //{ name: 'Soon', path: '/resume' },
   //{ name: 'Soon', path: '/about-mess' }, // disabled for now
   { name: 'Projects', path: '/main/projects' },
+  { name: 'Creative lab', path: 'https://lab.jaimetorrealba.com/', external: true },
   { name: 'Articles', path: '/main/articles' },
   { name: 'Open source', path: '/main/oss' },
+  { name: 'Courses/Talks', path: '/main/courses_talks' },
   { name: 'Contact me', path: '/main/ContactMe' },
   { name: 'Exit', path: '/' },
   //{ name: 'Soon', path: '/settings' },
@@ -70,9 +72,10 @@ const showNavBar = computed(() => {
 <template>
   <nav class="content-v2" v-if="showNavBar">
     <ul class="flex flex-column ">
-      <li class="my-s bloom-effect-tiny" v-for="({ name, path }) in menuItems" :key="name">
+      <li class="my-s bloom-effect-tiny" v-for="({ name, path, external }) in menuItems" :key="name">
         <p class="menu-items">
-          <router-link :to="path"> {{ name }} </router-link>
+          <a v-if="external" :href="path" target="_blank" rel="no-referrer"> {{ name }} </a>
+          <router-link v-else :to="path"> {{ name }} </router-link>
         </p>
         <!-- @mouseenter="activate(index)" -->
       </li>

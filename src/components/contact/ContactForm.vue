@@ -71,6 +71,7 @@ const handleSubmit = (e) => {
     font-family: inherit;
     min-width: 300px;
     background-color: transparent;
+    
 }
 
 .submit-button {

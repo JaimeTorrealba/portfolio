@@ -17,7 +17,6 @@ watch(hasFinishLoading, (value) => {
 
 onMounted(async() => {
     await nextTick()
-    console.log(gsap);
     gsap.from('#Azathoth', {
         duration: 1.5,
         opacity: 0,

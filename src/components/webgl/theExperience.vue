@@ -13,6 +13,7 @@ import {
 import { useMainStore } from '@/stores'
 import { useSettingStore } from "@/stores/settings";
 import { perfectWidthResolution } from '@/constants'
+import { useCustomRouterFn } from "@/composables/routers.js";
 import * as camMotion from './utils/CameraAnimation'
 // COMPONENTS
 import LoadingScreen from '../common/LoadingScreen.vue'
@@ -21,6 +22,7 @@ import Nail from './components/PureNail.vue'
 import Chains from './components/TheChains.vue'
 import TheEnvironment from './components/TheEnvironment.vue'
 
+const { checkRoute } = useCustomRouterFn()
 const settingStore = useSettingStore()
 const store = useMainStore()
 const route = useRoute()
@@ -51,13 +53,14 @@ watch(music, (_music) => {
 })
 
 watch(() => route.name, () => {
-  if (route.name === 'AboutMe') {
-    camMotion.aboutViewAnimation(cameraRef.value)
-    parallaxFactor.value = 0.25
-  } if (route.name === 'ContactMe') {
+  // if (route.name === 'AboutMe') {
+  //   camMotion.aboutViewAnimation(cameraRef.value)
+  //   parallaxFactor.value = 0.25
+  // } 
+  if (checkRoute('ContactMe')) {
     camMotion.contactViewPosition(cameraRef.value)
   }
-  if (route.name === 'home') {
+  if (checkRoute('Main') || checkRoute('Home')) {
     if (!cameraRef.value?.position) return
     camMotion.originalPosition(cameraRef.value)
     parallaxFactor.value = 5

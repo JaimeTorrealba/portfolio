@@ -1,11 +1,13 @@
 <script setup>
 import { useCustomRouterFn } from "@/composables/routers.js";
 import CloseIcon from '@/assets/icons/CloseIcon.vue'
+import { useWindowSize } from '@vueuse/core';
 
+const { width } = useWindowSize()
 const { goToMain } = useCustomRouterFn()
 </script>
 <template>
-    <button class="button-back pointer" @click="goToMain()">
+    <button class="button-back pointer" @click="goToMain()" v-if="width < 768">
         <CloseIcon />
       </button>
 </template>
