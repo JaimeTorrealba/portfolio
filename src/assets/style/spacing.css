@@ -48,13 +48,13 @@
 
 /* //normal */
 
-.margin-normal {
+.ma{
     margin: var(--s-normal);
 }
-.margin-normal-x {
+.mx {
     margin: 0 var(--s-normal);
 }
-.margin-normal-y {
+.my {
     margin: var(--s-normal) 0;
 }
 
