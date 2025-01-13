@@ -7,7 +7,7 @@ const { width } = useWindowSize()
 const { goToMain } = useCustomRouterFn()
 </script>
 <template>
-    <button class="button-back pointer" @click="goToMain()" v-if="width < 768">
+    <button class="button-back pointer" @click="goToMain()" v-if="width <= 1024">
         <CloseIcon />
       </button>
 </template>

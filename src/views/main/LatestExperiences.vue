@@ -7,7 +7,7 @@ const experiences = [
         title: 'Push security, Frontend Developer',
         description: `Push Security is a cybersecurity company browser based focus on ITDR (Identity threat detect and respond)`,
         date: "11/2024 - Current",
-        img: '/img/PushLogo.svg',
+        img: '/img/experiences/PushLogo.svg',
         tags: ['Vue', 'CMS', 'Creative-code', 'UK'],
         href: 'https://pushsecurity.com/'
     },
@@ -15,7 +15,7 @@ const experiences = [
         title: 'Sky Airline, Frontend Developer',
         description: `SKY is one of the largest budget airlines in Latin America`,
         date: "09/2022 - 04/2024",
-        img: '/img/SkyLogo.svg',
+        img: '/img/experiences/SkyLogo.svg',
         tags: ['Vue', 'Micro-fronts', 'Airline', 'Chile'],
         href: 'https://www.skyairline.com/'
     },
@@ -23,7 +23,7 @@ const experiences = [
         title: 'Lemu, Frontend Developer',
         description: `Lemu is a startup focused on conservation parks and wildlife.`,
         date: "03/2022 - 09/2022",
-        img: '/img/LemuLogo.svg',
+        img: '/img/experiences/LemuLogo.svg',
         tags: ['Flutter', 'Firebase', 'Map-box', 'Chile'],
         href: 'https://le.mu/'
     },
@@ -31,7 +31,7 @@ const experiences = [
         title: 'Ripley Tech, Full stack developer',
         description: `One of the biggest retail companies in Chile.`,
         date: "07/2019 - 03/2022",
-        img: '/img/RipleyLogo.svg',
+        img: '/img/experiences/RipleyLogo.svg',
         tags: ['React.js', 'Node.js', 'MongoDB', 'Chile'],
         href: 'https://simple.ripley.cl/'
     },
@@ -39,7 +39,7 @@ const experiences = [
         title: 'Coaniquem, Frontend Developer',
         description: `Coaniquem is an NGO that helps children recovering from severe burns for free in Chile.`,
         date: " 02/2017 - 07/2019",
-        img: '/img/CoaniquemLogo.svg',
+        img: '/img/experiences/CoaniquemLogo.svg',
         tags: ['Vue', 'Freelance', 'Campaigns', 'Chile'],
         href: 'https://coaniquem.cl/'
     }

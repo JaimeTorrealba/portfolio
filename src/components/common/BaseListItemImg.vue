@@ -5,7 +5,7 @@ defineProps({
 })
 </script>
 <template>
-    <li class="link py-s Sentient pointer">
+    <div class="link py-s Sentient pointer">
         <a class="flex flex-between flex-wrap " :href="item.href" target="_blank" rel="no-referrer">
             <div class="my-s grid-container">
                 <div class="img-wrapper flex flex-center-column flex-center">
@@ -21,7 +21,7 @@ defineProps({
                 </div>
             </div>
         </a>
-    </li>
+    </div>
 </template>
 <style scoped>
 .grid-container{
@@ -37,8 +37,7 @@ defineProps({
 }
 
 .img{
-    max-height: 100px;
-    max-width: 100px;
+    width: 100%;
 }
 
 .img-wrapper{

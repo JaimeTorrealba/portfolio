@@ -36,7 +36,7 @@ const items = [
 ]
 </script>
 <template>
-    <h1 class="h2 text-center py-l Sentient-Bold">Articulos en Español</h1>
+    <h2 class="h2 text-center py-l Sentient-Bold">Articulos en Español</h2>
     <ul class="max-width">
         <BaseListItem v-for="item in items" :item="item" :key="item.title">
             <code class="px-s cascadian">
