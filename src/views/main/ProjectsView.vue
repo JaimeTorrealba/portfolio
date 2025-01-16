@@ -1,6 +1,5 @@
 <script setup>
 import BackButton from '../../components/common/BackButton.vue';
-import BaseListItemImg from '../../components/common/BaseListItemImg.vue';
 
 const experiences = [
     {
@@ -51,7 +50,7 @@ const experiences = [
         <div class="section relative bloom-effect-layout">
             <BackButton />
             <h1 class="h1 bloom-effect text-center py-l" id="contactTitle">Projects</h1>
-            <BaseListItemImg v-for="experience in experiences" :item="experience" :key="experience.title" />
+            <!-- <BaseListItemImg v-for="experience in experiences" :item="experience" :key="experience.title" /> -->
         </div>
     </section>
 </template>
