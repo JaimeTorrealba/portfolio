@@ -35,8 +35,8 @@ const handleSubmit = (e) => {
             :config="{ validationVisibility: 'submit' }" method="POST" name="contactMe" submit-label="Send"
             :submit-attrs="{
             inputClass: 'submit-button',
-            wrapperClass: 'width-100',
-            outerClass: 'flex flex-center width-100'
+            wrapperClass: 'w-full',
+            outerClass: 'flex flex-center w-full'
         }">
             <input type="hidden" name="form-name" value="contactMe" />
 

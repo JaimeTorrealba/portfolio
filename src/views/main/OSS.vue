@@ -9,14 +9,14 @@ const showCreated = ref(false)
 </script>
 <template>
     <section class="flex flex-column flex-evenly full-height relative">
-        <div class="section relative bloom-effect-layout" v-show="!showCreated">
+        <div class="section relative bloom-effect-layout scroll" v-show="!showCreated">
             <ContributionTo>
                 <div class="flex flex-center">
-                    <button v-show="width < 768" class="showButton" @click="showCreated = true">Pkg created by me</button>
+                    <button v-show="width < 768" class="showButton" @click="showCreated = true">Github Graph</button>
                 </div>
             </ContributionTo>
         </div>
-        <div class="section relative bloom-effect-layout" v-show="width > 768 || showCreated">
+        <div class="section relative bloom-effect-layout scroll" v-show="width > 768 || showCreated">
             <CreatedByMe>
                 <div class="flex flex-center">
                     <button v-show="width < 768" class="showButton" @click="showCreated = false">Contributions</button>

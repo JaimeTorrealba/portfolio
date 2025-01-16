@@ -4,7 +4,7 @@ export const showText = (elem) => {
   const tl = gsap.timeline()
 
   return tl.from(elem, {
-    yPercent: 300,
+    yPercent: 200,
     ease: 'Power3.out',
     stagger: 0.01,
     duration: 1,

@@ -1,5 +1,9 @@
 <script setup>
+import { ref, onMounted } from 'vue';
+import { gsap } from 'gsap';
+import { showText } from '@/utils/gsaps.js';
 import BaseListItem from '../common/BaseListItem.vue';
+import BaseTag from '@/components/common/BaseTag.vue';
 
 const items = [
     {
@@ -34,14 +38,42 @@ const items = [
 
     },
 ]
+
+const itemsRef = ref(null)
+const titleRef = ref(null)
+onMounted(() => {
+    showText(titleRef.value)
+    gsap.from(itemsRef.value, {
+        duration: 0.25,
+        filter: 'blur(10px)',
+        opacity: 0,
+        y: -20,
+        stagger: 0.1,
+        ease: 'power3.in',
+        delay: 0.5
+    });
+})
 </script>
 <template>
-    <h1 class="h2 text-center py-l Sentient-Bold">Articles English</h1>
+    <div class="overflow-none">
+        <h1 ref="titleRef" class="h1 text-center Sentient ">Articles English</h1>
+    </div>
     <ul class="max-width">
-        <BaseListItem v-for="item in items" :item="item" :key="item.title">
-            <code class="px-s cascadian">
-                {{ item.date }} -
-            </code>
+        <BaseListItem v-for="item in items" :href="item.href" :key="item.title">
+            <div ref="itemsRef" class="flex w-full flex-between flex-wrap py-s">
+                <div class="my-s">
+                    <code class="px-s cascadian">
+                        {{ item.date }} -
+                    </code>
+                    <span class="Sentient">
+                        {{ item.title }}
+                    </span>
+                </div>
+                <div class="my-s">
+                    <BaseTag v-for="tag in item.tags" :tag="tag" :key="tag" />
+                </div>
+            </div>
+
         </BaseListItem>
     </ul>
     <slot />

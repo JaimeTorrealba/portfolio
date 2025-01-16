@@ -10,7 +10,7 @@ const showEs = ref(false)
 </script>
 <template>
     <section class="flex flex-column flex-evenly full-height relative">
-        <div class="section bloom-effect-layout relative" v-show="!showEs">
+        <div class="section bloom-effect-layout relative scroll" v-show="!showEs">
             <BackButton />
             <EnArticles>
                 <div class="flex flex-center">
@@ -19,7 +19,7 @@ const showEs = ref(false)
                 </div>
             </EnArticles>
         </div>
-        <div class="section relative bloom-effect-layout" v-show="width > 768 || showEs">
+        <div class="section bloom-effect-layout relative scroll" v-show="width > 768 || showEs">
             <BackButton />
             <EsArticles>
                 <div class="flex flex-center">

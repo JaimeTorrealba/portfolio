@@ -1,6 +1,9 @@
 <script setup>
+import { ref, onMounted } from 'vue';
+import { gsap } from 'gsap';
+import { showText } from '@/utils/gsaps.js';
 import BackButton from '../../components/common/BackButton.vue';
-import BaseListItemImg from '../../components/common/BaseListItemImg.vue';
+import BaseTag from '../../components/common/BaseTag.vue';
 
 const experiences = [
     {
@@ -45,13 +48,45 @@ const experiences = [
     }
 ]
 
+const itemsRef = ref(null)
+const titleRef = ref(null)
+onMounted(() => {
+    showText(titleRef.value)
+    gsap.from(itemsRef.value, {
+        duration: 0.25,
+        filter: 'blur(10px)',
+        opacity: 0,
+        y: -20,
+        stagger: 0.1,
+        ease: 'power3.in',
+        delay: 0.5
+    });
+})
 </script>
 <template>
-    <section class="flex flex-column flex-evenly full-height relative">
-        <div class="section relative bloom-effect-layout">
+    <section class="flex flex-column flex-evenly full-height relative scroll bloom-effect-layout">
+        <div class="section relative ">
             <BackButton />
-            <h1 class="h1 bloom-effect text-center py-l" id="contactTitle">Latest Experience</h1>
-            <BaseListItemImg v-for="experience in experiences" :item="experience" :key="experience.title" />
+            <div class="overflow-none">
+                <h1 class="h1 text-center Sentient py-l" ref="titleRef">Latest Experience</h1>
+            </div>
+            <div class="link py-s Sentient pointer" v-for="item in experiences" :item="experience" :key="item.title" >
+                <a ref="itemsRef" class="flex flex-between flex-wrap " :href="item.href" target="_blank" rel="no-referrer">
+                    <div class="my-s grid-container">
+                        <div class="img-wrapper flex flex-center-column flex-center">
+                            <img :src="item.img" class="w-full" width="200" />
+                        </div>
+                        <div class="px-s">
+                            <p class="Sentient-Bold h4 py-s">{{ item.title }} <span
+                                    class="px cascadian helper">{{ item.date }}</span> </p>
+                            <p>{{ item.description }}</p>
+                            <div class="my">
+                                <BaseTag v-for="tag in item.tags" :tag="tag" :key="tag" />
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
         </div>
     </section>
 </template>
@@ -66,9 +101,7 @@ const experiences = [
     border-radius: 16px;
     padding: 2rem;
     margin-right: 0.5rem;
-    overflow-y: auto;
     max-width: 1200px;
-    
 }
 
 .showButton {
@@ -78,5 +111,38 @@ const experiences = [
     padding: 0.5rem 1rem;
     margin: 1rem;
     cursor: pointer;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 10% 1fr;
+    gap: 1rem;
+    place-items: center;
+
+    @media screen and (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.helper {
+    font-size: 0.75rem;
+}
+
+.img-wrapper {
+    margin-right: 1rem;
+    height: 100%;
+    width: 100%;
+    @media screen and (max-width: 768px) {
+        height: 50%;
+        width: 50%;
+    }
+}
+
+.link {
+    transition: all 0.3s;
+}
+
+.link:hover {
+    background-color: #e4e4e42a;
 }
 </style>

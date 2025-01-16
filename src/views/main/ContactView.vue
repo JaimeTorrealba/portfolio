@@ -1,18 +1,20 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import RRSS from '@/components/contact/RRSS.vue'
 import ContactForm from '@/components/contact/ContactForm.vue'
 import { showText } from '@/utils/gsaps.js'
 import BackButton from '@/components/common/BackButton.vue'
 
+const titleRef = ref(null)
 onMounted(() => {
   const master = gsap.timeline()
-  master.add(showText('#contactTitle', { delay: 0 }))
+  master.add(showText(titleRef.value))
   master.from('#form-id', {
-    duration: 1.5,
+    duration: 0.5,
     opacity: 0,
-  })
+    scale: 0.5,
+  }, '-=0.5')
 })
 
 </script>
@@ -20,11 +22,11 @@ onMounted(() => {
 <template>
   <section class="contact-section bloom-effect-layout relative flex flex-column flex-evenly">
     <BackButton />
-    <div>
-      <h1 class="h1 bloom-effect text-center Sentient" id="contactTitle">Contact me</h1>
+    <div class="overflow-none">
+      <h1 ref="titleRef" class="h1  text-center Sentient" id="contactTitle">Contact me</h1>
     </div>
-    <div class="flex flex-center">
-      <ContactForm id="form-id" />
+    <div class="flex flex-center" id="form-id">
+      <ContactForm  />
     </div>
     <RRSS />
   </section>

@@ -33,8 +33,9 @@ const store = useMainStore()
   display: grid;
   min-block-size: 100vb;
   grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: repeat(12, auto);
+  grid-template-rows: repeat(12, minmax(auto, 100px));
   gap: 0.5rem;
+
 }
 
 .version {

@@ -35,7 +35,7 @@ watchEffect(() => {
 const menuItems = [
   //{ name: 'Soon', path: '/resume' },
   //{ name: 'Soon', path: '/about-mess' }, // disabled for now
-  { name: 'Projects', path: '/main/projects' },
+  // { name: 'Projects', path: '/main/projects' },
   { name: 'Latest Experiences', path: '/main/experiences' },
   { name: 'Creative lab', path: 'https://lab.jaimetorrealba.com/', external: true },
   { name: 'Articles', path: '/main/articles' },
