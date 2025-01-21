@@ -14,7 +14,7 @@ const { width } = useWindowSize()
 const { checkRoute } = useCustomRouterFn()
 
 // Animations
-const playAnimation = async() => {
+const playAnimation = async () => {
   await nextTick()
   const menuItems = gsap.utils.toArray(".menu-items")
   gsap.from(menuItems, {
@@ -27,9 +27,9 @@ const playAnimation = async() => {
 }
 
 watchEffect(() => {
-    if (store.finishLoading && checkRoute('Main')) {
-        playAnimation()
-    }
+  if (store.finishLoading && checkRoute('Main')) {
+    playAnimation()
+  }
 })
 
 const menuItems = [
@@ -49,10 +49,19 @@ const menuItems = [
 const showNavBar = computed(() => {
   if (checkRoute('Main')) {
     return true
-  } else {
-    return width.value > lg
   }
+  return width.value > lg
+
 })
+
+const showSubPages = computed(() => {
+  if (checkRoute('Main')) {
+    return false
+  }
+  return true
+})
+
+
 
 // SOUNDS
 // const settingStore = useSettingStore()
@@ -82,7 +91,7 @@ const showNavBar = computed(() => {
       </li>
     </ul>
   </nav>
-  <section class="content-subpages">
+  <section class="content-subpages debug" v-show="showSubPages">
     <router-view />
   </section>
 </template>
@@ -101,11 +110,12 @@ const showNavBar = computed(() => {
   }
 }
 
-.content-subpages{
+.content-subpages {
   grid-column-start: 4;
   grid-column-end: 12;
   grid-row-start: 2;
   grid-row-end: 12;
+
   @media screen and (max-width: 1024px) {
     grid-column-start: 2;
     grid-column-end: 12;
