@@ -19,11 +19,11 @@ const router = createRouter({
       name: 'Main',
       component: () => import('../views/MainView.vue'),
       children:[
-        {
-          path: 'projects',
-          name: 'Projects',
-          component: () => import('../views/main/ProjectsView.vue')
-        },
+        // {
+        //   path: 'projects',
+        //   name: 'Projects',
+        //   component: () => import('../views/main/ProjectsView.vue')
+        // },
         {
           path: 'experiences',
           name: 'LatestExperiences',

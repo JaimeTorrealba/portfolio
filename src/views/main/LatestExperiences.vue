@@ -115,12 +115,13 @@ onMounted(() => {
 
 .grid-container {
     display: grid;
-    grid-template-columns: 10% 1fr;
+    grid-template-columns: minmax(100px, 0.15fr) 1fr;
     gap: 1rem;
-    place-items: center;
+    place-items: start;
 
     @media screen and (max-width: 768px) {
         grid-template-columns: 1fr;
+        place-items: center;
     }
 }
 
@@ -135,6 +136,7 @@ onMounted(() => {
     @media screen and (max-width: 768px) {
         height: 50%;
         width: 50%;
+        
     }
 }
 

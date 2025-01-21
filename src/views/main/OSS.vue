@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import ContributionTo from '@/components/oss/ContributionsTo.vue';
-import CreatedByMe from '@/components/oss/CreatedByMe.vue';
+// import GithubStats from '@/components/oss/GithubStats.vue';
 import { useWindowSize } from '@vueuse/core';
 
 const { width } = useWindowSize()
@@ -16,19 +16,20 @@ const showCreated = ref(false)
                 </div>
             </ContributionTo>
         </div>
-        <div class="section relative bloom-effect-layout scroll" v-show="width > 768 || showCreated">
-            <CreatedByMe>
+        <!-- <div class="section relative bloom-effect-layout scroll" v-show="width > 768 || showCreated">
+            <GithubStats>
                 <div class="flex flex-center">
                     <button v-show="width < 768" class="showButton" @click="showCreated = false">Contributions</button>
                 </div>
-            </CreatedByMe>
-        </div>
+            </GithubStats>
+        </div> -->
     </section>
 </template>
 <style scoped>
 .full-height {
     height: 100%;
     border-radius: 16px;
+    gap: 1rem;
 }
 
 .section {
@@ -36,8 +37,10 @@ const showCreated = ref(false)
     border-radius: 16px;
     padding: 2rem 1rem;
     margin-right: 0.5rem;
-    overflow-y: auto;
     max-width: 1200px;
+    @media screen and (max-width: 768px) {
+        overflow-y: auto;
+    }
 }
 
 .showButton {
