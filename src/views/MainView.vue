@@ -91,7 +91,7 @@ const showSubPages = computed(() => {
       </li>
     </ul>
   </nav>
-  <section class="content-subpages debug" v-show="showSubPages">
+  <section class="content-subpages" v-show="showSubPages">
     <router-view />
   </section>
 </template>
