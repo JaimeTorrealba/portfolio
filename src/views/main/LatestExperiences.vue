@@ -64,8 +64,7 @@ onMounted(() => {
 })
 </script>
 <template>
-    <section class="flex flex-column flex-evenly full-height relative scroll bloom-effect-layout">
-        <div class="section relative ">
+    <section class="flex flex-column flex-evenly full-height relative scroll bloom-effect-layout section relative">
             <BackButton />
             <div class="overflow-none">
                 <h1 class="h1 text-center Sentient py-l" ref="titleRef">Latest Experience</h1>
@@ -87,7 +86,6 @@ onMounted(() => {
                     </div>
                 </a>
             </div>
-        </div>
     </section>
 </template>
 <style scoped>
