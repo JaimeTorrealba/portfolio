@@ -7,9 +7,13 @@ import { showText, appear } from "@/utils/gsaps.js";
 import YogSothothIcon from "@/assets/icons/YogSothothIcon.vue";
 
 const store = useMainStore()
+
 const { goToMain: _goToMain, checkRoute } = useCustomRouterFn()
 
-const goToMain = () => _goToMain()
+const goToMain = () => {
+  _goToMain()
+  store.musicInstance.play()
+}
 
 const onHover = (isHover) => {
   const icon = document.getElementById('YogSothothID')

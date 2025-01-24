@@ -18,7 +18,7 @@ import * as camMotion from './utils/CameraAnimation'
 // COMPONENTS
 import LoadingScreen from '../common/LoadingScreen.vue'
 import Floor from './components/theFloor.vue'
-import Nail from './components/PureNail.vue'
+import Model from './components/TheModel.vue'
 import Chains from './components/TheChains.vue'
 import TheEnvironment from './components/TheEnvironment.vue'
 
@@ -26,10 +26,9 @@ const { checkRoute } = useCustomRouterFn()
 const settingStore = useSettingStore()
 const store = useMainStore()
 const route = useRoute()
-const music = ref()
+const musicRef = ref()
 const bgMusic = "/assets/Kingdom's Edge.mp3"
 const cameraRef = ref()
-const parallaxFactor = ref(5)
 
 const gl = {
   clearColor: '#111',
@@ -48,22 +47,23 @@ watch(cameraRef, camera => {
   camera.updateProjectionMatrix()
 })
 
-watch(music, (_music) => {
-  store.musicInstance = _music.sound
+watch(musicRef, (_music) => {
+  store.musicInstance = _music.instance
 })
 
 watch(() => route.name, () => {
-  // if (route.name === 'AboutMe') {
-  //   camMotion.aboutViewAnimation(cameraRef.value)
-  //   parallaxFactor.value = 0.25
-  // } 
   if (checkRoute('ContactMe')) {
-    camMotion.contactViewPosition(cameraRef.value)
+    camMotion.contactPos(cameraRef.value)
   }
-  if (checkRoute('Main') || checkRoute('Home')) {
+  if (checkRoute('OSS')) {
+    camMotion.OSSPos(cameraRef.value)
+  }
+  if (checkRoute('LatestExperiences')) {
+    camMotion.latestExperiencePos(cameraRef.value)
+  }
+  if (checkRoute('Main') || checkRoute('Home') || checkRoute('Articles')) {
     if (!cameraRef.value?.position) return
-    camMotion.originalPosition(cameraRef.value)
-    parallaxFactor.value = 5
+    camMotion.initPos(cameraRef.value)
   }
 })
 
@@ -81,21 +81,21 @@ const floorMap = await useTexture({
   displacementMap: '/textures/floor/floor_disp.jpg',
 })
 
-const { scene } = await useGLTF('/models/Pure_Nail.glb', { draco: true })
+const { scene } = await useGLTF('/models/Necronomicon.glb', { draco: true })
 
-const { scene: iron } = await useGLTF('/models/iron_chain.glb')
+const { scene: ironChain } = await useGLTF('/models/iron_chain.glb')
 </script>
 <template>
   <LoadingScreen />
   <TresCanvas v-bind="gl" window-size class="canvas-styles">
     <TresPerspectiveCamera ref="cameraRef" :position="[0, 3.5, 25]" :fov="30" />
     <Suspense>
-      <GlobalAudio ref="music" :src="bgMusic" :volume="settingStore.environmentVolume" :loop="true" />
+      <GlobalAudio ref="musicRef" :src="bgMusic" :volume="settingStore.environmentVolume" :loop="true" />
     </Suspense>
     <Floor :textures="floorMap" />
-    <Chains :model="iron" />
-    <Nail :model="scene" :scaleFactor="scaleFactor" />
-    <TheEnvironment :parallaxFactor="parallaxFactor" :startParticle="startParticle" />
+    <Chains :model="ironChain" />
+    <Model :model="scene" :scaleFactor="scaleFactor" />
+    <TheEnvironment :startParticle="startParticle" />
   </TresCanvas>
 </template>
 <style scoped>

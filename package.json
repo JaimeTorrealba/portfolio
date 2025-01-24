@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@formkit/vue": "^1.6.2",
-    "@tresjs/cientos": "^4.0.3",
+    "@tresjs/cientos": "^4.1.0",
     "@tresjs/core": "^4.3.2",
     "@vueuse/core": "^10.9.0",
     "@vueuse/sound": "^2.0.1",
