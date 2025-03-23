@@ -1,10 +1,10 @@
 <script setup>
-import { RouterView } from 'vue-router'
-import { useMainStore } from '@/stores'
-import theExperience from '@/components/webgl/theExperience.vue'
-import MusicButton from '@/components/common/MusicButton.vue';
+import { RouterView } from "vue-router";
+import { useMainStore } from "@/stores";
+import theExperience from "@/components/webgl/theExperience.vue";
+import MusicButton from "@/components/common/MusicButton.vue";
 
-const store = useMainStore()
+const store = useMainStore();
 
 // TODO transition in loading screen
 // TODO transition in content about and mobile
@@ -15,18 +15,13 @@ const store = useMainStore()
   <Suspense>
     <theExperience />
   </Suspense>
-  <router-view v-slot="{ Component }">
-    <main class="container">
-      <transition name="fade">
-        <component :is="Component" />
-      </transition>
-    </main>
-  </router-view>
+  <main class="container">
+    <router-view></router-view>
+  </main>
   <MusicButton v-if="store.finishLoading" />
   <div class="version" v-if="store.finishLoading">
     <pre>Version 3.1.0</pre>
   </div>
-
 </template>
 <style>
 .container {
@@ -35,7 +30,6 @@ const store = useMainStore()
   grid-template-columns: repeat(12, 1fr);
   grid-template-rows: repeat(12, minmax(auto, 100px));
   gap: 0.5rem;
-
 }
 
 .version {
@@ -45,7 +39,6 @@ const store = useMainStore()
   background-color: rgba(1, 1, 1, 0.5);
   color: white;
   font-size: 0.75rem;
-
 }
 
 .fade-enter-active,

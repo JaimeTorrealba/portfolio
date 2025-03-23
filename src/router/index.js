@@ -9,42 +9,10 @@ const router = createRouter({
       name: 'Home',
       component: HomeView
     },
-    // {
-    //   path: '/about-me',
-    //   name: 'AboutMe',
-    //   component: () => import('../views/AboutMe.vue')
-    // },
     {
       path: '/main',
       name: 'Main',
       component: () => import('../views/MainView.vue'),
-      children:[
-        // {
-        //   path: 'projects',
-        //   name: 'Projects',
-        //   component: () => import('../views/main/ProjectsView.vue')
-        // },
-        {
-          path: 'experiences',
-          name: 'LatestExperiences',
-          component: () => import('../views/main/LatestExperiences.vue')
-        },
-        {
-          path: 'articles',
-          name: 'Articles',
-          component: () => import('../views/main/ArticlesView.vue')
-        },
-        {
-          path: 'oss',
-          name: 'OSS',
-          component: () => import('../views/main/OSS.vue')
-        },
-        {
-          path: 'ContactMe',
-          name: 'ContactMe',
-          component: () => import('../views/main/ContactView.vue')
-        },
-      ]
     },
     {
       path: '/success/:name',
