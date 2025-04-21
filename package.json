@@ -15,7 +15,6 @@
     "@tresjs/cientos": "^4.1.0",
     "@tresjs/core": "^4.3.2",
     "@vueuse/core": "^10.9.0",
-    "@vueuse/sound": "^2.0.1",
     "gsap": "^3.12.5",
     "pinia": "^2.1.7",
     "three": "^0.172.0",
