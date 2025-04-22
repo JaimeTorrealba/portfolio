@@ -1,7 +1,15 @@
 <script setup>
+import Carousel from '../components/main/Carousel.vue';
 </script>
 <template>
-  <div>
+  <main class="container" >
     <h1>MainView</h1>
-  </div>
+    <Carousel />
+  </main>
 </template>
+<style scoped>
+.container{
+  min-height: 100vh;
+  background-color: #111;
+}
+</style>
