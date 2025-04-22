@@ -9,6 +9,7 @@ import {
   SRGBColorSpace,
   ACESFilmicToneMapping,
 } from 'three'
+import { NoisePmndrs, EffectComposerPmndrs } from '@tresjs/post-processing'
 // Internals
 import { useMainStore } from '@/stores'
 // import { useSettingStore } from "@/stores/settings";
@@ -22,7 +23,6 @@ import TheEnvironment from './components/TheEnvironment.vue'
 // const settingStore = useSettingStore()
 const store = useMainStore()
 const router = useRouter()
-console.log('jaime ~ router:', router);
 const musicRef = ref()
 const cameraRef = ref()
 
@@ -74,6 +74,13 @@ const { scene: ironChain } = await useGLTF('/models/iron_chain.glb')
     <TresPerspectiveCamera ref="cameraRef" :position="[0, 3.5, 25]" :fov="30" />
     <BookModel @click-model="onClickModel" :model="scene" :scaleFactor="scaleFactor" />
     <TheEnvironment :startParticle="startParticle" :floor-textures="floorMap" :chainModel="ironChain" />
+    <Suspense>
+      <EffectComposerPmndrs>
+        <NoisePmndrs
+          premultiply
+        />
+      </EffectComposerPmndrs>
+    </Suspense>
   </TresCanvas>
 </template>
 <style scoped>

@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import { useMainStore } from "@/stores";
 import { showText } from "@/utils/gsaps.js";
 import theExperience from "@/components/webgl/theExperience.vue";
+import LoadingScreen from '@/components/common/LoadingScreen.vue';
 
 const store = useMainStore()
 
@@ -25,6 +26,9 @@ watchEffect(() => {
 </script>
 
 <template>
+  <Suspense>
+    <LoadingScreen />
+  </Suspense>
   <div class="px-l overflow-none z-10" v-if="store.finishLoading">
     <h1 ref="titleRef" class="h1-large bloom-effect-tiny pa-s">Jaime <br />
       Torrealba</h1>

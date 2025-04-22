@@ -13,45 +13,47 @@ const emit = defineEmits(["clickModel"]);
 const modelRef = shallowRef(null);
 const spotLightRef = shallowRef(null);
 
-watch(modelRef, (nail) => {
-  nail.traverse((child) => {
+watch(modelRef, (book) => {
+  book.traverse((child) => {
     if (child.isMesh) {
       child.castShadow = true;
     }
   });
 });
 
-const { onBeforeRender, pause, resume } = useLoop();
+const { onBeforeRender } = useLoop();
 
 onBeforeRender(({ elapsed }) => {
-  if (modelRef.value) {
-    modelRef.value.rotation.y = elapsed;
-    modelRef.value.position.y = Math.sin(elapsed) + 3;
+  if (modelRef.value && !hasMouse.value) {
+    modelRef.value.rotation.y = ((elapsed * 0.5) % Math.PI) * 2;
   }
 });
 
 const hasMouse = ref(false);
 const onMouseEnter = () => {
   if (!hasMouse.value) {
-    gsap.to(modelRef.value.rotation, { y: 0, duration: 0.3 });
+    const toRotate = modelRef.value.rotation.y < Math.PI ? 0 : Math.PI * 2;
+    gsap.to(modelRef.value.rotation, { y: toRotate, duration: 0.3 });
     document.body.style.cursor = "pointer";
-    pause();
   }
   hasMouse.value = true;
 };
 const onMouseLeave = () => {
   if (hasMouse.value) {
     document.body.style.cursor = "";
-    resume();
   }
   hasMouse.value = false;
 };
 
 const onClick = () => {
-    //TODO: add more animations and effect maybe sounds
-    gsap.to(spotLightRef.value, { intensity: 0, duration: 0.75, onComplete: () => {
-        emit('clickModel')
-    } });
+  //TODO: add more animations and effect maybe sounds
+  gsap.to(spotLightRef.value, {
+    intensity: 0,
+    duration: 0.75,
+    onComplete: () => {
+      emit("clickModel");
+    },
+  });
 };
 </script>
 <template>
@@ -65,13 +67,13 @@ const onClick = () => {
     :position="[0, 2.5 * scaleFactor, 3]"
     :object="model"
   />
+
   <TresSpotLight
     ref="spotLightRef"
     cast-shadow
     color="#F5EBD4"
     :intensity="25"
-    :penumbra="1"
-    :angle="Math.PI * 0.4"
+    :penumbra="1"    :angle="Math.PI * 0.4"
     :decay="1.25"
     :position="[-4, 10, 4]"
   />
