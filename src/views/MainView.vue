@@ -1,11 +1,15 @@
 <script setup>
 import Carousel from '../components/main/Carousel.vue';
+import AboutMe from '../components/main/AboutMe.vue';
+import RRSS from '../components/main/RRSS.vue';
 </script>
 <template>
-  <main class="container" >
+  <div class="container" >
     <h1>MainView</h1>
+    <AboutMe />
     <Carousel />
-  </main>
+    <RRSS />
+  </div>
 </template>
 <style scoped>
 .container{

@@ -65,7 +65,8 @@ onMounted(() => {
 .title{
     font-size: 2rem;
     color: var(--white);
-    padding: 1rem 0;
+    padding: 4rem 0;
+    text-align: center;
 }
 .carousel-container{
     padding: 1rem 0;
