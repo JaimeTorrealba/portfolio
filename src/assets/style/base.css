@@ -37,7 +37,6 @@ body {
   font-family: 'Friz Quadrata Regular OS';
   cursor: url('../wcursor.cur'), pointer;
   padding: 0;
-  overflow: hidden;
 }
 
 a {

@@ -1,10 +1,29 @@
 <script setup>
-import { onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import gsap from "gsap";
 import { Draggable } from "gsap/Draggable";
+import { InertiaPlugin } from "gsap/InertiaPlugin";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+gsap.registerPlugin(ScrollTrigger);
 gsap.registerPlugin(Draggable);
+gsap.registerPlugin(InertiaPlugin) 
 
+const titleRef = ref(null);
+const carouselRef = ref(null);
 onMounted(() => {
+  gsap.from(titleRef.value, {
+    scrollTrigger: titleRef.value,
+    duration: 1,
+    y: 250,
+  });
+  gsap.from(carouselRef.value, {
+    scrollTrigger: carouselRef.value,
+    duration: 0.5,
+    delay: 0.5,
+    opacity: 0,
+  });
+
+  // Carousel
   const slides = gsap.utils.toArray(".carousel li");
   const slidesCount = slides.length;
   const slideHeight = slides[0].offsetHeight;
@@ -36,6 +55,9 @@ onMounted(() => {
     snap: {
       y: (y) => Math.round(y / slideHeight) * circumFerence,
     },
+    inertia: { 
+      y: (value) => {},
+    },
     onDrag: updateProgress,
     onThrowUpdate: updateProgress,
   });
@@ -48,9 +70,11 @@ onMounted(() => {
 });
 </script>
 <template>
-  <section class="carousel-container">
-    <h3 ref="titleRef" class="title">Experience:</h3>
-    <div class="carousel">
+  <section >
+    <div class="overflow-hidden-y">
+      <h3 ref="titleRef" class="title">Experience</h3>
+    </div>
+    <div ref="carouselRef" class="carousel">
       <ul>
         <li>Coaniquem</li>
         <li>Ripley</li>
@@ -62,15 +86,6 @@ onMounted(() => {
   </section>
 </template>
 <style scoped>
-.title{
-    font-size: 2rem;
-    color: var(--white);
-    padding: 4rem 0;
-    text-align: center;
-}
-.carousel-container{
-    padding: 1rem 0;
-}
 .carousel {
   width: 100%;
   position: relative;
