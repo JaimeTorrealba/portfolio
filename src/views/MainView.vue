@@ -3,12 +3,14 @@ import Carousel from '../components/main/Carousel.vue';
 import AboutMe from '../components/main/AboutMe.vue';
 import RRSS from '../components/main/RRSS.vue';
 import ShowRel from '../components/main/ShowRel.vue';
+import Content from '../components/main/Content.vue';
 </script>
 <template>
   <div class="container">
     <ShowRel />
     <AboutMe class="py" />
     <Carousel class="py" />
+    <Content class="py" />
     <RRSS class="py" />
   </div>
 </template>

@@ -1,13 +1,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
 
 const titleRef = ref(null);
 onMounted(() => {
   gsap.from(titleRef.value, {
-    scrollTrigger: titleRef.value,
     duration: 1,
     y: 250,
   });

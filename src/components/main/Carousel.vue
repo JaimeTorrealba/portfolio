@@ -13,7 +13,7 @@ const carouselRef = ref(null);
 onMounted(() => {
   gsap.from(titleRef.value, {
     scrollTrigger: titleRef.value,
-    duration: 1,
+    duration: 0.5,
     y: 250,
   });
   gsap.from(carouselRef.value, {

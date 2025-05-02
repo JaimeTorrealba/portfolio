@@ -13,6 +13,6 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(plugin, defaultConfig)
-app.use(VueTippy, { directive: 'tippy', })
+app.use(VueTippy, { directive: 'tippy', component: 'tippy', })
 
 app.mount('#app')
