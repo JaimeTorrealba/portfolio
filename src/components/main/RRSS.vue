@@ -2,11 +2,11 @@
 import { onMounted } from "vue";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import TwitterIcon from "@/assets/icons/TwitterIcon.vue";
-import GithubIcon from "@/assets/icons/GithubIcon.vue";
-import LinkedinIcon from "@/assets/icons/LinkedinIcon.vue";
-import CodepenIcon from "@/assets/icons/CodepenIcon.vue";
-import BlueSkyIcon from "@/assets/icons/BlueskyIcon.vue";
+import TwitterIcon from "@/assets/icons/RRSS/TwitterIcon.vue";
+import GithubIcon from "@/assets/icons/RRSS/GithubIcon.vue";
+import LinkedinIcon from "@/assets/icons/RRSS/LinkedinIcon.vue";
+import CodepenIcon from "@/assets/icons/RRSS/CodepenIcon.vue";
+import BlueSkyIcon from "@/assets/icons/RRSS/BlueskyIcon.vue";
 
 gsap.registerPlugin(ScrollTrigger);
 

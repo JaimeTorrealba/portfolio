@@ -30,6 +30,6 @@ import Content from '../components/main/Content.vue';
 .container{
   min-height: 100vh;
   padding: 0 2rem;
-  background-color: #111;
+  background-color: #333;
 }
 </style>

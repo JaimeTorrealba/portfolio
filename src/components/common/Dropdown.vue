@@ -1,5 +1,4 @@
 <script setup>
-import { defineModel } from 'vue';
 
 defineProps({
   items: {
@@ -30,6 +29,12 @@ function selectItem(item) {
     </template>
     <template #content>
       <ul class="dropdown-menu">
+        <li
+          class="dropdown-item"
+          @click="selectItem('All')"
+        >
+          All
+        </li>
         <li
           v-for="(item, index) in items"
           :key="index"
@@ -65,6 +70,8 @@ function selectItem(item) {
   cursor: pointer;
   font-size: var(--step--1);
   transition: all 0.15s ease;
+  background-color: #111;
+  width: 100%;
 }
 
 .dropdown-item:hover {
