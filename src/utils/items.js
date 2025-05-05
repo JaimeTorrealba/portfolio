@@ -53,8 +53,9 @@ const courses = [
     {
         id: 11,
         title: '3D Web Development with Vue.js and Three.js',
-        description: 'Description for 3D Web Development with Vue.js and Three.js',
+        description: 'My first course on Udemy and by myself, I teach here the basics of 3D development with Vue.js and Three.js.',
         url: 'https://www.udemy.com/course/tresjs-interfaces-3d-con-vuejs/learn/lecture/43861186?utm_campaign=email&utm_medium=email&utm_source=sendgrid.com#overview',
+        img: '/img/logos/Udemy.svg',
         date: 'Oct, 2023',
         type: 'Course'
     },
@@ -63,6 +64,7 @@ const courses = [
         title: 'Three.js desde 0 on ED.team',
         description: 'Curso en español en colaboración con la plataforma digital ED.team, fue mi primer curso y una muy buena experiencia.',
         url: 'https://ed.team/cursos/threejs',
+        img: '/img/logos/EDteam-isotipo.svg',
         date: "March 2025",
         type: 'Course'
     }

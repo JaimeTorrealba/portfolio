@@ -13,8 +13,8 @@ defineProps({
         <p class="card-title">{{ data.title }}</p>
       </div>
       <div class="image-wrapper">
-        <div class="test"></div>
-        <!-- <img :src="data.image" alt="Card Image" class="card-image" /> -->
+        <div v-if="!data.img" class="default-img"></div>
+        <img :src="data.img" alt="Card Image" class="card-image" />
       </div>
       <div class="inner-wrapper date-type">
         <p>{{ data.date }}</p>
@@ -27,9 +27,11 @@ defineProps({
   </a>
 </template>
 <style scoped lang="scss">
-.test{
-    height: 10rem;
+.default-img {
+  height: 10rem;
+  padding: 0.5rem;
 }
+
 .card {
   border: 0.5rem solid #111;
   border-radius: 1rem;
@@ -38,6 +40,10 @@ defineProps({
   background-size: cover;
   background-color: #adc0cf;
   max-width: 300px;
+  transition: box-shadow 0.3s ease-in-out;
+}
+.card:hover {
+  box-shadow: 0px 0px 16px 0px #626f77;
 }
 
 .inner-wrapper {
@@ -50,6 +56,7 @@ defineProps({
 .date-type {
   display: flex;
   justify-content: space-between;
+  font-weight: 500;
   align-items: center;
   padding: 0.5rem 0.25rem;
   color: #111;
@@ -58,8 +65,11 @@ defineProps({
 .image-wrapper {
   border-radius: 4px;
   border: 1px solid #fabf41;
-  background: radial-gradient(83.73% 83.73% at 50% 50%, #111 23.08%, #adc0cf 100%);
+  background: radial-gradient(83.73% 83.73% at 50% 50%, #adc0cf 23.08%, #111 100%);
   box-shadow: 0px 0px 8px 0px rgba(247, 247, 247, 0.5);
+  display: flex;
+  justify-content: center;
+
 }
 
 .card-title {
@@ -68,9 +78,20 @@ defineProps({
   text-wrap: balance;
   font-weight: 600;
   padding: 0.5rem 0.25rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  min-height: 90px;
 }
 .card-description {
   color: #111;
   padding: 0.5rem 0.25rem;
+}
+
+.card-image{
+  height: 10rem;
+  width: 50%;
+  padding: 0.5rem;
 }
 </style>
