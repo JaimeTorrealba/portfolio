@@ -1,24 +1,24 @@
 const blogPosts = [
     {
         id: 1,
-        title: 'Useful tips for tresjs',
-        description: 'Collection of useful tips developing with tresjs',
+        title: 'Useful tips for tres.js',
+        description: 'Collection of useful tips developing with tres.js',
         url: 'https://medium.com/stackademic/useful-tips-for-tresjs-cbb2a7d67fa8?',
         date: 'May 28, 2024',
         type: 'Blog'
     },
     {
         id: 2,
-        title: 'Multi cameras with tresjs',
-        description: 'Tutorial on how to multi cameras with tresjs',
+        title: 'Multi cameras with tres.js',
+        description: 'Tutorial on how to build a simple multi camera scene with tres.js',
         url: 'https://medium.com/stackademic/multi-cameras-with-tresjs-26a54d06878e',
         date: "Apr 29, 2024",
         type: 'Blog'
     },
     {
         id: 3,
-        title: 'How to create an infinite tube with tresjs',
-        description: 'Tutorial on how how to create an infinite tube with tresjs',
+        title: 'How to create an infinite tube with tres.js',
+        description: 'Tutorial on how how to create an infinite tube effect with tres.js',
         url: 'https://medium.com/stackademic/how-to-create-an-infinite-tube-with-tresjs-e9ff4fc76e86',
         date: "Apr 23, 2024",
         type: 'Blog'
@@ -26,23 +26,23 @@ const blogPosts = [
     {
         id: 4,
         title: '3D pixel art on the web',
-        description: 'Post step by step on how to 3D pixel art on the web',
+        description: 'Step by step tutorial on how to do 3D pixel art on the web using Three.js and Crocotile3D',
         url: 'https://medium.com/@Jaimebboyjt/3d-pixel-art-on-the-web-f70fbf68fb4f',
         date: "Jan 30, 2024",
         type: 'Blog'
     },
     {
         id: 5,
-        title: 'Transition threejs component using vuejs and tresjs',
-        description: 'How to transition threejs component using vuejs and tresjs',
+        title: 'Transition three.js component using vue.js and tres.js',
+        description: 'Using the Vue Transition built-in component to apply transitions in Tres.js',
         url: 'https://medium.com/@Jaimebboyjt/transition-threejs-component-using-vuejs-and-tresjs-d1119cb8ef6c',
         date: "Nov 14, 2023",
         type: 'Blog'
     },
     {
         id: 6,
-        title: 'How to use instancemesh with tresjs',
-        description: 'Simple guide on how to use instancemesh with tresjs',
+        title: 'How to use instanceMesh with tres.js',
+        description: 'Simple guide on how to use instanceMesh class with tres.js',
         url: 'https://medium.com/@Jaimebboyjt/how-to-use-instancemesh-with-tresjs-fae8e3b48dcc',
         date: "Sep 24, 2023",
         type: 'Blog'
@@ -55,8 +55,8 @@ const courses = [
         title: '3D Web Development with Vue.js and Three.js',
         description: 'My first course on Udemy and by myself, I teach here the basics of 3D development with Vue.js and Three.js.',
         url: 'https://www.udemy.com/course/tresjs-interfaces-3d-con-vuejs/learn/lecture/43861186?utm_campaign=email&utm_medium=email&utm_source=sendgrid.com#overview',
-        img: '/img/logos/Udemy.svg',
         date: 'Oct, 2023',
+        theme: "#688871",
         type: 'Course'
     },
     {
@@ -64,8 +64,8 @@ const courses = [
         title: 'Three.js desde 0 on ED.team',
         description: 'Curso en español en colaboración con la plataforma digital ED.team, fue mi primer curso y una muy buena experiencia.',
         url: 'https://ed.team/cursos/threejs',
-        img: '/img/logos/EDteam-isotipo.svg',
         date: "March 2025",
+        theme: "#688871",
         type: 'Course'
     }
 ]
@@ -77,6 +77,7 @@ const talks = [
         description: 'Talk in Glasgow, guide by Glasgow JS and Scottish Technology Club',
         url: 'https://www.scottishtechnology.club/library/9db1b23644-jaime-torrealba-tresjs',
         date: '15th October 2024',
+        theme: "#C7B65D",
         type: 'Talk'
     },
     {
@@ -85,7 +86,8 @@ const talks = [
         description: 'Podcast in stackoverflow',
         url: 'https://stackoverflow.blog/2025/02/04/will-the-web-ever-be-the-primary-delivery-system-for-3d-games/',
         date: 'February 4, 2025',
-        type: 'Talk'
+        theme: "#A08F71",
+        type: 'Podcast'
     },
     {
         id: 23,
@@ -93,14 +95,16 @@ const talks = [
         description: 'Talk in Edinburgh, guide by Edinburgh JS and Scottish Technology Club',
         url: 'https://youtu.be/gIYE2I6PG3I?si=8wQVx7oJT4oyJiR1',
         date: 'March 19, 2025',
+        theme: "#C7B65D",
         type: 'Talk'
     },
     {
         id: 24,
         title: '3D with Vue.js and Three.js',
-        description: 'Talk in Vue talks #8 online, orginized by EpicMax',
+        description: 'Talk in Vue talks #8 online, organized by EpicMax',
         url: 'https://youtu.be/l_-Zx_HQYE4?si=dRLlo56QYqn0THu6',
         date: 'March 19, 2025',
+        theme: "#C7B65D",
         type: 'Talk online'
     }
 ]
@@ -112,6 +116,7 @@ const assets = [
         description: 'My 3D models in sketchfab',
         url: 'https://sketchfab.com/solucionesinformaticasjtc/models',
         date: 'N/A',
+        theme: "#D68A7D",
         type: 'Asset'
     },
     {
@@ -120,6 +125,7 @@ const assets = [
         description: 'Codepen profile',
         url: 'https://codepen.io/jaime_torrealba',
         date: 'N/A',
+        theme: "#D68A7D",
         type: 'Asset'
     },
     {
@@ -128,6 +134,7 @@ const assets = [
         description: 'https://github.com/JaimeTorrealba/creative-lab',
         url: 'https://github.com/JaimeTorrealba/creative-lab',
         date: 'N/A',
+        theme: "#4D8ACE",
         type: 'OSS'
     },
     {
@@ -136,14 +143,16 @@ const assets = [
         description: 'Github repo, First person shooter controls to easily create 3D shooter experiences (or other first person experiences).',
         url: 'https://github.com/JaimeTorrealba/tres-fps-controls',
         date: 'N/A',
+        theme: "#4D8ACE",
         type: 'OSS'
     },
     {
         id: 35,
         title: 'Tres Path Tracing',
-        description: 'Github repo, Path tracing in tresjs (private)',
+        description: 'Github repo, Path tracing in tres.js (private)',
         url: 'https://github.com/Tresjs/path-tracing',
         date: 'N/A',
+        theme: "#4D8ACE",
         type: 'OSS'
     }
 ]
