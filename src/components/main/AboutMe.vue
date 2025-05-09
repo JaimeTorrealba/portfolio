@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, ref } from "vue";
+import SignatureJT from "@/assets/icons/SignatureJT.vue";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
@@ -8,6 +9,7 @@ gsap.registerPlugin(SplitText);
 
 const titleRef = ref(null);
 const descriptionRef = ref(null);
+const perfilRef = ref(null);
 onMounted(() => {
   gsap.from(titleRef.value, {
     scrollTrigger: titleRef.value,
@@ -15,10 +17,10 @@ onMounted(() => {
     y: 250,
   });
   document.fonts.ready.then(() => {
-    const firstText = SplitText.create(descriptionRef.value.children[0], {
+    const firstText = SplitText.create(descriptionRef.value.children[1], {
       type: "lines",
     });
-    const secondText = SplitText.create(descriptionRef.value.children[1], {
+    const secondText = SplitText.create(descriptionRef.value.children[2], {
       type: "lines",
     });
     const lines = [firstText.lines, secondText.lines].flat();
@@ -31,6 +33,15 @@ onMounted(() => {
       delay: 0.5,
     });
   });
+  gsap.from(perfilRef.value, {
+    scrollTrigger: perfilRef.value,
+    duration: 0.5,
+    delay: 0.5,
+    opacity: 0,
+    transformOrigin: "50% 50%",
+    scale: 0.5,
+    y: 50,
+  });
 });
 </script>
 <template>
@@ -39,6 +50,7 @@ onMounted(() => {
       <h2 ref="titleRef" class="title">About Me</h2>
     </div>
     <div ref="descriptionRef" class="about-me">
+      <img ref="perfilRef" class="img" src="/img/Foto_Perfil.jpg" width="150" height="auto" alt="Perfil" />
       <p>
         I am a passionate creative developer with a strong background in creating
         interactive experiences on the web using 3D scenes, GPU image manipulations,
@@ -50,19 +62,16 @@ onMounted(() => {
         content and staying updated with the latest trends in web development. Out side
         software development, I love cooking, traveling, and spending time with my family.
       </p>
+      <SignatureJT />
     </div>
   </section>
 </template>
 <style scoped lang="scss">
 .about-me {
-  padding: 0 2rem;
+  padding: 0 1rem;
   color: var(--white);
   font-size: 1.5rem;
   line-height: 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   p {
     max-width: 75ch;
     margin: 0 0 1.5rem;
@@ -72,4 +81,13 @@ onMounted(() => {
     line-height: 1.5rem;
   }
 }
+
+.img {
+  border-radius: 1rem;
+  margin: 0 2.5rem 0 0;
+  float: left;
+  width: 150px;
+  height: auto;
+}
+
 </style>
