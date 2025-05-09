@@ -1,9 +1,9 @@
 <script setup>
-import Carousel from '../components/main/Carousel.vue';
-import AboutMe from '../components/main/AboutMe.vue';
-import RRSS from '../components/main/RRSS.vue';
 import ShowRel from '../components/main/ShowRel.vue';
+import AboutMe from '../components/main/AboutMe.vue';
+import Carousel from '../components/main/Carousel.vue';
 import Content from '../components/main/Content.vue';
+import RRSS from '../components/main/RRSS.vue';
 </script>
 <template>
   <div class="container">

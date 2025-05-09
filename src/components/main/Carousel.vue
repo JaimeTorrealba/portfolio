@@ -18,7 +18,7 @@ onMounted(() => {
   });
   gsap.from(carouselRef.value, {
     scrollTrigger: carouselRef.value,
-    duration: 0.5,
+    duration: 1,
     delay: 0.5,
     opacity: 0,
   });
@@ -56,7 +56,7 @@ onMounted(() => {
       y: (y) => Math.round(y / slideHeight) * circumFerence,
     },
     inertia: { 
-      y: (value) => {},
+      y: () => {},
     },
     onDrag: updateProgress,
     onThrowUpdate: updateProgress,
