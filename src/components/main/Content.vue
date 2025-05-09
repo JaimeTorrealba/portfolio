@@ -19,6 +19,19 @@ watch(selectedItem, (newValue) => {
   } else {
     currentItems.value = items;
   }
+  // animations cards when appears
+  const cards = gsap.utils.toArray(".card");
+  cards.forEach((card) => {
+    ScrollTrigger.create({
+      trigger: card,
+      start: "top 80%",
+      animation: gsap.from(card, {
+        duration: 0.5,
+        y: 250, // no funciona
+        opacity: 0,
+      }),
+    });
+  });
 });
 
 const titleRef = ref(null);
@@ -27,6 +40,18 @@ onMounted(() => {
     scrollTrigger: titleRef.value,
     duration: 0.5,
     y: 250,
+  });
+  const cards = gsap.utils.toArray(".card-link");
+  cards.forEach((card) => {
+    ScrollTrigger.create({
+      trigger: card,
+      start: "top 80%",
+      animation: gsap.from(card, {
+        duration: 0.5,
+        y: 50,
+        opacity: 0,
+      }),
+    });
   });
 });
 </script>
@@ -43,8 +68,8 @@ onMounted(() => {
     </div>
   </section>
 </template>
-<style scoped >
-.container-item{
+<style scoped>
+.container-item {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;

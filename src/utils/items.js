@@ -83,7 +83,7 @@ const talks = [
     {
         id: 22,
         title: 'Will the web ever be the primary delivery system for 3D games?',
-        description: 'Podcast in stackoverflow',
+        description: 'Podcast in stackoverflow, this was my first podcast and I was very nervous, but it was a great experience.',
         url: 'https://stackoverflow.blog/2025/02/04/will-the-web-ever-be-the-primary-delivery-system-for-3d-games/',
         date: 'February 4, 2025',
         theme: "#A08F71",
@@ -113,7 +113,7 @@ const assets = [
     {
         id: 31,
         title: 'Sketchfab',
-        description: 'My 3D models in sketchfab',
+        description: 'I got some 3D pixelart models and some other models there, but in general is a great resource for 3D models.',
         url: 'https://sketchfab.com/solucionesinformaticasjtc/models',
         date: 'N/A',
         theme: "#D68A7D",
@@ -122,7 +122,7 @@ const assets = [
     {
         id: 32,
         title: 'Codepen',
-        description: 'Codepen profile',
+        description: 'Before I was more into creating creative demos there now my codepen profile works more for quick prototypes and experiments.',
         url: 'https://codepen.io/jaime_torrealba',
         date: 'N/A',
         theme: "#D68A7D",
@@ -131,7 +131,7 @@ const assets = [
     {
         id: 33,
         title: 'My personal creative lab',
-        description: 'https://github.com/JaimeTorrealba/creative-lab',
+        description: 'This is my personal creative lab, where I experiment with different libraries and ideas. Mostly I use Tres.js and try different concepts',
         url: 'https://github.com/JaimeTorrealba/creative-lab',
         date: 'N/A',
         theme: "#4D8ACE",
@@ -161,7 +161,7 @@ const BlogES = [
     {
         id: 41,
         title: 'Programación 3D con JavaScript parte 1',
-        description: 'Blog post in dev.to',
+        description: 'Primera parte de mi serie sobre programación 3D con JavaScript (teoria)',
         url: 'https://dev.to/javascriptchile/programacion-3d-con-javascript-parte-1-2k95',
         date: 'Dec 7, 2023',
         type: 'Blog (ES)'
@@ -169,7 +169,7 @@ const BlogES = [
     {
         id: 42,
         title: 'Programación 3D con JavaScript parte 2',
-        description: 'Blog post in dev.to',
+        description: 'Segunda parte de mi serie sobre programación 3D con JavaScript (set up y codigo)',
         url: 'https://dev.to/javascriptchile/programacion-3d-con-javascript-parte-2-1jj8',
         date: ' Dec 15, 2023',
         type: 'Blog (ES)'
@@ -177,7 +177,7 @@ const BlogES = [
     {
         id: 43,
         title: 'Programación 3D con JavaScript parte 3',
-        description: 'Blog post in dev.to',
+        description: 'Tercera parte de mi serie sobre programación 3D con JavaScript (creative)',
         url: 'https://dev.to/javascriptchile/programacion-3d-con-javascript-parte-3-56cj',
         date: 'Dec 25, 2023',
         type: 'Blog (ES)'
@@ -185,7 +185,7 @@ const BlogES = [
     {
         id: 44,
         title: 'TresJS por una web con más 3D',
-        description: 'Blog post in dev.to',
+        description: 'Post introductorio a tres.js y su uso en la web, en el que se explica como usarlo y sus ventajas',
         url: 'https://dev.to/javascriptchile/tresjs-por-una-web-con-mas-3d-39d4',
         date: 'Feb 28, 2024',
         type: 'Blog (ES)'
@@ -193,7 +193,7 @@ const BlogES = [
     {
         id: 45,
         title: '¿Como es ser un mantenedor open source?',
-        description: 'Blog post in dev.to',
+        description: 'Un post algo viejo en español sobre como es ser un mantenedor open source',
         url: 'https://dev.to/jaimebboyjt/como-es-ser-un-mantenedor-open-source-4624',
         date: 'Mar 27, 2024',
         type: 'Blog (ES)'
