@@ -11,6 +11,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@dgreenheck/ez-tree": "^1.0.0",
     "@formkit/vue": "^1.6.9",
     "@tresjs/cientos": "^4.3.0",
     "@tresjs/core": "^4.3.3",

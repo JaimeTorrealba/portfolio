@@ -16,8 +16,9 @@ import { useMainStore } from '@/stores'
 import { perfectWidthResolution } from '@/constants'
 // COMPONENTS
 
-import BookModel from './components/BookModel.vue'
+import InteractiveScene from './components/InteractiveScene.vue'
 import TheEnvironment from './components/TheEnvironment.vue'
+import CameraMouse from './components/CameraMouse.vue'
 
 // const { checkRoute } = useCustomRouterFn()
 // const settingStore = useSettingStore()
@@ -62,18 +63,18 @@ const floorMap = await useTexture({
   map: '/textures/floor/floor.jpg',
   normalMap: '/textures/floor/floor_nor.jpg',
   roughnessMap: '/textures/floor/floor_rough.jpg',
-  displacementMap: '/textures/floor/floor_disp.jpg',
+  aoMap: '/textures/floor/floor_ao.jpg',
 })
 
 const { scene } = await useGLTF('/models/Necronomicon.glb', { draco: true })
 
-const { scene: ironChain } = await useGLTF('/models/iron_chain.glb')
 </script>
 <template>
   <TresCanvas v-bind="gl" window-size>
-    <TresPerspectiveCamera ref="cameraRef" :position="[0, 3.5, 25]" :fov="30" />
-    <BookModel @click-model="onClickModel" :model="scene" :scaleFactor="scaleFactor" />
-    <TheEnvironment :startParticle="startParticle" :floor-textures="floorMap" :chainModel="ironChain" />
+    <TresPerspectiveCamera ref="cameraRef" :position="[0, 1.5, 25]" :look-at="[0,0,0]" />
+    <CameraMouse />
+    <InteractiveScene @click-model="onClickModel" :model="scene" :scaleFactor="scaleFactor" />
+    <TheEnvironment :startParticle="startParticle" :floor-textures="floorMap" />
     <Suspense>
       <EffectComposerPmndrs>
         <NoisePmndrs

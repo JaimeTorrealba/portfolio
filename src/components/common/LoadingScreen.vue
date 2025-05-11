@@ -7,7 +7,7 @@ import Azathoth from '@/assets/icons/AzathothIcon.vue'
 
 const store = useMainStore()
 
-const { hasFinishLoading, progress } = await useProgress()
+const { hasFinishLoading } = await useProgress()
 
 watch(hasFinishLoading, (value) => {
     if (value) {
@@ -53,7 +53,7 @@ onMounted(async() => {
         <div v-if="!hasFinishLoading" class="perfect-center">
             <div class="relative">
                 <div class="flex flex-center-column flex-column">
-                    <Azathoth id="Azathoth" /> <span class="comic-sans">{{ progress }} % </span>
+                    <Azathoth id="Azathoth" />
                 </div>
                 <svg class="center-svg-inner" id="innerText" width="250%" viewBox="0 0 500 500"
                     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
