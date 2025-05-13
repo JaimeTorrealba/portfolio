@@ -1,19 +1,19 @@
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { TresCanvas, useTexture } from '@tresjs/core'
 import { useGLTF } from '@tresjs/cientos'
-import { useWindowSize } from '@vueuse/core'
+// import { useWindowSize } from '@vueuse/core'
 import {
   PCFSoftShadowMap,
   SRGBColorSpace,
-  ACESFilmicToneMapping,
+  AgXToneMapping,
 } from 'three'
 import { NoisePmndrs, EffectComposerPmndrs } from '@tresjs/post-processing'
 // Internals
 import { useMainStore } from '@/stores'
 // import { useSettingStore } from "@/stores/settings";
-import { perfectWidthResolution } from '@/constants'
+// import { perfectWidthResolution } from '@/constants'
 // COMPONENTS
 
 import InteractiveScene from './components/InteractiveScene.vue'
@@ -33,7 +33,7 @@ const gl = {
   alpha: false,
   shadowMapType: PCFSoftShadowMap,
   outputColorSpace: SRGBColorSpace,
-  toneMapping: ACESFilmicToneMapping,
+  toneMapping: AgXToneMapping,
   toneMappingExposure: 1.5,
   antialias: true,
 }
@@ -53,8 +53,8 @@ watch(musicRef, (_music) => {
 })
 
 //responsive
-const { width } = useWindowSize()
-const scaleFactor = computed(() => Math.min(Math.max(width.value / perfectWidthResolution, 0.75), 1.10))
+// const { width } = useWindowSize()
+// const scaleFactor = computed(() => Math.min(Math.max(width.value / perfectWidthResolution, 0.75), 1.10))
 
 // Loads
 const { map: startParticle } = await useTexture({ map: '/textures/startParticle.png' })
@@ -67,14 +67,15 @@ const floorMap = await useTexture({
 })
 
 const { scene } = await useGLTF('/models/Necronomicon.glb', { draco: true })
+const { scene: floor } = await useGLTF('/models/floor.glb', { draco: true })
 
 </script>
 <template>
   <TresCanvas v-bind="gl" window-size>
     <TresPerspectiveCamera ref="cameraRef" :position="[0, 1.5, 25]" :look-at="[0,0,0]" />
-    <CameraMouse />
-    <InteractiveScene @click-model="onClickModel" :model="scene" :scaleFactor="scaleFactor" />
-    <TheEnvironment :startParticle="startParticle" :floor-textures="floorMap" />
+    <!-- <CameraMouse /> -->
+    <InteractiveScene @click-model="onClickModel" :model="scene" />
+    <TheEnvironment :startParticle="startParticle" :floor-textures="floorMap" :floor="floor" />
     <Suspense>
       <EffectComposerPmndrs>
         <NoisePmndrs
