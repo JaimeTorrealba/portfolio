@@ -14,7 +14,7 @@ const props = defineProps({
 const { scene } = useTresContext();
 const _floor = props.floor.getObjectByName("Floor");
 
-const setDefaultTextures = (obj, repeat = [8, 8]) => {
+const setDefaultTextures = (obj, repeat = [2, 2]) => {
   Object.keys(obj).map((key) => {
     if (obj[key]?.isTexture) {
       obj[key].repeat.set(repeat[0], repeat[1]);
@@ -60,7 +60,7 @@ createTree(449, { x: -13, y: -3.1, z: 5 }, 1.16);
     :transparent="true"
     :alphaMap="startParticle"
   />
-  <TresMesh :position-y="-3" receive-shadow name="Floor" :geometry="_floor.geometry">
+  <TresMesh :position-y="-3" :position-z="10"  receive-shadow name="Floor" :geometry="_floor.geometry">
     <TresMeshPhysicalMaterial
       v-bind="floorTextures"
       :normal-scale="5"
@@ -68,6 +68,6 @@ createTree(449, { x: -13, y: -3.1, z: 5 }, 1.16);
     />
   </TresMesh>
   <Suspense>
-    <Cloud :position="[-3, 5, 0]" :scale="25" :speed="0.1" :opacity="0.25" />
+    <Cloud :position="[0, 5, 0]" :scale="20" :speed="0.1" :opacity="0.25" />
   </Suspense>
 </template>

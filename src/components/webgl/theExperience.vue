@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { TresCanvas, useTexture } from '@tresjs/core'
-import { useGLTF } from '@tresjs/cientos'
+import { useGLTF, useProgress } from '@tresjs/cientos'
 // import { useWindowSize } from '@vueuse/core'
 import {
   PCFSoftShadowMap,
@@ -24,7 +24,6 @@ import CameraMouse from './components/CameraMouse.vue'
 // const settingStore = useSettingStore()
 const store = useMainStore()
 const router = useRouter()
-const musicRef = ref()
 const cameraRef = ref()
 
 const gl = {
@@ -48,10 +47,6 @@ watch(cameraRef, camera => {
   camera.updateProjectionMatrix()
 })
 
-watch(musicRef, (_music) => {
-  store.musicInstance = _music.instance
-})
-
 //responsive
 // const { width } = useWindowSize()
 // const scaleFactor = computed(() => Math.min(Math.max(width.value / perfectWidthResolution, 0.75), 1.10))
@@ -68,12 +63,17 @@ const floorMap = await useTexture({
 
 const { scene } = await useGLTF('/models/Necronomicon.glb', { draco: true })
 const { scene: floor } = await useGLTF('/models/floor.glb', { draco: true })
-
+const { hasFinishLoading } = await useProgress()
+watch(hasFinishLoading, (value) => {
+    if (value) {
+        store.finishLoading = value
+    }
+})
 </script>
 <template>
   <TresCanvas v-bind="gl" window-size>
-    <TresPerspectiveCamera ref="cameraRef" :position="[0, 1.5, 25]" :look-at="[0,0,0]" />
-    <!-- <CameraMouse /> -->
+    <TresPerspectiveCamera ref="cameraRef" :position="[0, 5, 25]" :look-at="[0,0,0]" />
+    <CameraMouse />
     <InteractiveScene @click-model="onClickModel" :model="scene" />
     <TheEnvironment :startParticle="startParticle" :floor-textures="floorMap" :floor="floor" />
     <Suspense>

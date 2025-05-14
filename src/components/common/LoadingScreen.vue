@@ -1,19 +1,10 @@
 <script setup>
-import { onMounted, watch, nextTick } from 'vue';
+import { onMounted, nextTick } from 'vue';
 import { gsap } from 'gsap'
-import { useProgress } from '@tresjs/cientos'
 import { useMainStore } from '@/stores'
 import Azathoth from '@/assets/icons/AzathothIcon.vue'
 
 const store = useMainStore()
-
-const { hasFinishLoading } = await useProgress()
-
-watch(hasFinishLoading, (value) => {
-    if (value) {
-        store.finishLoading = value
-    }
-})
 
 onMounted(async() => {
     await nextTick()
@@ -50,7 +41,7 @@ onMounted(async() => {
 </script>
 <template>
     <Transition mode="out-in">
-        <div v-if="!hasFinishLoading" class="perfect-center">
+        <div v-if="!store.finishLoading" class="perfect-center">
             <div class="relative">
                 <div class="flex flex-center-column flex-column">
                     <Azathoth id="Azathoth" />
