@@ -19,7 +19,7 @@ const { onBeforeRender } = useLoop();
 
 onBeforeRender(({ delta }) => {
   camera.value.rotation.y += (cursorX.value - camera.value.rotation.y) * delta * _ease;
-  camera.value.rotation.x += (cursorY.value - camera.value.rotation.x) * delta * _ease;
+  camera.value.rotation.x += ((cursorY.value -0.25) - camera.value.rotation.x) * delta * _ease;
 });
 </script>
 
