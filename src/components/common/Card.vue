@@ -71,7 +71,7 @@ const bgColor = computed(() => props.data.theme || '#adc0cf');
 .image-wrapper {
   border-radius: 4px;
   border: 1px solid #fabf41;
-  background: radial-gradient(83.73% 83.73% at 50% 50%, #adc0cf 23.08%, #111 100%);
+  background: linear-gradient(0deg,rgba(17, 17, 17, 1) 0%, rgba(173, 192, 207, 1) 100%);
   box-shadow: 0px 0px 8px 0px rgba(247, 247, 247, 0.5);
   display: flex;
   justify-content: center;
@@ -89,7 +89,7 @@ const bgColor = computed(() => props.data.theme || '#adc0cf');
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
-  height: 70px;
+  height: 65px;
 }
 .card-description {
   color: #111;

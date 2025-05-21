@@ -1,21 +1,28 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import rough from "roughjs";
 import gsap from "gsap";
 import { Draggable } from "gsap/Draggable";
 import { InertiaPlugin } from "gsap/InertiaPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-gsap.registerPlugin(ScrollTrigger);
-gsap.registerPlugin(Draggable);
-gsap.registerPlugin(InertiaPlugin) 
+import { SplitText } from "gsap/SplitText";
+gsap.registerPlugin(SplitText, ScrollTrigger, Draggable, InertiaPlugin);
 
 const titleRef = ref(null);
 const carouselRef = ref(null);
 onMounted(() => {
-  gsap.from(titleRef.value, {
-    scrollTrigger: titleRef.value,
-    duration: 0.5,
-    y: 250,
+  const title = SplitText.create(titleRef.value, {
+    type: "chars",
   });
+  gsap.from(title.chars, {
+    duration: 0.75,
+    opacity: 0,
+    stagger: 0.1,
+    ease: "power2.out",
+  });
+
+  const rc = rough.canvas(document.getElementById("carouselCanvas"));
+  rc.line(20, 130, 290, 130, { stroke: "white" });
   gsap.from(carouselRef.value, {
     scrollTrigger: carouselRef.value,
     duration: 1,
@@ -55,7 +62,7 @@ onMounted(() => {
     snap: {
       y: (y) => Math.round(y / slideHeight) * circumFerence,
     },
-    inertia: { 
+    inertia: {
       y: () => {},
     },
     onDrag: updateProgress,
@@ -70,9 +77,10 @@ onMounted(() => {
 });
 </script>
 <template>
-  <section >
-    <div class="overflow-hidden-y">
+  <section>
+    <div class="overflow-hidden-y title-padding relative">
       <h3 ref="titleRef" class="title">Experience</h3>
+      <canvas id="carouselCanvas" class="canvas" width="300" height="200"></canvas>
     </div>
     <div ref="carouselRef" class="carousel">
       <ul>
@@ -127,6 +135,21 @@ onMounted(() => {
     z-index: 1;
     pointer-events: none;
   }
+}
 
+.canvas{
+  position: absolute;
+  top: 0;
+  left: 0;
+  @media screen and (max-width: 500px) {
+    display: none;
+  }
+}
+
+.title-padding{
+  padding: 0 2rem;
+    @media screen and (max-width: 500px) {
+    padding: 0;
+  }
 }
 </style>

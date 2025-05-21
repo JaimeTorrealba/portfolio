@@ -16,9 +16,12 @@ import RRSS from '../components/main/RRSS.vue';
 </template>
 <style>
 .title {
-  font-size: var(--step-4);
+  font-size: 52px;
   color: var(--white);
   padding: 4rem 0;
+    @media screen and (max-width: 500px) {
+    font-size: 44px;
+  }
 }
 .py{
   padding: 4rem 0;

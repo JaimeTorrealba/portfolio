@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import SignatureJT from "@/assets/icons/SignatureJT.vue";
+import rough from "roughjs";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
@@ -11,12 +12,19 @@ const titleRef = ref(null);
 const descriptionRef = ref(null);
 const perfilRef = ref(null);
 onMounted(() => {
-  gsap.from(titleRef.value, {
-    scrollTrigger: titleRef.value,
-    duration: 0.5,
-    y: 250,
-  });
+  const rc = rough.canvas(document.getElementById("aboutMeCanvas"));
+  rc.rectangle(0, 60, 300, 70, { stroke: "white" });
   document.fonts.ready.then(() => {
+    const title = SplitText.create(titleRef.value, {
+      type: "chars",
+    });
+    gsap.from(title.chars, {
+      duration: 0.75,
+      opacity: 0,
+      stagger: 0.1,
+      ease: "power2.out",
+    });
+
     const firstText = SplitText.create(descriptionRef.value.children[1], {
       type: "lines",
     });
@@ -46,16 +54,24 @@ onMounted(() => {
 </script>
 <template>
   <section>
-    <div class="overflow-hidden-y">
+    <div class="overflow-hidden-y title-padding relative">
       <h2 ref="titleRef" class="title">About Me</h2>
+      <canvas id="aboutMeCanvas" class="canvas" width="300" height="200"></canvas>
     </div>
     <div ref="descriptionRef" class="about-me">
-      <img ref="perfilRef" class="img" src="/img/Foto_Perfil.jpg" width="150" height="auto" alt="Perfil" />
+      <img
+        ref="perfilRef"
+        class="img"
+        src="/img/Foto_Perfil.jpg"
+        width="150"
+        height="auto"
+        alt="Perfil"
+      />
       <p>
         I am a passionate creative developer with a strong background in creating
         interactive experiences on the web using 3D scenes, GPU image manipulations,
-        micro-interactions, and well craft animations. My expertise lies in Vue.js,
-        JavaScript, CSS, Three.js and GSAP.
+        micro-interactions, and well craft animations. <br />
+        My expertise lies in Vue.js, JavaScript, CSS, Three.js and GSAP.
       </p>
       <p>
         In my free time, I enjoy contributing to open-source projects, teaching creating
@@ -90,4 +106,19 @@ onMounted(() => {
   height: auto;
 }
 
+.canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  @media screen and (max-width: 500px) {
+    display: none;
+  }
+}
+
+.title-padding{
+  padding: 0 1.5rem;
+    @media screen and (max-width: 500px) {
+    padding: 0;
+  }
+}
 </style>
