@@ -11,9 +11,9 @@ importers:
       '@dgreenheck/ez-tree':
         specifier: ^1.0.0
         version: 1.0.0(three@0.172.0)
-      '@formkit/vue':
-        specifier: ^1.6.9
-        version: 1.6.9(vue@3.5.13)
+      '@heroicons/vue':
+        specifier: ^2.2.0
+        version: 2.2.0(vue@3.5.13)
       '@tresjs/cientos':
         specifier: ^4.3.0
         version: 4.3.0(@tresjs/core@4.3.3(three@0.172.0)(vue@3.5.13))(@types/three@0.176.0)(three@0.172.0)(vue@3.5.13)
@@ -26,6 +26,9 @@ importers:
       '@vueuse/core':
         specifier: ^10.11.1
         version: 10.11.1(vue@3.5.13)
+      bulma:
+        specifier: ^1.0.4
+        version: 1.0.4
       gsap:
         specifier: ^3.13.0
         version: 3.13.0
@@ -47,9 +50,6 @@ importers:
       vue-router:
         specifier: ^4.5.1
         version: 4.5.1(vue@3.5.13)
-      vue-tippy:
-        specifier: ^6.7.0
-        version: 6.7.0(vue@3.5.13)
     devDependencies:
       '@rushstack/eslint-patch':
         specifier: ^1.11.0
@@ -262,48 +262,10 @@ packages:
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@formkit/core@1.6.9':
-    resolution: {integrity: sha512-Zb5OkYKMf7Rp1pd4iUMv0TJQvfgl1PdKtRRQoGiTA0XIFLB/7tcRMr1wc5isA2JS+hllfxMTh3RWF8N+64fTMg==}
-
-  '@formkit/dev@1.6.9':
-    resolution: {integrity: sha512-4ueBpZAOiKr8/LZnq3mNePCX4ZB1j1JuJscBEwugWMnDeDwCNo5XWBrng1ER/LlitTRQ3mtEBNy2Qpm0yAHlwA==}
-
-  '@formkit/i18n@1.6.9':
-    resolution: {integrity: sha512-8NA5bALlspCBEwInuZVgBqgQr0lDfproZdmbs2LciQpGi2B15u74JCjAkEwaKlMs+qgf/ds3QcIgUv2ztyyVEA==}
-
-  '@formkit/inputs@1.6.9':
-    resolution: {integrity: sha512-k9gjV1e5F87NxSnu13JtKb30XYt6ndx2KGHZG8Xz0etoP75yJlMaeROHHPvlxdy2gZM6qH7Ex4it51W74Wh2Eg==}
-
-  '@formkit/observer@1.6.9':
-    resolution: {integrity: sha512-p3MCmzp6jwzXIuV3gI9uTJTJl+sN5689C7qf7gdrS8jb1fbX1snKiTyWA8FXOrBXu+ne5z/sA/yBWqYFTSLy8A==}
-
-  '@formkit/rules@1.6.9':
-    resolution: {integrity: sha512-5Vu3JACKyws1kw02qF+024WkS7L9kYZ0lmdSpsaTqg5Wf7+InsxWXFYaG6vCzqIh4Lk9NeffIzq/xyGpGxf5uQ==}
-
-  '@formkit/themes@1.6.9':
-    resolution: {integrity: sha512-/UD+MehQEdcCEadt73eIBGGAMEK8ODN0yq9r9299WvQxIELCOP2MbcxuWCV/g2Vd15Xhl8YFdn4KCzQi4X7QXA==}
+  '@heroicons/vue@2.2.0':
+    resolution: {integrity: sha512-G3dbSxoeEKqbi/DFalhRxJU4mTXJn7GwZ7ae8NuEQzd1bqdd0jAbdaBZlHPcvPD2xI1iGzNVB4k20Un2AguYPw==}
     peerDependencies:
-      tailwindcss: ^3.2.0
-      unocss: 0.x.x
-      windicss: ^3.0.0
-    peerDependenciesMeta:
-      tailwindcss:
-        optional: true
-      unocss:
-        optional: true
-      windicss:
-        optional: true
-
-  '@formkit/utils@1.6.9':
-    resolution: {integrity: sha512-vSFhB/Sm/A+SdwKdBi4WhJcdbePqSYRaB878Ol9HL8roTmmmgQpThvkv6EjLM6aRRP27Il5rS8XtIAIeh8vdTA==}
-
-  '@formkit/validation@1.6.9':
-    resolution: {integrity: sha512-9PGwN0ZDJt3hsrMyaL8KTG3diSQDik1OGogVG6/nFcZhWUycpeamFfXZSQ5pfzmwnvrTHsvyT0FtKitUnWWuPA==}
-
-  '@formkit/vue@1.6.9':
-    resolution: {integrity: sha512-WrjAtEsKnFJzxQuATWsWKMpTAyJE15PUmRh9hwEAqgTDy2yMog1gxqxfZv3rEAdIdgXNp08tWmRVnQgDIF3vAQ==}
-    peerDependencies:
-      vue: ^3.4.0
+      vue: '>= 3'
 
   '@humanwhocodes/config-array@0.13.0':
     resolution: {integrity: sha512-DZLEEqFWQFiyK6h5YIeynKx7JlvCYWL0cImfSRXZ9l4Sg2efkFGTuFf6vzXjK1cq6IYkU+Eg/JizXw+TD2vRNw==}
@@ -418,9 +380,6 @@ packages:
   '@pkgr/core@0.2.4':
     resolution: {integrity: sha512-ROFF39F6ZrnzSUEmQQZUar0Jt4xVoP9WnDRdWwF4NNcXs3xBTLgBUDoOwW141y1jP+S8nahIbdxbFC7IShw9Iw==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
-
-  '@popperjs/core@2.11.8':
-    resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
 
   '@rollup/pluginutils@5.1.4':
     resolution: {integrity: sha512-USm05zrsFxYLPdWWq+K3STlWiT/3ELn3RcV5hJMghpeAIhxfsUIg6mt12CBJBInWMV4VneoV7SfGv8xIwo2qNQ==}
@@ -586,6 +545,9 @@ packages:
   braces@3.0.3:
     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
     engines: {node: '>=8'}
+
+  bulma@1.0.4:
+    resolution: {integrity: sha512-Ffb6YGXDiZYX3cqvSbHWqQ8+LkX6tVoTcZuVB3lm93sbAVXlO0D6QlOTMnV6g18gILpAXqkG2z9hf9z4hCjz2g==}
 
   callsites@3.1.0:
     resolution: {integrity: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==}
@@ -1146,9 +1108,6 @@ packages:
   through2@0.6.5:
     resolution: {integrity: sha512-RkK/CCESdTKQZHdmKICijdKKsCRVHs5KsLZ6pACAmF/1GPUQhonHSXWNERctxEp7RmvjdNbZTL5z9V7nSCXKcg==}
 
-  tippy.js@6.3.7:
-    resolution: {integrity: sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==}
-
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
@@ -1226,11 +1185,6 @@ packages:
 
   vue-router@4.5.1:
     resolution: {integrity: sha512-ogAF3P97NPm8fJsE4by9dwSYtDwXIY1nFY9T6DyQnGHd1E2Da94w9JIolpe42LJGIl0DwOHBi8TcRPlPGwbTtw==}
-    peerDependencies:
-      vue: ^3.2.0
-
-  vue-tippy@6.7.0:
-    resolution: {integrity: sha512-e0w6UA+A+J79GhDYNw5xZjGu7Tc2ksYypwF5RjkJVWgAGNSpXkLVNx4gZ8cMUa8FRHqmGAZxN3ue7MeXgbeZAQ==}
     peerDependencies:
       vue: ^3.2.0
 
@@ -1379,65 +1333,9 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@formkit/core@1.6.9':
+  '@heroicons/vue@2.2.0(vue@3.5.13)':
     dependencies:
-      '@formkit/utils': 1.6.9
-
-  '@formkit/dev@1.6.9':
-    dependencies:
-      '@formkit/core': 1.6.9
-      '@formkit/utils': 1.6.9
-
-  '@formkit/i18n@1.6.9':
-    dependencies:
-      '@formkit/core': 1.6.9
-      '@formkit/utils': 1.6.9
-      '@formkit/validation': 1.6.9
-
-  '@formkit/inputs@1.6.9':
-    dependencies:
-      '@formkit/core': 1.6.9
-      '@formkit/utils': 1.6.9
-
-  '@formkit/observer@1.6.9':
-    dependencies:
-      '@formkit/core': 1.6.9
-      '@formkit/utils': 1.6.9
-
-  '@formkit/rules@1.6.9':
-    dependencies:
-      '@formkit/core': 1.6.9
-      '@formkit/utils': 1.6.9
-      '@formkit/validation': 1.6.9
-
-  '@formkit/themes@1.6.9':
-    dependencies:
-      '@formkit/core': 1.6.9
-
-  '@formkit/utils@1.6.9': {}
-
-  '@formkit/validation@1.6.9':
-    dependencies:
-      '@formkit/core': 1.6.9
-      '@formkit/observer': 1.6.9
-      '@formkit/utils': 1.6.9
-
-  '@formkit/vue@1.6.9(vue@3.5.13)':
-    dependencies:
-      '@formkit/core': 1.6.9
-      '@formkit/dev': 1.6.9
-      '@formkit/i18n': 1.6.9
-      '@formkit/inputs': 1.6.9
-      '@formkit/observer': 1.6.9
-      '@formkit/rules': 1.6.9
-      '@formkit/themes': 1.6.9
-      '@formkit/utils': 1.6.9
-      '@formkit/validation': 1.6.9
       vue: 3.5.13
-    transitivePeerDependencies:
-      - tailwindcss
-      - unocss
-      - windicss
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
@@ -1527,8 +1425,6 @@ snapshots:
     optional: true
 
   '@pkgr/core@0.2.4': {}
-
-  '@popperjs/core@2.11.8': {}
 
   '@rollup/pluginutils@5.1.4(rollup@3.29.5)':
     dependencies:
@@ -1747,6 +1643,8 @@ snapshots:
     dependencies:
       fill-range: 7.1.1
     optional: true
+
+  bulma@1.0.4: {}
 
   callsites@3.1.0: {}
 
@@ -2284,10 +2182,6 @@ snapshots:
       readable-stream: 1.0.34
       xtend: 4.0.2
 
-  tippy.js@6.3.7:
-    dependencies:
-      '@popperjs/core': 2.11.8
-
   to-regex-range@5.0.1:
     dependencies:
       is-number: 7.0.0
@@ -2345,11 +2239,6 @@ snapshots:
   vue-router@4.5.1(vue@3.5.13):
     dependencies:
       '@vue/devtools-api': 6.6.4
-      vue: 3.5.13
-
-  vue-tippy@6.7.0(vue@3.5.13):
-    dependencies:
-      tippy.js: 6.3.7
       vue: 3.5.13
 
   vue@3.5.13:

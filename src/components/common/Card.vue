@@ -1,104 +1,70 @@
 <script setup>
-import { computed } from 'vue';
-
-const props = defineProps({
+import {
+  DocumentTextIcon,
+  ChevronRightIcon,
+  MicrophoneIcon,
+  PhotoIcon,
+  CodeBracketIcon,
+  AcademicCapIcon,
+  ChatBubbleOvalLeftEllipsisIcon,
+} from "@heroicons/vue/24/solid";
+defineProps({
   data: {
     type: Object,
     required: true,
   },
 });
 
-const bgColor = computed(() => props.data.theme || '#adc0cf');
+const iconComponent = {
+  Blog: DocumentTextIcon,
+  Course: AcademicCapIcon,
+  Talk: ChatBubbleOvalLeftEllipsisIcon,
+  Podcast: MicrophoneIcon,
+  Asset: PhotoIcon,
+  OSS: CodeBracketIcon,
+};
 </script>
 <template>
-  <a :href="data.url" target="_blank" rel="noopener noreferrer" class="card-link">
-    <div class="card">
-      <div class="inner-wrapper">
-        <p class="card-title">{{ data.title }}</p>
+  <a :href="data.url" target="_blank" rel="noopener noreferrer">
+    <div class="custom-item p-2 is-flex is-justify-content-space-between">
+      <div class="is-flex gap-4">
+        <div
+          class="start-icon-section is-flex is-flex-direction-column is-justify-content-center is-align-content-center"
+        >
+          <component
+            :is="iconComponent[data.type]"
+            class="icon is-medium has-text-grey-light"
+          />
+          <p class="is-size-7 has-text-grey-light has-text-centered">{{ data.type }}</p>
+        </div>
+        <div
+          class="text-section is-flex is-flex-direction-column is-justify-content-center"
+        >
+          <p class="is-size-4 has-text-weight-medium has-text-light">
+            {{ data.title }}
+          </p>
+          <p class="has-text-grey-light">{{ data.description }}</p>
+        </div>
       </div>
-      <div class="image-wrapper">
-        <div v-if="!data.img" class="default-img"></div>
-        <!-- <img :src="data.img" alt="Card Image" class="card-image" /> -->
-      </div>
-      <div class="inner-wrapper date-type">
-        <p class="font-medium">{{ data.date }}</p>
-        <p class="font-medium">{{ data.type }}</p>
-      </div>
-      <div class="inner-wrapper">
-        <p class="card-description">{{ data.description }}</p>
+      <div class="is-flex is-flex-direction-column is-justify-content-center">
+        <ChevronRightIcon class="icon" />
       </div>
     </div>
   </a>
 </template>
-<style scoped lang="scss">
-.default-img {
-  height: 10rem;
-  padding: 0.5rem;
+<style scoped>
+a {
+  color: #f7f7f7;
+}
+.custom-item {
+  border: 1px solid #f7f7f7;
+  transition: background-color 0.2s;
+  &:hover {
+    background-color: rgba(247, 247, 247, 0.25);
+  }
 }
 
-.card {
-  border: 0.5rem solid #111;
-  border-radius: 1rem;
-  padding: 1rem;
-  background: url(/img/Noise.png) no-repeat center center;
-  background-size: cover;
-  background-color: v-bind(bgColor);
-  max-width: 300px;
-  transition: box-shadow 0.3s ease-in-out;
-}
-.card:hover {
-  box-shadow: 0px 0px 16px 0px #626f77;
-}
-
-.inner-wrapper {
-  border-radius: 8px;
-  border: 1px solid #111;
-  background: #e4e4e4b7;
-  box-shadow: 0px 0px 16px 0px #626f77 inset;
-}
-
-.date-type {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 0.25rem;
-  color: #111;
-}
-.font-medium{
-  font-weight: bold;
-}
-
-.image-wrapper {
-  border-radius: 4px;
-  border: 1px solid #fabf41;
-  background: linear-gradient(0deg,rgba(17, 17, 17, 1) 0%, rgba(173, 192, 207, 1) 100%);
-  box-shadow: 0px 0px 8px 0px rgba(247, 247, 247, 0.5);
-  display: flex;
-  justify-content: center;
-}
-
-.card-title {
-  font-size: var(--step-0);
-  color: #111;
-  text-wrap: balance;
-  text-align: center;
-  font-weight: 600;
-  padding: 0.5rem 0.25rem;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  height: 65px;
-}
-.card-description {
-  color: #111;
-  padding: 0.5rem 0.25rem;
-}
-
-.card-image {
-  height: 10rem;
-  width: 50%;
-  padding: 0.5rem;
+.gap-4 {
+  gap: 1rem;
 }
 </style>

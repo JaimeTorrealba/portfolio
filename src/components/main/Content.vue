@@ -1,10 +1,9 @@
 <script setup>
 import { onMounted, ref, watch } from "vue";
-import rough from 'roughjs';
+import rough from "roughjs";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
-import Dropdown from "@/components/common/Dropdown.vue";
 import Card from "@/components/common/Card.vue";
 import { items } from "@/utils/items.js";
 gsap.registerPlugin(ScrollTrigger, SplitText);
@@ -21,24 +20,11 @@ watch(selectedItem, (newValue) => {
   } else {
     currentItems.value = items;
   }
-  // animations cards when appears
-  const cards = gsap.utils.toArray(".card");
-  cards.forEach((card) => {
-    ScrollTrigger.create({
-      trigger: card,
-      start: "top 80%",
-      animation: gsap.from(card, {
-        duration: 0.5,
-        y: 250, // no funciona
-        opacity: 0,
-      }),
-    });
-  });
 });
 
 const titleRef = ref(null);
 onMounted(() => {
-   const title = SplitText.create(titleRef.value, {
+  const title = SplitText.create(titleRef.value, {
     type: "chars",
   });
   gsap.from(title.chars, {
@@ -46,61 +32,148 @@ onMounted(() => {
     opacity: 0,
     stagger: 0.1,
     ease: "power2.out",
+    scrollTrigger: {
+      trigger: titleRef.value,
+      start: "top 80%",
+      // markers: true, // TODO: debug this
+    },
   });
 
-  const rc = rough.canvas(document.getElementById('contentCanvas'));
-  rc.line(20, 130, 290, 130, { stroke: "white" });
-  rc.line(20, 70, 290, 70, { stroke: "white" });
-  const cards = gsap.utils.toArray(".card-link");
-  cards.forEach((card) => {
-    ScrollTrigger.create({
-      trigger: card,
-      start: "top 80%",
-      animation: gsap.from(card, {
-        duration: 0.5,
-        y: 50,
-        opacity: 0,
-      }),
-    });
-  });
+  const rc = rough.canvas(document.getElementById("contentCanvas"));
+  rc.rectangle(16, 1, 150, 50, { stroke: "white" });
 });
 </script>
 <template>
-  <section>
-    <div class="overflow-hidden-y title-padding relative">
-      <h4 ref="titleRef" class="title ">Content</h4>
-      <canvas id="contentCanvas" class="canvas" width="300" height="200"></canvas>
-    </div>
-    <Dropdown v-model="selectedItem" :items="uniqueTypes" />
-    <div class="container-item py">
-      <div v-for="item in currentItems" :key="item.id">
-        <Card :data="item" />
+  <section class="is-relative">
+    <h4
+      ref="titleRef"
+      class="title mx-4 p-2 is-relative title-position has-background-black-bis"
+    >
+      Content
+    </h4>
+    <canvas id="contentCanvas" class="canvas" width="300" height="200"></canvas>
+    <div class="is-relative">
+      <div class="diffuse">
+        <div
+          class="is-flex is-flex-direction-column is-relative container-item px-4 pb-4"
+        >
+          <div class="sticky has-background-black-bis pt-4 pb-2">
+            <ul class="is-flex">
+              <li
+                @click="selectedItem = 'All'"
+                class="is-clickable custom-item has-text-weight-semibold py-2 pr-4 is-size-5"
+              >
+                All
+              </li>
+              <li
+                v-for="type in uniqueTypes"
+                :key="type"
+                @click="selectedItem = type"
+                class="is-clickable custom-item has-text-weight-semibold py-2 px-4 is-size-5"
+              >
+                {{ type }}
+              </li>
+            </ul>
+          </div>
+          <div v-for="item in currentItems" :key="item.id">
+            <Card :data="item" />
+          </div>
+        </div>
       </div>
     </div>
   </section>
 </template>
 <style scoped>
+.title-position {
+  z-index: 4;
+  top: 10px;
+  display: inline;
+}
 .container-item {
-  display: flex;
-  flex-wrap: wrap;
   gap: 1rem;
-  justify-content: space-between;
-  align-items: flex-start;
+  border: 1px solid #f7f7f7;
+  max-height: 75vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.diffuse::before,
+.diffuse::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: calc(100% - 1rem);
+  margin: 0 1px;
+  height: 2rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.diffuse::before {
+  top: 1px;
+  background: linear-gradient(to bottom, rgba(1, 1, 1, 1), rgba(247, 247, 247, 0));
+}
+
+.diffuse::after {
+  bottom: 1px;
+  background: linear-gradient(to top, rgba(1, 1, 1, 1), rgba(247, 247, 247, 0));
+}
+
+.custom-item {
+  color: #f7f7f7;
+  border-top: 1px solid transparent;
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  transition: all 0.15s ease;
+  &:hover {
+    color: var(--gold);
+    border-top: 1px solid var(--gold);
+    border-left: 1px solid var(--gold);
+    border-right: 1px solid var(--gold);
+  }
+}
+
+.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 3;
 }
 
 .canvas {
   position: absolute;
   top: 0;
   left: 0;
-  @media screen and (max-width: 500px) {
+  z-index: 999;
+  @media screen and (max-width: 764px) {
     display: none;
   }
 }
 
-.title-padding {
-  padding: 0 2rem;
-  @media screen and (max-width: 500px) {
-    padding: 0;
+.container-item {
+  --sb-track-color: #232e33;
+  --sb-thumb-color: #e4e4e4;
+  --sb-size: 12px;
+}
+
+.container-item::-webkit-scrollbar {
+  width: var(--sb-size);
+}
+
+.container-item::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 4px;
+}
+
+.container-item::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color);
+  border-radius: 4px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .container-item {
+    scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
   }
 }
 </style>

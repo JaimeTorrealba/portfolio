@@ -12,19 +12,19 @@
   },
   "dependencies": {
     "@dgreenheck/ez-tree": "^1.0.0",
-    "@formkit/vue": "^1.6.9",
+    "@heroicons/vue": "^2.2.0",
     "@tresjs/cientos": "^4.3.0",
     "@tresjs/core": "^4.3.3",
     "@tresjs/post-processing": "^2.3.1",
     "@vueuse/core": "^10.11.1",
+    "bulma": "^1.0.4",
     "gsap": "^3.13.0",
     "pinia": "^2.3.1",
     "roughjs": "^4.6.6",
     "three": "^0.172.0",
     "vite-plugin-glsl": "^1.4.1",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.1",
-    "vue-tippy": "^6.7.0"
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.11.0",
