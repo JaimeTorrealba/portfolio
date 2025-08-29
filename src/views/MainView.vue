@@ -17,17 +17,17 @@ import RRSS from "../components/main/RRSS.vue";
     </nav>
     <div class="column ">
       <!-- <ShowRel />
-      <AboutMe class="py" />
       <Carousel class="py" /> -->
+      <AboutMe />
       <Content />
-      <!-- <RRSS class="py" /> -->
+      <RRSS />
     </div>
   </div>
 </template>
 <style scoped>
 .wrapper {
   padding: 2rem;
-  font-family: 'Cascadia Code';
+  font-family: 'Sentient';
 }
 .nav-style{
   @media screen and (max-width: 1024px) {

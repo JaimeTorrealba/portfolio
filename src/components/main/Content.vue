@@ -40,7 +40,7 @@ onMounted(() => {
   });
 
   const rc = rough.canvas(document.getElementById("contentCanvas"));
-  rc.rectangle(16, 1, 150, 50, { stroke: "white" });
+  rc.rectangle(16, 1, 140, 50, { stroke: "white" });
 });
 </script>
 <template>
@@ -55,7 +55,7 @@ onMounted(() => {
     <div class="is-relative">
       <div class="diffuse">
         <div
-          class="is-flex is-flex-direction-column is-relative container-item px-4 pb-4"
+          class="is-flex is-flex-direction-column is-relative container-item scroll px-4 pb-4"
         >
           <div class="sticky has-background-black-bis pt-4 pb-2">
             <ul class="is-flex">
@@ -148,32 +148,6 @@ onMounted(() => {
   z-index: 999;
   @media screen and (max-width: 764px) {
     display: none;
-  }
-}
-
-.container-item {
-  --sb-track-color: #232e33;
-  --sb-thumb-color: #e4e4e4;
-  --sb-size: 12px;
-}
-
-.container-item::-webkit-scrollbar {
-  width: var(--sb-size);
-}
-
-.container-item::-webkit-scrollbar-track {
-  background: var(--sb-track-color);
-  border-radius: 4px;
-}
-
-.container-item::-webkit-scrollbar-thumb {
-  background: var(--sb-thumb-color);
-  border-radius: 4px;
-}
-
-@supports not selector(::-webkit-scrollbar) {
-  .container-item {
-    scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
   }
 }
 </style>

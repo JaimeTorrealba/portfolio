@@ -34,7 +34,6 @@ onMounted(() => {
 });
 </script>
 <template>
-  <!-- Generator: Adobe Illustrator 25.2.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
   <svg
     ref="svgRef"
     version="1.1"
@@ -65,7 +64,6 @@ onMounted(() => {
 </template>
 <style scoped>
 .svg {
-  float: right;
   transform: scale(1.5);
 }
 .signature-path {

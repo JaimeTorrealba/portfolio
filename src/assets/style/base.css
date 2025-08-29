@@ -22,19 +22,10 @@
   font-weight: normal;
 }
 
-@font-face {
-  font-family: 'Cascadia Code';
-  font-style: normal;
-  font-weight: normal;
-  font-display: swap;
-  src: local('CascadiaCode'),
-      url('../fonts/CascadiaCode.woff2') format('woff2');
-}
-
 body {
   min-height: 100vh;
   color: var(--white);
-  font-family: 'Friz Quadrata Regular OS';
+  font-family: 'Sentient';
   cursor: url('../wcursor.cur'), pointer;
   padding: 0;
 }
