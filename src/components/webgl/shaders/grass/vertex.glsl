@@ -90,30 +90,6 @@ void main() {
 
   vec3 grassOffset = vec3(hashedInstanceID.x, 0.0, hashedInstanceID.y) * GRASS_PATCH_SIZE;
 
-vec2 centerOffset = grassOffset.xz;
-float radius = length(centerOffset);
-float _angle = atan(centerOffset.y, centerOffset.x); // returns [-π, π]
-
-// Normalize angle to [0, 2π] if needed
-if (_angle < 0.0) _angle += 2.0 * PI;
-
-// Define C-shape parameters
-float innerRadius = 4.5;
-float outerRadius = 20.0;
-float startAngle = radians(45.0);   // Angle in radians
-float endAngle   = radians(360.0);  // Angle in radians
-
-// Check if point is inside the C ring
-bool inRing = radius >= innerRadius && radius <= outerRadius;
-bool inAngle = _angle >= startAngle && _angle <= endAngle;
-
-if (!(inRing && inAngle)) {
-    // Option 1: push outside bounds
-    grassOffset.y = -999.0;
-
-    // Option 2: hide (set scale to 0, or alpha to 0, or discard)
-}
-
   vec3 grassBladeWorldPos = (modelMatrix * vec4(grassOffset, 1.0)).xyz;
   vec3 hashVal = hash(grassBladeWorldPos);
 

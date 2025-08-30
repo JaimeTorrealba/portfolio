@@ -42,6 +42,7 @@ const onClickModel = () => {
 watch(cameraRef, (camera) => {
   camera.setFocalLength(45);
   camera.updateProjectionMatrix();
+  console.log(camera.getFocalLength());
 });
 
 //responsive
@@ -68,19 +69,18 @@ watch(hasFinishLoading, (value) => {
 </script>
 <template>
   <TresCanvas v-bind="gl" window-size>
-    <TresPerspectiveCamera ref="cameraRef" :position="[0, 5, 25]" :look-at="[0, 0, 0]" />
+    <TresPerspectiveCamera ref="cameraRef" :position="[0, 5, 25]" />
     <CameraMouse />
     <InteractiveScene @click-model="onClickModel" :model="scene" />
     <TheEnvironment
       :startParticle="startParticle"
       :floor-textures="floorMap"
-      :floor="floor"
     />
-    <Suspense>
+    <!-- <Suspense>
       <EffectComposerPmndrs>
         <NoisePmndrs premultiply />
       </EffectComposerPmndrs>
-    </Suspense>
+    </Suspense> -->
   </TresCanvas>
 </template>
 <style scoped></style>

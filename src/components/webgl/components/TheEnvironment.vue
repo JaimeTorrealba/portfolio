@@ -1,5 +1,6 @@
 <script setup>
-import { useTresContext } from "@tresjs/core";
+import { ref } from "vue";
+import { useTresContext, useLoop } from "@tresjs/core";
 import { Precipitation } from "@tresjs/cientos";
 import { RepeatWrapping } from "three";
 import { Tree } from "@dgreenheck/ez-tree";
@@ -37,16 +38,27 @@ const createTree = (seed, position, scale) => {
 };
 
 // tree 1
-createTree(12345, { x: -8, y: -3.1, z: -6 }, 1);
+// createTree(12345, { x: -8, y: -3.1, z: -6 }, 1);
 // tree 2
-createTree(553, { x: 10, y: -3.1, z: -2 }, 1.5);
+// createTree(553, { x: 10, y: -3.1, z: -2 }, 1.5);
 // tree 3
-createTree(449, { x: 0, y: -3.1, z: -8 }, 1.32);
+// createTree(449, { x: 0, y: -3.1, z: -8 }, 1.32);
 // tree 4
-createTree(449, { x: -13, y: -3.1, z: 5 }, 1.16);
+// createTree(449, { x: -13, y: -3.1, z: 5 }, 1.16);
+
+const floorMaterial = ref();
+
+const { onBeforeRender } = useLoop();
+
+onBeforeRender(({ elapsed }) => {
+  floorMaterial.value.map.offset.x = elapsed * -0.5
+  floorMaterial.value.normalMap.offset.x = elapsed * -0.5
+  floorMaterial.value.roughnessMap.offset.x = elapsed * -0.5
+  floorMaterial.value.aoMap.offset.x = elapsed * -0.5
+});
 </script>
 <template>
-  <TresFog color="#111" near="8" far="40" />
+  <TresFog color="#111" near="8" far="100" />
 
   <Precipitation
     :rotation-z="Math.PI"
@@ -61,16 +73,24 @@ createTree(449, { x: -13, y: -3.1, z: 5 }, 1.16);
     :alphaMap="startParticle"
   />
   <!-- FLOOR -->
-  <TresMesh :position-y="-3" :rotate-x="Math.PI * -0.5" receive-shadow name="Floor">
-    <TresPlaneGeometry :args="[80, 80, 100, 100]" />
+  <TresMesh
+    :position="[0, -3, -20]"
+    :rotate-x="Math.PI * -0.5"
+    :rotate-y="0"
+    :rotate-z="Math.PI * -0.5"
+    name="Floor"
+  >
+    <TresPlaneGeometry :args="[100, 100, 10, 10]" />
     <TresMeshPhysicalMaterial
+      ref="floorMaterial"
       v-bind="floorTextures"
       :normal-scale="5"
       :roughness="0.75"
     />
   </TresMesh>
   <Suspense>
-    <Cloud :position="[0, 5, 0]" :scale="20" :speed="0.1" :opacity="0.25" />
+    <!-- Clouds move to z25 to remove temporarily from the view -->
+    <Cloud :position="[0, 5, 25]" :scale="20" :speed="0.1" :opacity="0.25" />
   </Suspense>
-  <Grass :position="[0, -3.3, 0]" :rotation-y="-1.1" />
+  <!-- <Grass :position="[0, -3.3, 0]" :rotation-y="-1.1" /> -->
 </template>
