@@ -40,9 +40,9 @@ const onClickModel = () => {
 
 //modifiers
 watch(cameraRef, (camera) => {
+  camera.far = 500;
   camera.setFocalLength(45);
   camera.updateProjectionMatrix();
-  console.log(camera.getFocalLength());
 });
 
 //responsive
@@ -60,18 +60,18 @@ const floorMap = await useTexture({
 });
 
 const { scene } = await useGLTF("/models/Necronomicon.glb", { draco: true });
-const { hasFinishLoading } = await useProgress();
-watch(hasFinishLoading, (value) => {
-  if (value) {
-    store.finishLoading = value;
-  }
-});
+// const { hasFinishLoading } = await useProgress();
+// watch(hasFinishLoading, (value) => {
+//   if (value) {
+//     store.finishLoading = value;
+//   }
+// });
 </script>
 <template>
   <TresCanvas v-bind="gl" window-size>
     <TresPerspectiveCamera ref="cameraRef" :position="[0, 5, 25]" />
     <CameraMouse />
-    <InteractiveScene @click-model="onClickModel" :model="scene" />
+    <InteractiveScene :model="scene" />
     <TheEnvironment
       :startParticle="startParticle"
       :floor-textures="floorMap"

@@ -4,15 +4,15 @@ import { useTresContext, useLoop } from "@tresjs/core";
 import { Precipitation } from "@tresjs/cientos";
 import { RepeatWrapping } from "three";
 import { Tree } from "@dgreenheck/ez-tree";
-import Cloud from "./Cloud.vue";
-import Grass from "./Grass.vue";
+// import Cloud from "./Cloud.vue";
+// import Grass from "./Grass.vue";
 
 const props = defineProps({
   startParticle: Object,
   floorTextures: Object,
 });
 
-const { scene } = useTresContext();
+const { scene, camera } = useTresContext();
 
 const setDefaultTextures = (obj, repeat = [4, 4]) => {
   Object.keys(obj).map((key) => {
@@ -26,48 +26,63 @@ const setDefaultTextures = (obj, repeat = [4, 4]) => {
 
 setDefaultTextures(props.floorTextures);
 
-const createTree = (seed, position, scale) => {
+//TODO: scales +- random
+//TODO: x position should be randomized but not in the middle
+//TODO: x position should be randomized but not in the middle
+
+const createTree = (_x) => {
   const tree = new Tree();
-  tree.scale.set(scale, scale, scale);
-  tree.position.set(position.x, position.y, position.z);
-  tree.options.seed = seed;
+  const randomScale = 2 + (Math.random() - 0.5);
+  tree.scale.set(randomScale, randomScale, randomScale);
+  tree.position.set(_x, -3.1, Math.random() * 40 - 100);
+  tree.options.seed = Math.random() * 10000;
   tree.options.leaves.size = 0;
   tree.generate();
+  trees.push(tree);
   scene.value.add(tree);
   return tree;
 };
 
-// tree 1
-// createTree(12345, { x: -8, y: -3.1, z: -6 }, 1);
-// tree 2
-// createTree(553, { x: 10, y: -3.1, z: -2 }, 1.5);
-// tree 3
-// createTree(449, { x: 0, y: -3.1, z: -8 }, 1.32);
-// tree 4
-// createTree(449, { x: -13, y: -3.1, z: 5 }, 1.16);
+const trees = [];
+
+createTree(Math.random() * 10 - 20);
+
+setTimeout(() => {
+  createTree(Math.random() * 10 + 10);
+}, Math.random() * 5000);
 
 const floorMaterial = ref();
 
 const { onBeforeRender } = useLoop();
 
-onBeforeRender(({ elapsed }) => {
-  floorMaterial.value.map.offset.x = elapsed * -0.5
-  floorMaterial.value.normalMap.offset.x = elapsed * -0.5
-  floorMaterial.value.roughnessMap.offset.x = elapsed * -0.5
-  floorMaterial.value.aoMap.offset.x = elapsed * -0.5
+onBeforeRender(({ elapsed, delta }) => {
+  floorMaterial.value.map.offset.x = elapsed * -0.5;
+  floorMaterial.value.normalMap.offset.x = elapsed * -0.5;
+  floorMaterial.value.roughnessMap.offset.x = elapsed * -0.5;
+  floorMaterial.value.aoMap.offset.x = elapsed * -0.5;
+  if (trees.length > 0) {
+    trees.forEach((tree) => {
+      tree.position.z += delta * 12.5;
+      if (tree.position.z > camera.value.position.z + 5) {
+        scene.value.remove(tree);
+        trees.splice(trees.indexOf(tree), 1);
+        const leftRight = tree.position.x < 0 ? Math.random() * 10 - 20 : Math.random() * 10 + 10;
+        createTree(leftRight);
+      }
+    });
+  }
 });
 </script>
 <template>
   <TresFog color="#111" near="8" far="100" />
-
   <Precipitation
-    :rotation-z="Math.PI"
+    :rotate-x="Math.PI * -0.5"
     :area="[30, 30, 30]"
-    :randomness="50"
+    :randomness="0"
     :count="100"
     :size="0.15"
     :color="0xffd700"
-    :speed="0.001"
+    :speed="0.5"
     :opacity="0.8"
     :transparent="true"
     :alphaMap="startParticle"
@@ -88,9 +103,10 @@ onBeforeRender(({ elapsed }) => {
       :roughness="0.75"
     />
   </TresMesh>
-  <Suspense>
+  <!-- <Suspense> -->
     <!-- Clouds move to z25 to remove temporarily from the view -->
-    <Cloud :position="[0, 5, 25]" :scale="20" :speed="0.1" :opacity="0.25" />
-  </Suspense>
-  <!-- <Grass :position="[0, -3.3, 0]" :rotation-y="-1.1" /> -->
+    <!-- <Cloud :position="[0, 5, 25]" :scale="20" :speed="0.1" :opacity="0.25" /> -->
+  <!-- </Suspense> -->
+  <!-- <Grass :position="[22, -3.3, -20]" />
+  <Grass :position="[-22, -3.3, -20]" /> -->
 </template>
