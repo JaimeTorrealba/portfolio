@@ -1,9 +1,12 @@
+// Infinite scroll patch settings
+#define INSTANCES_PER_PATCH 10.0
+#define NUM_PATCHES 10.0
 uniform vec4 uGrassParams;
 uniform float uTime;
 
 varying vec3 vColour;
 varying vec4 vGrassData;
-varying vec2 vUv;
+varying vec3 vNormal;
 
 float inverseLerp(float v, float minValue, float maxValue) {
   return (v - minValue) / (maxValue - minValue);
@@ -26,6 +29,7 @@ uvec2 murmurHash21(uint src) {
   h *= M;
   h ^= h >> 15u;
   return h;
+  
 }
 
 vec3 hash(vec3 p) // replace this by something better
@@ -74,10 +78,11 @@ vec3 bezier(vec3 P0, vec3 P1, vec3 P2, vec3 P3, float t) {
     t * t * t * P3;
 }
 
-const vec3 BASE_COLOUR = vec3(0, 0, 0);
-const vec3 TIP_COLOUR = vec3(0.08, 0.05, 0.01);
+const vec3 BASE_COLOUR = vec3(0.35, 0.27, 0.11); // brown
+const vec3 TIP_COLOUR = vec3(0.58, 0.51, 0.3);  // pale yellow
 
 void main() {
+
   const float PI = 3.14159;
   int GRASS_SEGMENTS = int(uGrassParams.x);
   int GRASS_VERTICES = (GRASS_SEGMENTS + 1) * 2;
@@ -87,8 +92,8 @@ void main() {
 
   // figure grass offset
   vec2 hashedInstanceID = hash21(float(gl_InstanceID)) * 2.0 - 1.0;
-
-  vec3 grassOffset = vec3(hashedInstanceID.x, 0.0, hashedInstanceID.y) * GRASS_PATCH_SIZE;
+  //Multiply by 5.0 z axis to make it larger
+  vec3 grassOffset = vec3(hashedInstanceID.x, 0.0, hashedInstanceID.y * 5.0) * GRASS_PATCH_SIZE;
 
   vec3 grassBladeWorldPos = (modelMatrix * vec4(grassOffset, 1.0)).xyz;
   vec3 hashVal = hash(grassBladeWorldPos);
@@ -140,8 +145,12 @@ void main() {
 
   vec3 grassLocalPosition = grassMat * vec3(x, y, z) + grassOffset;
 
+
   vColour = mix(BASE_COLOUR, TIP_COLOUR, heightPercent * 0.5);
   vColour = mix(vec3(1.0, 0.0, 0.0), vColour, stiffness);
+
+  // Set normal for lighting (up direction in local grass space, transformed)
+  vNormal = normalize(grassMat * vec3(0.0, 1.0, 0.0));
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(grassLocalPosition, 1.0);
 

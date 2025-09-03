@@ -4,9 +4,9 @@ import fragment from "../shaders/grass/fragment.glsl";
 import { InstancedBufferGeometry, Sphere, Vector3, Vector2, Vector4 } from "three";
 import { useLoop } from "@tresjs/core";
 
-const NUM_GRASS = 30000;
+const NUM_GRASS = 15000; // 30000
 const GRASS_SEGMENTS = 6;
-const GRASS_PATCH_SIZE = 20; // 15
+const GRASS_PATCH_SIZE = 15; // 15
 const GRASS_HEIGHT = 3.5;
 const GRASS_WIDTH = 0.25;
 

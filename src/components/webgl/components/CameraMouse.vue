@@ -2,7 +2,9 @@
 import { useLoop, useTresContext } from "@tresjs/core";
 import { useMouse, useWindowSize } from "@vueuse/core";
 import { computed, shallowRef } from "vue";
+import { useMainStore } from "@/stores";
 
+const store = useMainStore();
 const { camera } = useTresContext();
 
 const { x, y } = useMouse();
@@ -15,14 +17,14 @@ const _ease = 1.5;
 const cursorX = computed(() => -(x.value / width.value - 0.5) * _factor);
 const cursorY = computed(() => -(y.value / height.value - 0.5) * _factor);
 
+
+
 const { onBeforeRender } = useLoop();
 
 onBeforeRender(({ elapsed, delta }) => {
   camera.value.rotation.y += (cursorX.value - camera.value.rotation.y) * delta * _ease;
   camera.value.rotation.x += ((cursorY.value) - camera.value.rotation.x) * delta * _ease;
-  camera.value.position.y = 5 + Math.sin(elapsed * 4)  * 0.5;
-  // camera.value.position.y = 5  * 2;
-  // console.log(camera.value.position.z);
+  camera.value.position.y = 5 + Math.sin(elapsed * 4)  * (store.isHovered ? 0.1 : 0.3);
 });
 </script>
 

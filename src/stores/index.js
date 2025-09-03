@@ -3,9 +3,7 @@ import { defineStore } from 'pinia'
 
 export const useMainStore = defineStore('main', () => {
     const finishLoading = ref(true)
-    const showFirstPage = ref(true)
+    const isHovered = ref(false)
 
-    const HKWordsIndex = ref(0)
-    
-    return { finishLoading, showFirstPage, HKWordsIndex }
+    return { finishLoading, isHovered }
 })

@@ -4,7 +4,7 @@ import { useRouter } from "vue-router";
 import { TresCanvas, useTexture } from "@tresjs/core";
 import { useGLTF, useProgress } from "@tresjs/cientos";
 // import { useWindowSize } from '@vueuse/core'
-import { PCFSoftShadowMap, SRGBColorSpace, AgXToneMapping } from "three";
+import { PCFSoftShadowMap, SRGBColorSpace, ACESFilmicToneMapping } from "three";
 import { NoisePmndrs, EffectComposerPmndrs } from "@tresjs/post-processing";
 // Internals
 import { useMainStore } from "@/stores";
@@ -12,10 +12,9 @@ import { useMainStore } from "@/stores";
 // import { perfectWidthResolution } from '@/constants'
 // COMPONENTS
 
-import InteractiveScene from "./components/InteractiveScene.vue";
+import Lights from "./components/Lights.vue";
 import TheEnvironment from "./components/TheEnvironment.vue";
 import CameraMouse from "./components/CameraMouse.vue";
-
 
 // const { checkRoute } = useCustomRouterFn()
 // const settingStore = useSettingStore()
@@ -29,14 +28,11 @@ const gl = {
   alpha: false,
   shadowMapType: PCFSoftShadowMap,
   outputColorSpace: SRGBColorSpace,
-  toneMapping: AgXToneMapping,
-  toneMappingExposure: 1.5,
+  toneMapping: ACESFilmicToneMapping,
+  toneMappingExposure: 1.0,
   antialias: true,
 };
 
-const onClickModel = () => {
-  router.push("/main");
-};
 
 //modifiers
 watch(cameraRef, (camera) => {
@@ -71,7 +67,7 @@ const { scene } = await useGLTF("/models/Necronomicon.glb", { draco: true });
   <TresCanvas v-bind="gl" window-size>
     <TresPerspectiveCamera ref="cameraRef" :position="[0, 5, 25]" />
     <CameraMouse />
-    <InteractiveScene :model="scene" />
+    <Lights :model="scene" />
     <TheEnvironment
       :startParticle="startParticle"
       :floor-textures="floorMap"
