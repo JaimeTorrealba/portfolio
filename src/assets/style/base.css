@@ -14,6 +14,7 @@
   --step-4: clamp(2.0736rem, 1.5211rem + 2.7626vi, 3.6621rem);
   --step-5: clamp(2.4883rem, 1.7616rem + 3.6336vi, 4.5776rem);
 }
+
 *,
 *::before,
 *::after {
@@ -22,26 +23,35 @@
   font-weight: normal;
 }
 
+html,
+body {
+  scroll-behavior: smooth !important;
+}
+
 body {
   min-height: 100vh;
   color: var(--white);
   font-family: 'Sentient';
   cursor: url('../wcursor.cur'), pointer;
   padding: 0;
+
 }
 
 a {
   color: var(--white);
   text-decoration: none;
 }
-li{
+
+li {
   list-style: none;
 }
-ul{
+
+ul {
   padding: 0;
   margin: 0;
 }
-button{
+
+button {
   cursor: pointer;
   border: none;
   background: none;
@@ -49,9 +59,10 @@ button{
   padding: 0;
 }
 
-.debug{
+.debug {
   outline: 1px solid red;
 }
-p{
+
+p {
   max-width: 75ch;
 }

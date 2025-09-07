@@ -2,7 +2,7 @@
 import { onMounted, nextTick } from "vue";
 import { gsap } from "gsap";
 import { useMainStore } from "@/stores";
-import Azathoth from "@/assets/icons/AzathothIcon.vue";
+import Azathoth from "@/assets/icons/Lovecraft/Azathoth.vue";
 
 const store = useMainStore();
 

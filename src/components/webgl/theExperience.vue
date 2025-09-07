@@ -1,13 +1,13 @@
 <script setup>
 import { ref, watch } from "vue";
-import { useRouter } from "vue-router";
+// import { useRouter } from "vue-router";
 import { TresCanvas, useTexture } from "@tresjs/core";
-import { useGLTF, useProgress } from "@tresjs/cientos";
+import { useGLTF } from "@tresjs/cientos";
 // import { useWindowSize } from '@vueuse/core'
 import { PCFSoftShadowMap, SRGBColorSpace, ACESFilmicToneMapping } from "three";
-import { NoisePmndrs, EffectComposerPmndrs } from "@tresjs/post-processing";
+// import { NoisePmndrs, EffectComposerPmndrs } from "@tresjs/post-processing";
 // Internals
-import { useMainStore } from "@/stores";
+// import { useMainStore } from "@/stores";
 // import { useSettingStore } from "@/stores/settings";
 // import { perfectWidthResolution } from '@/constants'
 // COMPONENTS
@@ -18,8 +18,8 @@ import CameraMouse from "./components/CameraMouse.vue";
 
 // const { checkRoute } = useCustomRouterFn()
 // const settingStore = useSettingStore()
-const store = useMainStore();
-const router = useRouter();
+// const store = useMainStore();
+// const router = useRouter();
 const cameraRef = ref();
 
 const gl = {

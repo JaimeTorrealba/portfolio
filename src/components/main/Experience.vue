@@ -6,11 +6,31 @@ import { Draggable } from "gsap/Draggable";
 import { InertiaPlugin } from "gsap/InertiaPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
+import Azathoth from "@/assets/icons/Lovecraft/Azathoth.vue";
+import Ripley from "./CarouselCards/Ripley.vue";
+import Coaniquem from "./CarouselCards/Coaniquem.vue";
+import Lemu from "./CarouselCards/Lemu.vue";
+import Push from "./CarouselCards/Push.vue";
+import Sky from "./CarouselCards/Sky.vue";
+import Tres from "./CarouselCards/Tres.vue";
+
 gsap.registerPlugin(SplitText, ScrollTrigger, Draggable, InertiaPlugin);
 
 const titleRef = ref(null);
 const carouselRef = ref(null);
-onMounted(() => {
+const currentElement = ref("Push");
+
+const elementsMap = {
+  Ripley,
+  Coaniquem,
+  Lemu,
+  Push,
+  Sky,
+  Tres,
+};
+
+onMounted(async () => {
+  await document.fonts.ready;
   const title = SplitText.create(titleRef.value, {
     type: "chars",
   });
@@ -19,16 +39,15 @@ onMounted(() => {
     opacity: 0,
     stagger: 0.1,
     ease: "power2.out",
+    scrollTrigger: {
+      trigger: titleRef.value,
+      start: "top 80%",
+      // markers: true, // TODO: debug this
+    },
   });
 
   const rc = rough.canvas(document.getElementById("carouselCanvas"));
-  rc.line(20, 130, 290, 130, { stroke: "white" });
-  gsap.from(carouselRef.value, {
-    scrollTrigger: carouselRef.value,
-    duration: 1,
-    delay: 0.5,
-    opacity: 0,
-  });
+  rc.rectangle(5, 0, 250, 55, { stroke: "white" });
 
   // Carousel
   const slides = gsap.utils.toArray(".carousel li");
@@ -73,23 +92,58 @@ onMounted(() => {
 
   function updateProgress() {
     animation.progress(wrapValue(this.y) / circumFerence);
+    // Detect which slide is in front
+    function getFrontSlide() {
+      let frontIndex = -1;
+      let minAngle = 9999;
+      slides.forEach((slide, index) => {
+        const style = window.getComputedStyle(slide);
+        const transform = style.transform || style.webkitTransform;
+        if (!transform || transform === "none") return;
+        const values = transform.match(/matrix3d\(([^)]+)\)/);
+        if (values) {
+          const matrix = values[1].split(",").map(Number);
+          // rotateX = Math.atan2(matrix[9], matrix[10]) in radians
+          const rotateXRad = Math.atan2(matrix[9], matrix[10]);
+          const rotateXDeg = rotateXRad * (180 / Math.PI);
+          const normalized = ((rotateXDeg % 360) + 360) % 360;
+          const angleToFront = Math.abs(normalized > 180 ? normalized - 360 : normalized);
+          if (angleToFront < minAngle) {
+            minAngle = angleToFront;
+            frontIndex = index;
+          }
+        }
+      });
+      return frontIndex;
+    }
+    const frontIndex = getFrontSlide();
+    if (frontIndex !== -1) {
+      const splittedText = slides[frontIndex].textContent.split(" ");
+      currentElement.value = splittedText[0];
+    }
   }
 });
 </script>
 <template>
-  <section>
-    <div class="overflow-hidden-y title-padding relative">
-      <h3 ref="titleRef" class="title">Experience</h3>
+  <section class="min-h-screen">
+    <div class="overflow-hidden px-4 is-relative">
+      <h3 ref="titleRef" id="experience" class="title is-flex is-align-items-center py-1"><Azathoth />  Experience</h3>
       <canvas id="carouselCanvas" class="canvas" width="300" height="200"></canvas>
     </div>
-    <div ref="carouselRef" class="carousel">
+    <div ref="carouselRef" class="carousel my-6 radial-gradient">
       <ul>
+        <li>Push Security</li>
         <li>Coaniquem</li>
         <li>Ripley</li>
         <li>Lemu</li>
         <li>Sky Airlines</li>
-        <li>Push Security</li>
+        <li>Tres js</li>
       </ul>
+    </div>
+    <div class="py-6">
+      <transition mode="out-in" name="blur">
+        <component :is="elementsMap[currentElement]" :key="currentElement" />
+      </transition>
     </div>
   </section>
 </template>
@@ -137,7 +191,7 @@ onMounted(() => {
   }
 }
 
-.canvas{
+.canvas {
   position: absolute;
   top: 0;
   left: 0;
@@ -146,10 +200,13 @@ onMounted(() => {
   }
 }
 
-.title-padding{
-  padding: 0 2rem;
-    @media screen and (max-width: 500px) {
-    padding: 0;
-  }
+.blur-enter-active,
+.blur-leave-active {
+  transition: all 0.25s;
+}
+.blur-enter-from,
+.blur-leave-to {
+  opacity: 0;
+  filter: blur(1rem);
 }
 </style>

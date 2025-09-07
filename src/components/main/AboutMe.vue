@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import SignatureJT from "@/assets/icons/SignatureJT.vue";
+import YogSothoth from "@/assets/icons/Lovecraft/YogSothoth.vue";
 import rough from "roughjs";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -13,7 +14,7 @@ const descriptionRef = ref(null);
 const perfilRef = ref(null);
 onMounted(() => {
   const rc = rough.canvas(document.getElementById("aboutMeCanvas"));
-  rc.rectangle(2, 0, 200, 50, { stroke: "white" });
+  rc.rectangle(2, 0, 210, 60, { stroke: "white" });
   document.fonts.ready.then(() => {
     const title = SplitText.create(titleRef.value, {
       type: "chars",
@@ -53,13 +54,15 @@ onMounted(() => {
 });
 </script>
 <template>
-  <section class="min-h-screen">
-    <div class="overflow-hidden-y p-2 is-relative">
-      <h2 ref="titleRef" class="title">About Me</h2>
+  <section id="aboutme" class="min-h-screen">
+    <div class="overflow-hidden p-2 is-relative">
+      <h2 ref="titleRef" class="title is-flex is-align-items-center">
+        <YogSothoth /> About Me
+      </h2>
       <canvas id="aboutMeCanvas" class="canvas" width="300" height="200"></canvas>
     </div>
     <div ref="descriptionRef" class="p-4 is-flex is-flex-wrap-wrap is-justify-flex-start">
-      <div class="is-flex is-justify-content-center w-full">
+      <div class="is-flex is-justify-content-center w-full radial-gradient">
         <div class="blob my-4">
           <img
             ref="perfilRef"

@@ -1,3 +1,9 @@
+<script setup>
+defineProps({
+  width: { type: String, default: "48" },
+  height: { type: String, default: "48" },
+});
+</script>
 <template>
     <svg id="YogSothothID" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" width="48">
         <path class="cls-1"

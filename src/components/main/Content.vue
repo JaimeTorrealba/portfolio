@@ -4,8 +4,9 @@ import rough from "roughjs";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
-import Card from "@/components/common/Card.vue";
 import { items } from "@/utils/items.js";
+import Nyarlathotep from "@/assets/icons/Lovecraft/Nyarlathotep.vue";
+import Card from "@/components/common/Card.vue";
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
 const types = items.map((item) => item.type);
@@ -23,7 +24,8 @@ watch(selectedItem, (newValue) => {
 });
 
 const titleRef = ref(null);
-onMounted(() => {
+onMounted(async () => {
+  await document.fonts.ready;
   const title = SplitText.create(titleRef.value, {
     type: "chars",
   });
@@ -35,29 +37,30 @@ onMounted(() => {
     scrollTrigger: {
       trigger: titleRef.value,
       start: "top 80%",
-      // markers: true, // TODO: debug this
     },
   });
 
   const rc = rough.canvas(document.getElementById("contentCanvas"));
-  rc.rectangle(16, 1, 140, 50, { stroke: "white" });
+  rc.rectangle(1, 1, 200, 60, { stroke: "white" });
 });
 </script>
 <template>
-  <section class="is-relative">
-    <h4
+  <section class="is-relative min-h-screen">
+    <div
       ref="titleRef"
+      id="content"
       class="title mx-4 p-2 is-relative title-position has-background-black-bis"
     >
-      Content
-    </h4>
-    <canvas id="contentCanvas" class="canvas" width="300" height="200"></canvas>
+      <Nyarlathotep />
+      <h4 class="inline pr-4">Content</h4>
+      <canvas id="contentCanvas" class="canvas" width="240" height="75"></canvas>
+    </div>
     <div class="is-relative">
       <div class="diffuse">
         <div
           class="is-flex is-flex-direction-column is-relative container-item scroll px-4 pb-4"
         >
-          <div class="sticky has-background-black-bis pt-4 pb-2">
+          <div class="sticky has-background-black-bis pt-5 pb-2">
             <ul class="is-flex">
               <li
                 @click="selectedItem = 'All'"
@@ -84,14 +87,23 @@ onMounted(() => {
   </section>
 </template>
 <style scoped>
+section{
+  display: inline !important;
+}
 .title-position {
   z-index: 4;
-  top: 10px;
+  display: inline-flex;
+  align-items: center;
+  top: 50px;
+}
+
+.inline {
   display: inline;
 }
 .container-item {
   gap: 1rem;
   border: 1px solid #f7f7f7;
+  border-radius: 4px;
   max-height: 75vh;
   overflow-y: auto;
   position: relative;
@@ -143,7 +155,7 @@ onMounted(() => {
 
 .canvas {
   position: absolute;
-  top: 0;
+  top: 2.5px;
   left: 0;
   z-index: 999;
   @media screen and (max-width: 764px) {

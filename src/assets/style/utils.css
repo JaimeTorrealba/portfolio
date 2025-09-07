@@ -40,3 +40,7 @@
 .overflow-hidden{
     overflow: hidden;
 }
+
+.radial-gradient {
+  background: radial-gradient(50% 50% at 50% 50%, #222 0%, transparent 100%);
+}

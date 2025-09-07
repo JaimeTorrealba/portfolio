@@ -1,17 +1,25 @@
 <script setup>
-import { onMounted } from "vue";
-import { gsap } from "gsap";
+import { onMounted, ref } from "vue";
+import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 // import Tooltip from "@/components/common/Tooltip.vue";
-import TwitterIcon from "@/assets/icons/RRSS/TwitterIcon.vue";
-import GithubIcon from "@/assets/icons/RRSS/GithubIcon.vue";
-import LinkedinIcon from "@/assets/icons/RRSS/LinkedinIcon.vue";
-import CodepenIcon from "@/assets/icons/RRSS/CodepenIcon.vue";
-import BlueSkyIcon from "@/assets/icons/RRSS/BlueskyIcon.vue";
+import Twitter from "@/assets/icons/RRSS/Twitter.vue";
+import Github from "@/assets/icons/RRSS/Github.vue";
+import Linkedin from "@/assets/icons/RRSS/Linkedin.vue";
+import Codepen from "@/assets/icons/RRSS/Codepen.vue";
+import BlueSky from "@/assets/icons/RRSS/Bluesky.vue";
 
-gsap.registerPlugin(ScrollTrigger);
+const titleRef = ref(null);
 
 onMounted(() => {
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.from(titleRef.value, {
+    yPercent: 200,
+    ease: "Power3.out",
+    duration: 1,
+    scrollTrigger: ".icon-containers",
+  });
+
   gsap.from(".icon-container", {
     scrollTrigger: ".icon-containers",
     duration: 1,
@@ -29,8 +37,10 @@ onMounted(() => {
 // const showTooltipEmail = ref(false);
 </script>
 <template>
-  <section class="icon-containers pt-6">
-    <h4 class="title px-2 py-4 is-relative has-text-centered">Say hi!</h4>
+  <section class="icon-containers radial-gradient pt-6">
+    <div class="overflow-hidden">
+      <h4 ref="titleRef" id="rrss" class="title px-2 py-4 is-relative has-text-centered">Say hi!</h4>
+    </div>
     <div class="is-flex is-justify-content-space-between py-4">
       <a
         href="https://bsky.app/profile/jaimebboyjt.bsky.social"
@@ -41,7 +51,7 @@ onMounted(() => {
       >
         <div class="icon-container">
           <!-- <Tooltip text="Bluesky" :show="showTooltipBlueSky" anchor="top center"> -->
-            <BlueSkyIcon />
+          <BlueSky />
           <!-- </Tooltip> -->
         </div>
       </a>
@@ -54,7 +64,7 @@ onMounted(() => {
       >
         <div class="icon-container">
           <!-- <Tooltip text="Twitter" :show="showTooltipTwitter" anchor="top center"> -->
-            <TwitterIcon />
+          <Twitter />
           <!-- </Tooltip> -->
         </div>
       </a>
@@ -68,7 +78,7 @@ onMounted(() => {
         @mouseleave="showTooltipGithub = false"
       >
         <div class="icon-container">
-          <GithubIcon />
+          <Github />
         </div>
       </a>
       <!-- </Tooltip> -->
@@ -81,7 +91,7 @@ onMounted(() => {
         @mouseleave="showTooltipLinkedin = false"
       >
         <div class="icon-container">
-          <LinkedinIcon />
+          <Linkedin />
         </div>
       </a>
       <!-- </Tooltip> -->
@@ -94,7 +104,7 @@ onMounted(() => {
         @mouseleave="showTooltipCodepen = false"
       >
         <div class="icon-container">
-          <CodepenIcon />
+          <Codepen />
         </div>
       </a>
       <!-- </Tooltip> -->
@@ -142,5 +152,11 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+a {
+  transition: scale 0.15s ease;
+}
+a:hover {
+  scale: 1.1;
 }
 </style>

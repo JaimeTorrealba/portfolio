@@ -1,7 +1,12 @@
-<script setup></script>
+<script setup>
+defineProps({
+  width: { type: String, default: "48" },
+  height: { type: String, default: "48" },
+});
+</script>
 
 <template>
-    <svg id="TsathogguaID" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" width="150">
+    <svg id="TsathogguaID" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" :width="width" :height="height">
         <title>tsathoggua-grey</title>
         <g id="Tsathoggua">
             <path class="cls-1" d="M95.84,52.35a3.73,3.73,0,0,0-1-.61C95.17,51.94,95.51,52.14,95.84,52.35Z" />
