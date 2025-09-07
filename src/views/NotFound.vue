@@ -3,7 +3,7 @@ import { onMounted } from 'vue'
 import { gsap } from 'gsap'
 import { useMainStore } from '@/stores'
 import { showText, appear } from '@/utils/gsaps.js'
-import Tsathoggua from '@/assets/icons/TsathogguaIcon.vue'
+import Tsathoggua from '@/assets/icons/Lovecraft/Tsathoggua.vue'
 
 const store = useMainStore()
 
