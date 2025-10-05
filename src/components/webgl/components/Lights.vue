@@ -3,16 +3,11 @@ import { shallowRef, watch } from "vue";
 import { useTresContext, useLoop } from "@tresjs/core";
 import { useMouse, useWindowSize } from "@vueuse/core";
 import { Object3D } from "three";
-// import gsap from "gsap";
 
 defineProps({
   scaleFactor: Number,
-  model: Object,
 });
 
-// const emit = defineEmits(["clickModel"]);
-
-// const modelRef = shallowRef(null);
 const { scene } = useTresContext();
 const spotLightRef = shallowRef(null);
 const { x, y } = useMouse();
@@ -47,7 +42,7 @@ onBeforeRender(() => {
     if(Math.random() > 0.995) {
       spotLightRef.value.intensity = 1;
     } else {
-      spotLightRef.value.intensity = 1000;
+      spotLightRef.value.intensity = 1250;
     }
   }
 });
@@ -57,11 +52,12 @@ onBeforeRender(() => {
     ref="spotLightRef"
     cast-shadow
     color="#B8CDE0"
-    :intensity="1000"
+    :intensity="1250"
     :penumbra="1"
     :angle="Math.PI * 0.1"
     :decay="2"
     :position="[0, 5, 25]"
   />
-  <TresAmbientLight ref="ambientLightRef" color="#6FA28B" :intensity="0.05" />
+  <TresAmbientLight color="#6FA28B" :intensity="0.5" />
+  <TresDirectionalLight color="#B8CDE0" :intensity="1" :position="[0, 25, 25]" />
 </template>

@@ -2,7 +2,6 @@
 import { ref, watch } from "vue";
 // import { useRouter } from "vue-router";
 import { TresCanvas, useTexture } from "@tresjs/core";
-import { useGLTF } from "@tresjs/cientos";
 // import { useWindowSize } from '@vueuse/core'
 import { PCFSoftShadowMap, SRGBColorSpace, ACESFilmicToneMapping } from "three";
 // import { NoisePmndrs, EffectComposerPmndrs } from "@tresjs/post-processing";
@@ -33,7 +32,6 @@ const gl = {
   antialias: true,
 };
 
-
 //modifiers
 watch(cameraRef, (camera) => {
   camera.far = 500;
@@ -55,7 +53,6 @@ const floorMap = await useTexture({
   aoMap: "/textures/floor/floor_ao.jpg",
 });
 
-const { scene } = await useGLTF("/models/Necronomicon.glb", { draco: true });
 // const { hasFinishLoading } = await useProgress();
 // watch(hasFinishLoading, (value) => {
 //   if (value) {
@@ -67,7 +64,7 @@ const { scene } = await useGLTF("/models/Necronomicon.glb", { draco: true });
   <TresCanvas v-bind="gl" window-size>
     <TresPerspectiveCamera ref="cameraRef" :position="[0, 5, 25]" />
     <CameraMouse />
-    <Lights :model="scene" />
+    <Lights />
     <TheEnvironment
       :startParticle="startParticle"
       :floor-textures="floorMap"

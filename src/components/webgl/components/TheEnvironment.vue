@@ -5,7 +5,7 @@ import { Precipitation } from "@tresjs/cientos";
 import { RepeatWrapping } from "three";
 import { Tree } from "@dgreenheck/ez-tree";
 import { useMainStore } from "@/stores";
-// import Cloud from "./Cloud.vue";
+import Smoke from "./Smoke.vue";
 // import Grass from "./Grass.vue";
 
 const props = defineProps({
@@ -104,10 +104,9 @@ onBeforeRender(({ elapsed, delta }) => {
       :roughness="0.75"
     />
   </TresMesh>
-  <!-- <Suspense> -->
-    <!-- Clouds move to z25 to remove temporarily from the view -->
-    <!-- <Cloud :position="[0, 5, 25]" :scale="20" :speed="0.1" :opacity="0.25" /> -->
-  <!-- </Suspense> -->
+  <Suspense>
+    <Smoke />
+  </Suspense>
   <!-- <Grass :position="[22, -3.3, -20]" />
   <Grass :position="[-22, -3.3, -20]" /> -->
 </template>
