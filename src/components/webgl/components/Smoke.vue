@@ -57,17 +57,13 @@ const parameters = reactive({
   // Lighting
   ambientLightIntensity: 0.75,
   directionalLightIntensity: 0,
-  // Depth / Occlusion stabilization
-  depthBias: 0.5,            // Base bias (world units in view depth space approximation)
-  autoDepthBias: true,       // Enable adaptive biasing
-  minDepthBias: 0.15,        // Clamp lower bound (avoid precision acne)
-  maxDepthBias: 1.25,        // Clamp upper bound (avoid halos)
-  motionBiasScale: 0.35,     // How strongly camera motion influences bias
+  // Debug / Features
+  useDepthOcclusion: false, // set to true to re-enable depth based occlusion
 });
 
 // ------- Refs & Context -------
 const { width, height } = useWindowSize();
-const { camera, renderer, scene } = useTresContext();
+const { camera } = useTresContext();
 const directionalLightRef = shallowRef();
 const smokeRef = shallowRef();
 const store = useMainStore();
@@ -123,6 +119,7 @@ const shader = {
     uCameraFar: { value: camera.value.far },
     uOcclusionMode: { value: false },
     uDepthBias: { value: 0.5 }, // world-space bias to reduce popping holes when geometry moves
+    uUseDepthOcclusion: { value: parameters.useDepthOcclusion },
   },
   vertexShader: VERTEX_SHADER,
   fragmentShader: FRAGMENT_SHADER,
@@ -171,9 +168,6 @@ shader.uniforms.uDepthTexture.value = depthTarget.depthTexture;
 
 // Animate offsets + update matrices and light dir
 const animatedOffset = new Vector3();
-// For adaptive depth bias
-const lastCameraPos = new Vector3().copy(camera.value.position);
-let smoothedMotion = 0.0;
 const { onBeforeRender } = useLoop();
 onBeforeRender(({ delta }) => {
   // matrices and camera
@@ -188,22 +182,6 @@ onBeforeRender(({ delta }) => {
   shader.uniforms.uProjectionMatrix.value.copy(camera.value.projectionMatrix);
   shader.uniforms.cameraPos.value.copy(camera.value.position);
 
-  // Adaptive depth bias to reduce temporal holes when either camera or scene is moving fast.
-  if (parameters.autoDepthBias) {
-    const camMotion = camera.value.position.distanceTo(lastCameraPos);
-    lastCameraPos.copy(camera.value.position);
-    // Exponential smoothing to avoid flicker
-    const smoothing = 0.85;
-    smoothedMotion = smoothedMotion * smoothing + camMotion * (1.0 - smoothing);
-    // Derive dynamic bias: base + scaled motion
-    const dynamicBias = parameters.depthBias + smoothedMotion * parameters.motionBiasScale * (delta || 0.016) * 60.0; // normalize by ~60fps
-    const clamped = Math.min(Math.max(dynamicBias, parameters.minDepthBias), parameters.maxDepthBias);
-    shader.uniforms.uDepthBias.value = clamped;
-  } else {
-    // Manual mode
-    shader.uniforms.uDepthBias.value = parameters.depthBias;
-  }
-
   // light direction as normalized vector
   if (directionalLightRef.value?.position) {
     shader.uniforms.uLightDir.value.copy(
@@ -216,27 +194,6 @@ onBeforeRender(({ delta }) => {
   animatedOffset.y += parameters.animationSpeedY * dt;
   animatedOffset.z += parameters.animationSpeedZ * dt;
   shader.uniforms.uTextureOffset.value.copy(animatedOffset);
-
-  // Depth pre-pass: render scene without the volumetric mesh into the depth target
-  if (renderer.value && scene?.value && smokeRef.value) {
-    const r = renderer.value; // in v5 isn't .value
-    const s = scene.value;
-    const prevTarget = r.getRenderTarget();
-    const prevAutoClear = r.autoClear;
-    const prevVisible = smokeRef.value.visible;
-    // Hide the volume for depth pre-pass
-    smokeRef.value.visible = false;
-    r.setRenderTarget(depthTarget);
-    r.autoClear = true;
-    r.clear(true, true, true);
-    r.render(s, camera.value);
-    // Restore
-    smokeRef.value.visible = prevVisible;
-    r.setRenderTarget(prevTarget);
-    r.autoClear = prevAutoClear;
-    // Provide the freshly rendered depth texture to the shader
-    shader.uniforms.uDepthTexture.value = depthTarget.depthTexture;
-  }
 });
 
 // Keep resolution uniform in sync
@@ -247,16 +204,6 @@ watch([width, height], ([w, h]) => {
     depthTarget.setSize(w, h);
   }
 });
-
-// React to manual depthBias changes when auto is off
-watch(
-  () => [parameters.depthBias, parameters.autoDepthBias],
-  () => {
-    if (!parameters.autoDepthBias) {
-      shader.uniforms.uDepthBias.value = parameters.depthBias;
-    }
-  }
-);
 </script>
 
 <template>

@@ -1,12 +1,10 @@
 <script setup>
 import { ref, watch } from "vue";
-// import { useRouter } from "vue-router";
 import { TresCanvas, useTexture } from "@tresjs/core";
 // import { useWindowSize } from '@vueuse/core'
 import { PCFSoftShadowMap, SRGBColorSpace, ACESFilmicToneMapping } from "three";
 // import { NoisePmndrs, EffectComposerPmndrs } from "@tresjs/post-processing";
 // Internals
-// import { useMainStore } from "@/stores";
 // import { useSettingStore } from "@/stores/settings";
 // import { perfectWidthResolution } from '@/constants'
 // COMPONENTS
@@ -15,10 +13,6 @@ import Lights from "./components/Lights.vue";
 import TheEnvironment from "./components/TheEnvironment.vue";
 import CameraMouse from "./components/CameraMouse.vue";
 
-// const { checkRoute } = useCustomRouterFn()
-// const settingStore = useSettingStore()
-// const store = useMainStore();
-// const router = useRouter();
 const cameraRef = ref();
 
 const gl = {
@@ -52,13 +46,6 @@ const floorMap = await useTexture({
   roughnessMap: "/textures/floor/floor_rough.jpg",
   aoMap: "/textures/floor/floor_ao.jpg",
 });
-
-// const { hasFinishLoading } = await useProgress();
-// watch(hasFinishLoading, (value) => {
-//   if (value) {
-//     store.finishLoading = value;
-//   }
-// });
 </script>
 <template>
   <TresCanvas v-bind="gl" window-size>

@@ -25,6 +25,7 @@ uniform mat4 uModelMatrix;
 uniform float uCameraNear;
 uniform float uCameraFar;
 uniform float uDepthBias; // small bias to reduce temporal holes with moving geometry
+uniform bool uUseDepthOcclusion; // toggle for depth based early-out
 
 // Cloud Material & Rendering Parameters
 uniform float uOpacity;
@@ -150,13 +151,14 @@ void main() {
   float mu = dot(dir, uLightDir);
   float fade_zone = stepSize * 2.0;
 
-  // Sample scene depth at current pixel once and convert to linear camera distance
-  vec2 screenUV = gl_FragCoord.xy / uResolution;
-  float sceneDepthSample = texture(uDepthTexture, screenUV).r;
-  float sceneLinearDistance = linearize_depth(sceneDepthSample, uCameraNear, uCameraFar);
-  // If no geometry rendered to depth at this pixel, depth is 1.0 -> treat as "very far"
-  if (sceneDepthSample >= 0.9999) {
-    sceneLinearDistance = 1e20;
+  float sceneLinearDistance = 1e20;
+  if (uUseDepthOcclusion) {
+    vec2 screenUV = gl_FragCoord.xy / uResolution;
+    float sceneDepthSample = texture(uDepthTexture, screenUV).r;
+    sceneLinearDistance = linearize_depth(sceneDepthSample, uCameraNear, uCameraFar);
+    if (sceneDepthSample >= 0.9999) {
+      sceneLinearDistance = 1e20;
+    }
   }
   // Use provided view matrix directly (avoid inverse per-fragment)
   mat4 viewMatrix = uViewMatrix;
@@ -172,7 +174,7 @@ void main() {
   vec3 worldP = (uModelMatrix * vec4(p, 1.0)).xyz;
   float viewDepth = -(viewMatrix * vec4(worldP, 1.0)).z; // camera-forward positive depth
   // Apply bias so that near-surface samples are still considered (reduces popping when depth jitter occurs)
-  if (viewDepth - uDepthBias > sceneLinearDistance) break;
+  if (uUseDepthOcclusion && (viewDepth - uDepthBias > sceneLinearDistance)) break;
 
   float density = getDensity(p);
     if (density > 0.01) {
