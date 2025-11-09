@@ -6,6 +6,7 @@ import { RepeatWrapping } from "three";
 import { Tree } from "@dgreenheck/ez-tree";
 import { useMainStore } from "@/stores";
 import Smoke from "./Smoke.vue";
+import "three-hex-tiling";
 // import Grass from "./Grass.vue";
 
 const props = defineProps({
@@ -14,7 +15,7 @@ const props = defineProps({
 });
 
 const { scene, camera } = useTresContext();
-const store = useMainStore()
+const store = useMainStore();
 
 const setDefaultTextures = (obj, repeat = [4, 4]) => {
   Object.keys(obj).map((key) => {
@@ -27,6 +28,14 @@ const setDefaultTextures = (obj, repeat = [4, 4]) => {
 };
 
 setDefaultTextures(props.floorTextures);
+
+const hexTiling = {
+  // default values shown
+  patchScale: 2,
+  useContrastCorrectedBlending: false,
+  lookupSkipThreshold: 0.01,
+  textureSampleCoefficientExponent: 1,
+};
 
 const createTree = (_x) => {
   const tree = new Tree();
@@ -66,7 +75,8 @@ onBeforeRender(({ elapsed, delta }) => {
       if (tree.position.z > camera.value.position.z + 10) {
         scene.value.remove(tree);
         trees.splice(trees.indexOf(tree), 1);
-        const leftRight = tree.position.x < 0 ? Math.random() * 10 - 20 : Math.random() * 10 + 10;
+        const leftRight =
+          tree.position.x < 0 ? Math.random() * 10 - 20 : Math.random() * 10 + 10;
         createTree(leftRight);
       }
     });
@@ -100,8 +110,9 @@ onBeforeRender(({ elapsed, delta }) => {
     <TresMeshPhysicalMaterial
       ref="floorMaterial"
       v-bind="floorTextures"
-      :normal-scale="5"
+      :normal-scale="2"
       :roughness="0.75"
+      :hexTiling="hexTiling"
     />
   </TresMesh>
   <Suspense>

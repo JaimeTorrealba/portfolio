@@ -41,6 +41,9 @@ importers:
       three:
         specifier: ^0.172.0
         version: 0.172.0
+      three-hex-tiling:
+        specifier: ^0.1.5
+        version: 0.1.5(three@0.172.0)
       vite-plugin-glsl:
         specifier: ^1.4.1
         version: 1.4.1(rollup@3.29.5)(vite@4.5.14(sass@1.88.0))
@@ -1096,6 +1099,11 @@ packages:
         optional: true
       react:
         optional: true
+
+  three-hex-tiling@0.1.5:
+    resolution: {integrity: sha512-c38BKK3IV/AplEoO0DlUof3e5ikHEKW3XnKkuOt9PqLz7QRoc4ZuYnBqfoaXe3rctLmFztnEiiPRRGSR34mPgA==}
+    peerDependencies:
+      three: '>=0.151'
 
   three-stdlib@2.36.0:
     resolution: {integrity: sha512-kv0Byb++AXztEGsULgMAs8U2jgUdz6HPpAB/wDJnLiLlaWQX2APHhiTJIN7rqW+Of0eRgcp7jn05U1BsCP3xBA==}
@@ -2163,6 +2171,10 @@ snapshots:
       glsl-token-string: 1.0.1
       glsl-tokenizer: 2.1.5
       object-hash: 3.0.0
+      three: 0.172.0
+
+  three-hex-tiling@0.1.5(three@0.172.0):
+    dependencies:
       three: 0.172.0
 
   three-stdlib@2.36.0(three@0.172.0):
