@@ -3,7 +3,6 @@ import { ref, watch } from "vue";
 import { TresCanvas, useTexture } from "@tresjs/core";
 // import { useWindowSize } from '@vueuse/core'
 import { PCFSoftShadowMap, SRGBColorSpace, ACESFilmicToneMapping } from "three";
-// import { NoisePmndrs, EffectComposerPmndrs } from "@tresjs/post-processing";
 // Internals
 // import { useSettingStore } from "@/stores/settings";
 // import { perfectWidthResolution } from '@/constants'
@@ -52,15 +51,6 @@ const floorMap = await useTexture({
     <TresPerspectiveCamera ref="cameraRef" :position="[0, 5, 25]" />
     <CameraMouse />
     <Lights />
-    <TheEnvironment
-      :startParticle="startParticle"
-      :floor-textures="floorMap"
-    />
-    <!-- <Suspense>
-      <EffectComposerPmndrs>
-        <NoisePmndrs premultiply />
-      </EffectComposerPmndrs>
-    </Suspense> -->
+    <TheEnvironment :startParticle="startParticle" :floor-textures="floorMap" />
   </TresCanvas>
 </template>
-<style scoped></style>

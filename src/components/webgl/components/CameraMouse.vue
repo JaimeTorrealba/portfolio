@@ -1,11 +1,37 @@
 <script setup>
 import { useLoop, useTresContext } from "@tresjs/core";
 import { useMouse, useWindowSize } from "@vueuse/core";
-import { computed, shallowRef } from "vue";
+import { computed, shallowRef, watch } from "vue";
 import { useMainStore } from "@/stores";
+import gsap from "gsap";
 
 const store = useMainStore();
 const { camera } = useTresContext();
+
+watch(
+  () => store.isHovered,
+  (newVal) => {
+    if (newVal) {
+      gsap.to(camera.value, {
+        fov: 35,
+        duration: 1,
+        ease: "power2.out",
+        onUpdate: () => {
+          camera.value.updateProjectionMatrix();
+        },
+      });
+    } else {
+      gsap.to(camera.value, {
+        fov: 45,
+        duration: 1,
+        ease: "power2.out",
+        onUpdate: () => {
+          camera.value.updateProjectionMatrix();
+        },
+      });
+    }
+  }
+);
 
 const { x, y } = useMouse();
 const { width, height } = useWindowSize();
@@ -17,14 +43,12 @@ const _ease = 1.5;
 const cursorX = computed(() => -(x.value / width.value - 0.5) * _factor);
 const cursorY = computed(() => -(y.value / height.value - 0.5) * _factor);
 
-
-
 const { onBeforeRender } = useLoop();
 
 onBeforeRender(({ elapsed, delta }) => {
   camera.value.rotation.y += (cursorX.value - camera.value.rotation.y) * delta * _ease;
-  camera.value.rotation.x += ((cursorY.value) - camera.value.rotation.x) * delta * _ease;
-  camera.value.position.y = 5 + Math.sin(elapsed * 4)  * (store.isHovered ? 0.1 : 0.3);
+  camera.value.rotation.x += (cursorY.value - camera.value.rotation.x) * delta * _ease;
+  camera.value.position.y = 5 + Math.sin(elapsed * 4) * 0.3;
 });
 </script>
 

@@ -78,8 +78,8 @@ vec3 bezier(vec3 P0, vec3 P1, vec3 P2, vec3 P3, float t) {
     t * t * t * P3;
 }
 
-const vec3 BASE_COLOUR = vec3(0.35, 0.27, 0.11); // brown
-const vec3 TIP_COLOUR = vec3(0.58, 0.51, 0.3);  // pale yellow
+const vec3 TIP_COLOUR = vec3(0.27, 0.24, 0.15);  // darkpale yellow
+const vec3 BASE_COLOUR = vec3(0.14, 0.11, 0.04); // darkbrown
 
 void main() {
 
@@ -92,8 +92,8 @@ void main() {
 
   // figure grass offset
   vec2 hashedInstanceID = hash21(float(gl_InstanceID)) * 2.0 - 1.0;
-  //Multiply by 5.0 z axis to make it larger
-  vec3 grassOffset = vec3(hashedInstanceID.x, 0.0, hashedInstanceID.y * 5.0) * GRASS_PATCH_SIZE;
+  //Multiply by 10.0 z axis to make it larger
+  vec3 grassOffset = vec3(hashedInstanceID.x, 0.0, hashedInstanceID.y * 10.0) * GRASS_PATCH_SIZE;
 
   vec3 grassBladeWorldPos = (modelMatrix * vec4(grassOffset, 1.0)).xyz;
   vec3 hashVal = hash(grassBladeWorldPos);

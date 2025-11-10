@@ -1,12 +1,12 @@
 <script setup>
 import { ref } from "vue";
-import { useTresContext, useLoop } from "@tresjs/core";
+import { useLoop } from "@tresjs/core";
 import { Precipitation } from "@tresjs/cientos";
 import { RepeatWrapping } from "three";
-import { Tree } from "@dgreenheck/ez-tree";
 import { useMainStore } from "@/stores";
-import Smoke from "./Smoke.vue";
 import "three-hex-tiling";
+import Smoke from "./Smoke.vue";
+import Trees from "./Trees.vue";
 // import Grass from "./Grass.vue";
 
 const props = defineProps({
@@ -14,7 +14,6 @@ const props = defineProps({
   floorTextures: Object,
 });
 
-const { scene, camera } = useTresContext();
 const store = useMainStore();
 
 const setDefaultTextures = (obj, repeat = [4, 4]) => {
@@ -37,50 +36,15 @@ const hexTiling = {
   textureSampleCoefficientExponent: 1,
 };
 
-const createTree = (_x) => {
-  const tree = new Tree();
-  const randomScale = 2 + (Math.random() - 0.5);
-  tree.scale.set(randomScale, randomScale, randomScale);
-  tree.position.set(_x, -3.1, Math.random() * 40 - 100);
-  tree.options.seed = Math.random() * 10000;
-  tree.options.leaves.size = 0;
-  tree.generate();
-  trees.push(tree);
-  scene.value.add(tree);
-  return tree;
-};
-
-const trees = [];
-
-createTree(Math.random() * 10 - 20);
-
-setTimeout(() => {
-  createTree(Math.random() * 10 + 10);
-}, Math.random() * 5000);
-
 const floorMaterial = ref();
 
 const { onBeforeRender } = useLoop();
 
-onBeforeRender(({ elapsed, delta }) => {
-  const multiplier = store.isHovered ? -0.1 : -0.5;
-  floorMaterial.value.map.offset.x = elapsed * multiplier;
-  floorMaterial.value.normalMap.offset.x = elapsed * multiplier;
-  floorMaterial.value.roughnessMap.offset.x = elapsed * multiplier;
-  floorMaterial.value.aoMap.offset.x = elapsed * multiplier;
-  if (trees.length > 0) {
-    trees.forEach((tree) => {
-      const treeMultiplier = store.isHovered ? 2.5 : 12.5;
-      tree.position.z += delta * treeMultiplier;
-      if (tree.position.z > camera.value.position.z + 10) {
-        scene.value.remove(tree);
-        trees.splice(trees.indexOf(tree), 1);
-        const leftRight =
-          tree.position.x < 0 ? Math.random() * 10 - 20 : Math.random() * 10 + 10;
-        createTree(leftRight);
-      }
-    });
-  }
+onBeforeRender(({ elapsed }) => {
+  floorMaterial.value.map.offset.x = elapsed * -0.5;
+  floorMaterial.value.normalMap.offset.x = elapsed * -0.5;
+  floorMaterial.value.roughnessMap.offset.x = elapsed * -0.5;
+  floorMaterial.value.aoMap.offset.x = elapsed * -0.5;
 });
 </script>
 <template>
@@ -115,9 +79,9 @@ onBeforeRender(({ elapsed, delta }) => {
       :hexTiling="hexTiling"
     />
   </TresMesh>
+  <Trees />
   <Suspense>
     <Smoke />
   </Suspense>
-  <!-- <Grass :position="[22, -3.3, -20]" />
-  <Grass :position="[-22, -3.3, -20]" /> -->
+  <!-- <Grass /> -->
 </template>
