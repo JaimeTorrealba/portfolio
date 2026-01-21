@@ -20,17 +20,20 @@ const playAnimation = async () => {
 
 watchEffect(() => {
   if (store.finishLoading) {
+    // store.soundElement
+    // store.soundElement.play()
+    console.log('jaime ~ store.soundElement:', store.soundElement);
     playAnimation()
   }
 })
 
-const onEnter = () => {
-  store.isHovered = true
-}
+// const onEnter = () => {
+//   store.isHovered = true
+// }
 
-const onLeave = () => {
-  store.isHovered = false
-}
+// const onLeave = () => {
+//   store.isHovered = false
+// }
 </script>
 
 <template>
@@ -44,9 +47,9 @@ const onLeave = () => {
   <Suspense>
     <theExperience />
   </Suspense>
-  <div class="button p-4 custom-button" v-if="store.finishLoading" @mouseenter="onEnter" @mouseleave="onLeave">
+  <!-- <div class="button p-4 custom-button" v-if="store.finishLoading" @mouseenter="onEnter" @mouseleave="onLeave">
    <router-link to="/main" class="has-text-light is-size-4"> Check  my portfolio</router-link>
-  </div>
+  </div> -->
 </template>
 <style scoped>
 .version {

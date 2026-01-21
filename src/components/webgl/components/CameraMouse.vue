@@ -46,8 +46,12 @@ const cursorY = computed(() => -(y.value / height.value - 0.5) * _factor);
 const { onBeforeRender } = useLoop();
 
 onBeforeRender(({ elapsed, delta }) => {
-  camera.value.rotation.y += (cursorX.value - camera.value.rotation.y) * delta * _ease;
-  camera.value.rotation.x += (cursorY.value - camera.value.rotation.x) * delta * _ease;
+  const xMove = (cursorX.value - camera.value.rotation.y) * delta * _ease;
+  const yMove = (cursorY.value - camera.value.rotation.x) * delta * _ease;
+  camera.value.rotation.x +=  yMove;
+  camera.value.rotation.x = Math.max(-0.25, Math.min(0.25, camera.value.rotation.x));
+  camera.value.rotation.y += xMove;
+  camera.value.rotation.y = Math.max(-0.25, Math.min(0.25, camera.value.rotation.y));
   camera.value.position.y = 5 + Math.sin(elapsed * 4) * 0.3;
 });
 </script>
