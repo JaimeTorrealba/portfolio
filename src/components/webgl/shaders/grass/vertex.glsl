@@ -93,7 +93,7 @@ void main() {
   // figure grass offset
   vec2 hashedInstanceID = hash21(float(gl_InstanceID)) * 2.0 - 1.0;
   //Multiply by 10.0 z axis to make it larger
-  vec3 grassOffset = vec3(hashedInstanceID.x, 0.0, hashedInstanceID.y * 10.0) * GRASS_PATCH_SIZE;
+  vec3 grassOffset = vec3(hashedInstanceID.x, 0.0, hashedInstanceID.y) * GRASS_PATCH_SIZE;
 
   vec3 grassBladeWorldPos = (modelMatrix * vec4(grassOffset, 1.0)).xyz;
   vec3 hashVal = hash(grassBladeWorldPos);

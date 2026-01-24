@@ -1,13 +1,14 @@
 <script setup>
-import { ref } from "vue";
+import { ref, shallowRef, watch } from "vue";
 import { useLoop } from "@tresjs/core";
-import { Precipitation } from "@tresjs/cientos";
+import { Precipitation, Stats } from "@tresjs/cientos";
 import { RepeatWrapping } from "three";
 import { useMainStore } from "@/stores";
 import "three-hex-tiling";
 import Smoke from "./Smoke.vue";
 import Trees from "./Trees.vue";
-// import Grass from "./Grass.vue";
+import Sound from "./Sound.vue";
+import Grass from "./Grass.vue";
 
 const props = defineProps({
   startParticle: Object,
@@ -15,6 +16,13 @@ const props = defineProps({
 });
 
 const store = useMainStore();
+const soundRef = shallowRef(null);
+
+watch(soundRef, (sound) => {
+  if (sound) {
+    store.soundElement = sound.instance;
+  }
+});
 
 const setDefaultTextures = (obj, repeat = [4, 4]) => {
   Object.keys(obj).map((key) => {
@@ -49,6 +57,8 @@ onBeforeRender(({ elapsed }) => {
 </script>
 <template>
   <TresFog color="#111" near="8" far="100" />
+  <!-- <Sound /> -->
+  <Stats />
   <Precipitation
     :rotate-x="Math.PI * -0.5"
     :position="[0, 10, 10]"
@@ -83,5 +93,5 @@ onBeforeRender(({ elapsed }) => {
   <Suspense>
     <Smoke />
   </Suspense>
-  <!-- <Grass /> -->
+  <Grass />
 </template>
