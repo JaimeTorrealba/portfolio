@@ -59,5 +59,5 @@ onBeforeRender(() => {
     :position="[0, 5, 25]"
   />
   <TresAmbientLight color="#6FA28B" :intensity="0.75" />
-  <TresDirectionalLight color="#B8CDE0" :intensity="1.5" :position="[0, 25, 25]" />
+  <TresDirectionalLight color="#B8CDE0" :intensity="0.05" :position="[0, 5, -50]" />
 </template>

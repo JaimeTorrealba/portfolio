@@ -4,10 +4,10 @@ import fragment from "../shaders/grass/fragment.glsl";
 import { InstancedBufferGeometry, Sphere, Vector3, Vector2, Vector4 } from "three";
 import { useLoop } from "@tresjs/core";
 
-const NUM_GRASS = 15000; // 30000
+const NUM_GRASS = 20000;
 const GRASS_SEGMENTS = 6;
-const GRASS_PATCH_SIZE = 15; // 15
-const GRASS_HEIGHT = 3.5;
+const GRASS_PATCH_SIZE = 15;
+const GRASS_HEIGHT = 10;
 const GRASS_WIDTH = 0.25;
 
 const VERTICES = (GRASS_SEGMENTS + 1) * 2;
@@ -39,10 +39,13 @@ geo.setIndex(indices);
 geo.boundingSphere = new Sphere(new Vector3(0, 0, 0), 1 + GRASS_PATCH_SIZE * 2);
 
 const shader = {
-   vertexShader: vertex,
+  vertexShader: vertex,
   fragmentShader: fragment,
+  transparent: true,
+  depthWrite: true,
   uniforms: {
     uTime: { value: 0 },
+    uTimeMove: { value: 0 },
     uGrassParams: {
       value: new Vector4(GRASS_SEGMENTS, GRASS_PATCH_SIZE, GRASS_WIDTH, GRASS_HEIGHT),
     },
@@ -54,10 +57,14 @@ const { onBeforeRender } = useLoop();
 
 onBeforeRender(({elapsed}) => {
   shader.uniforms.uTime.value = elapsed * 0.5;
+  shader.uniforms.uTimeMove.value = elapsed * 6;
 });
 </script>
 <template>
-    <TresMesh :geometry="geo">
+    <TresMesh :geometry="geo" :position="[20,-5,0]">
+      <TresShaderMaterial v-bind="shader" />
+    </TresMesh>
+    <TresMesh :geometry="geo" :position="[-20,-5,0]">
         <TresShaderMaterial v-bind="shader" />
     </TresMesh>
 </template>

@@ -54,3 +54,8 @@ const floorMap = await useTexture({
     <TheEnvironment :startParticle="startParticle" :floor-textures="floorMap" />
   </TresCanvas>
 </template>
+<style>
+.tp-dfwv {
+  z-index: 999999;
+}
+</style>

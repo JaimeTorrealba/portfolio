@@ -24,10 +24,11 @@ import VERTEX_SHADER from "../shaders/smoke/vertex.glsl";
 import FRAGMENT_SHADER from "../shaders/smoke/fragment.glsl";
 import { useWindowSize } from "@vueuse/core";
 import { useMainStore } from "@/stores";
+import { Pane } from "tweakpane";
 
 const parameters = reactive({
   // Texture Generation
-  textureSize: 128,
+  textureSize: 64,
   cloudCoverage: 0.55,
   cloudSoftness: 0.05,
   noiseScale: 3.5,
@@ -55,11 +56,38 @@ const parameters = reactive({
   isAnimating: true,
 
   // Lighting
-  ambientLightIntensity: 0.75,
-  directionalLightIntensity: 0,
+  ambientLightIntensity: 1.75,
+  directionalLightIntensity: 1,
   // Debug / Features
   useDepthOcclusion: false, // set to true to re-enable depth based occlusion
 });
+
+const pane = new Pane({ title: "Volumetric Smoke" });
+const folderGen = pane.addFolder({ title: "Texture Generation" });
+folderGen.addBinding(parameters, "cloudCoverage", { min: 0, max: 1, step: 0.01 });
+folderGen.addBinding(parameters, "cloudSoftness", { min: 0.01, max: 0.2, step: 0.01 });
+folderGen.addBinding(parameters, "noiseScale", { min: 0.1, max: 10, step: 0.1 });
+folderGen.addBinding(parameters, "octaves", { min: 1, max: 8, step: 1 });
+folderGen.addBinding(parameters, "persistence", { min: 0.1, max: 1, step: 0.05 });
+folderGen.addBinding(parameters, "lacunarity", { min: 1, max: 5, step: 0.1 });
+folderGen.addBinding(parameters, "noiseIntensity", { min: 0.1, max: 5, step: 0.1 });
+folderGen.addBinding(parameters, "seed", { min: 0, max: 1000, step: 1 });
+const folderMat = pane.addFolder({ title: "Material & Rendering" });
+folderMat.addBinding(parameters, "textureTiling", { min: 0.1, max: 10, step: 0.1 });
+folderMat.addBinding(parameters, "densityThreshold", { min: 0.01, max: 1, step: 0.01 });
+folderMat.addBinding(parameters, "densityMultiplier", { min: 0.1, max: 10, step: 0.1 });
+folderMat.addBinding(parameters, "opacity", { min: 0.1, max: 10, step: 0.1 });
+folderMat.addBinding(parameters, "raymarchSteps", { min: 10, max: 100, step: 1 });
+folderMat.addBinding(parameters, "lightSteps", { min: 1, max: 10, step: 1 });
+const folderAnim = pane.addFolder({ title: "Scale & Animation" });
+folderAnim.addBinding(parameters, "containerScale", { min: 10, max: 300, step: 1 });
+folderAnim.addBinding(parameters, "animationSpeedX", { min: -1, max: 1, step: 0.01 });
+folderAnim.addBinding(parameters, "animationSpeedY", { min: -1, max: 1, step: 0.01 });
+folderAnim.addBinding(parameters, "animationSpeedZ", { min: -1, max: 1, step: 0.01 });
+const folderLight = pane.addFolder({ title: "Lighting" }); 
+folderLight.addBinding(parameters, "ambientLightIntensity", { min: 0, max: 5, step: 0.1 });
+folderLight.addBinding(parameters, "directionalLightIntensity", { min: 0, max: 5, step: 0.1 });
+
 
 // ------- Refs & Context -------
 const { width, height } = useWindowSize();

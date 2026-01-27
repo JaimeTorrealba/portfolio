@@ -14,5 +14,9 @@ void main() {
 
   vec3 litColour = baseColour * diff;
 
-  gl_FragColor = vec4(litColour, 1.0);
+  // Edge fade to hide wrap/teleport
+  float alpha = vGrassData.w;
+  if (alpha < 0.01) discard;
+
+  gl_FragColor = vec4(litColour, alpha);
 }

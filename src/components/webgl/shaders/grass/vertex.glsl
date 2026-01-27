@@ -3,6 +3,7 @@
 #define NUM_PATCHES 10.0
 uniform vec4 uGrassParams;
 uniform float uTime;
+uniform float uTimeMove;
 
 varying vec3 vColour;
 varying vec4 vGrassData;
@@ -93,7 +94,8 @@ void main() {
   // figure grass offset
   vec2 hashedInstanceID = hash21(float(gl_InstanceID)) * 2.0 - 1.0;
   //Multiply by 10.0 z axis to make it larger
-  vec3 grassOffset = vec3(hashedInstanceID.x, 0.0, hashedInstanceID.y) * GRASS_PATCH_SIZE;
+  float FORWARD_SCALE = 10.0;
+  vec3 grassOffset = vec3(hashedInstanceID.x, 0.0, hashedInstanceID.y * FORWARD_SCALE) * GRASS_PATCH_SIZE;
 
   vec3 grassBladeWorldPos = (modelMatrix * vec4(grassOffset, 1.0)).xyz;
   vec3 hashVal = hash(grassBladeWorldPos);
@@ -112,7 +114,9 @@ void main() {
   float heightPercent = float(vertID - xTest) / (float(GRASS_SEGMENTS) * 2.0);
 
   float width = GRASS_WIDTH * easeOut(1.0 - heightPercent, 0.5); // MAYBE DELETE THE EASEOUT
-  float height = GRASS_HEIGHT;
+  // Per-blade height jitter (±20%) using hashed world position
+  float heightJitter = remap(hashVal.z, -1.0, 1.0, 0.8, 1.2);
+  float height = GRASS_HEIGHT * heightJitter;
 
   // Calculate the vertex position
   float x = (xSide - 0.5) * width;
@@ -121,10 +125,10 @@ void main() {
 
     // Grass lean factor
   float stiffness = 1.0;
-  float windStrength = noise(vec3(grassBladeWorldPos.xz * 0.05, 0.0) + uTime);
+  float windStrength = noise(vec3(grassBladeWorldPos.xz * 0.5, 0.0) + uTime);
   float windAngle = 0.0;
   vec3 windAxis = vec3(cos(windAngle), 0.0, sin(windAngle));
-  float windLeanAngle = windStrength * 0.5 * heightPercent * stiffness;
+  float windLeanAngle = windStrength * 1.5 * heightPercent * stiffness;
 
   float randomLeanAnimation = noise(vec3(grassBladeWorldPos.xz, uTime * 4.0)) * (windStrength + 0.125);
 
@@ -145,6 +149,20 @@ void main() {
 
   vec3 grassLocalPosition = grassMat * vec3(x, y, z) + grassOffset;
 
+  // Infinite scroll: move grass toward camera over time
+  float range = GRASS_PATCH_SIZE * FORWARD_SCALE * 2.0;
+  float halfRange = range * 0.5;
+  float scrollSpeed = 2.0; // units per second
+
+  // Offset Z by time, then wrap within [-halfRange, halfRange]
+  float scrolledZ = grassLocalPosition.z + uTimeMove * scrollSpeed;
+  float wrappedZ = mod(scrolledZ + halfRange, range) - halfRange;
+  grassLocalPosition.z = wrappedZ;
+
+  // Calculate edge fade (0 at edges, 1 in middle)
+  float fadeMargin = halfRange * 0.55; // 15% fade zone at each edge
+  float distFromEdge = halfRange - abs(wrappedZ);
+  float edgeFade = smoothstep(0.0, fadeMargin, distFromEdge);
 
   vColour = mix(BASE_COLOUR, TIP_COLOUR, heightPercent * 0.5);
   vColour = mix(vec3(1.0, 0.0, 0.0), vColour, stiffness);
@@ -152,7 +170,8 @@ void main() {
   // Set normal for lighting (up direction in local grass space, transformed)
   vNormal = normalize(grassMat * vec3(0.0, 1.0, 0.0));
 
+  // Standard transform (works!)
   gl_Position = projectionMatrix * modelViewMatrix * vec4(grassLocalPosition, 1.0);
 
-  vGrassData = vec4(x, heightPercent, xSide, 1.0);
+  vGrassData = vec4(x, heightPercent, xSide, edgeFade);
 }

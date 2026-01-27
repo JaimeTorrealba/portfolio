@@ -7,7 +7,7 @@ import { useMainStore } from "@/stores";
 import "three-hex-tiling";
 import Smoke from "./Smoke.vue";
 import Trees from "./Trees.vue";
-import Sound from "./Sound.vue";
+// import Sound from "./Sound.vue";
 import Grass from "./Grass.vue";
 
 const props = defineProps({
@@ -80,7 +80,7 @@ onBeforeRender(({ elapsed }) => {
     :rotate-z="Math.PI * -0.5"
     name="Floor"
   >
-    <TresPlaneGeometry :args="[100, 100, 10, 10]" />
+    <TresPlaneGeometry :args="[100, 25, 10, 10]" />
     <TresMeshPhysicalMaterial
       ref="floorMaterial"
       v-bind="floorTextures"
