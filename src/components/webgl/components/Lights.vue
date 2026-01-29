@@ -1,14 +1,10 @@
 <script setup>
 import { shallowRef, watch } from "vue";
-import { useTresContext, useLoop } from "@tresjs/core";
+import { useTres, useLoop } from "@tresjs/core";
 import { useMouse, useWindowSize } from "@vueuse/core";
 import { Object3D } from "three";
 
-defineProps({
-  scaleFactor: Number,
-});
-
-const { scene } = useTresContext();
+const { scene } = useTres();
 const spotLightRef = shallowRef(null);
 const { x, y } = useMouse();
 const { width, height } = useWindowSize();
@@ -24,7 +20,6 @@ watch(
       const ndcX = (newX / width.value) * 2 - 1;
       const ndcY = -(newY / height.value) * 2 + 1;
       const target = { x: ndcX * 20, y: ndcY * 20, z: -25 };
-
       targetObject.position.set(target.x, target.y, target.z);
       if (!spotLightRef.value.target) {
         spotLightRef.value.target = {};
@@ -59,5 +54,5 @@ onBeforeRender(() => {
     :position="[0, 5, 25]"
   />
   <TresAmbientLight color="#6FA28B" :intensity="0.75" />
-  <TresDirectionalLight color="#B8CDE0" :intensity="0.05" :position="[0, 5, -50]" />
+  <TresDirectionalLight color="#B8CDE0" :intensity="0.5" :position="[0, 5, -50]" />
 </template>
