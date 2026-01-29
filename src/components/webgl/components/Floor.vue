@@ -1,10 +1,11 @@
 <script setup>
-import { shallowRef, watch, reactive } from "vue";
+import { shallowRef, watch, reactive, onMounted } from "vue";
 import { useLoop } from "@tresjs/core";
 import { useTextures } from "@tresjs/cientos";
 import { RepeatWrapping } from "three";
-import { Pane } from "tweakpane";
-import { onMounted } from "vue";
+import { usePaneStore } from '@/stores/pane'
+
+const store = usePaneStore()
 
 const options = reactive({
   stop: false,
@@ -18,9 +19,8 @@ const options = reactive({
 });
 
 onMounted(() => {
-  console.log(window.location.href);
   if (!window.location.href.includes("#debug")) return;
-  const pane = new Pane();
+  const pane = store.pane;
   const folder = pane.addFolder({ title: "Floor" });
   folder.addBinding(options, "stop");
   folder.addBinding(options, "visibility");

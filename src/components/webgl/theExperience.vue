@@ -7,6 +7,7 @@ import { PCFSoftShadowMap, SRGBColorSpace, ACESFilmicToneMapping } from "three";
 import TheEnvironment from "./components/TheEnvironment.vue";
 import Lights from "./components/Lights.vue";
 import Floor from './components/Floor.vue';
+import Precipitation from './components/Precipitation.vue';
 // import CameraMouse from "./components/CameraMouse.vue";
 
 const cameraRef = ref();
@@ -25,9 +26,6 @@ const gl = {
 const createWebGPURenderer = (ctx) => {
   const renderer = new WebGPURenderer({
     canvas: toValue(ctx.canvas),
-    // WebGPU specific configuration
-    alpha: true,
-    antialias: true,
   })
   return renderer
 }
@@ -41,11 +39,13 @@ watch(cameraRef, (camera) => {
 <template>
   <TresCanvas v-bind="gl" window-size :renderer="createWebGPURenderer">
     <TresPerspectiveCamera ref="cameraRef" :position="[0, 5, 25]" />
+    <TresFog color="#111" :near="8" :far="95" />
     <Stats />
     <!-- <CameraMouse /> -->
-     <Floor />
+    <Precipitation />
+    <Floor />
     <Lights />
-    <TheEnvironment />
+    <!-- <TheEnvironment /> -->
   </TresCanvas>
 </template>
 <style>
