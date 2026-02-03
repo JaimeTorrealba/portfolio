@@ -35,7 +35,7 @@ onMounted(() => {
   // Ambient Light
   const ambientFolder = folder.addFolder({ title: "Ambient Light" });
   ambientFolder.addBinding(options, "ambientVisible");
-  ambientFolder.addBinding(options, "ambientIntensity", { min: 0, max: 2, step: 0.01 });
+  ambientFolder.addBinding(options, "ambientIntensity", { min: 0, max: 20, step: 0.01 });
   ambientFolder.addBinding(options, "ambientColor");
 
   // Directional Light

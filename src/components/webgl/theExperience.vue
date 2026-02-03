@@ -4,9 +4,9 @@ import { ref, watch, toValue } from "vue";
 import { TresCanvas } from "@tresjs/core";
 import { Stats } from "@tresjs/cientos";
 import { PCFSoftShadowMap, SRGBColorSpace, ACESFilmicToneMapping } from "three";
-import TheEnvironment from "./components/TheEnvironment.vue";
 import Lights from "./components/Lights.vue";
 import Floor from './components/Floor.vue';
+import Trees from './components/Trees.vue';
 import Precipitation from './components/Precipitation.vue';
 // import CameraMouse from "./components/CameraMouse.vue";
 
@@ -42,6 +42,7 @@ watch(cameraRef, (camera) => {
     <TresFog color="#111" :near="8" :far="95" />
     <Stats />
     <!-- <CameraMouse /> -->
+    <Trees />
     <Precipitation />
     <Floor />
     <Lights />
