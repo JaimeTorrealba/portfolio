@@ -7,7 +7,7 @@ import { usePaneStore } from "@/stores/pane";
 const store = usePaneStore();
 const { camera } = useTres();
 const options = reactive({
-  treeCount: 2,
+  treeCount: 1,
   speed: 12.5,
   visible: true,
 });
@@ -15,7 +15,7 @@ const options = reactive({
 onMounted(async () => {
   await nextTick();
     for (let i = 0; i < options.treeCount; i++){
-    let xPos = Math.random() * (10 * i) - 10;
+    let xPos = Math.random() * (20 * i) - 20;
     if (xPos > -5 && xPos < 5) xPos *= 1.5;
     createTree(xPos);
   }
@@ -33,7 +33,7 @@ const createTree = (_x) => {
   const tree = new Tree();
   const randomScale = 2 + (Math.random() - 0.5) * 2;
   tree.scale.set(randomScale, randomScale, randomScale);
-  tree.position.set(_x, 0, Math.random() * 100 - 100);
+  tree.position.set(_x, 0, Math.random() * 100 - 125);
   tree.options.seed = Math.random() * 10000;
   tree.options.leaves.size = 0;
   tree.generate();
@@ -46,7 +46,7 @@ const trees = [];
 
 setTimeout(() => {
   for (let i = 0; i < options.treeCount; i++){
-    createTree(Math.random() * 10 + 10);
+    createTree(Math.random() * 10 + 20);
   }
 }, Math.random() * 5000);
 
@@ -56,11 +56,11 @@ onBeforeRender(({ delta }) => {
   if (trees.length > 0) {
     trees.forEach((tree) => {;
       tree.position.z += delta * options.speed;
-      if (tree.position.z > camera.value.position.z + 10) {
+      if (tree.position.z > camera.value.position.z + 15) {
         treesRef.value.remove(tree);
         trees.splice(trees.indexOf(tree), 1);
         const leftRight =
-          tree.position.x < 0 ? Math.random() * 10 - 20 : Math.random() * 10 + 10;
+          tree.position.x < 0 ? Math.random() * 10 - 20 : Math.random() * 10 + 20;
         createTree(leftRight);
       }
     });
@@ -68,5 +68,5 @@ onBeforeRender(({ delta }) => {
 });
 </script>
 <template>
-    <TresGroup :position-y="-4.1" ref="treesRef" :visible="options.visible" />
+    <TresGroup :position-y="-5.1" ref="treesRef" :visible="options.visible" />
 </template>

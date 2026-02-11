@@ -10,12 +10,13 @@ const store = usePaneStore()
 const options = reactive({
   stop: false,
   visibility: true,
-  repeatTexS: 4,
-  repeatTexT: 4,
+  repeatTexS: 2,
+  repeatTexT: 2,
   speed: 0.25,
-  normalScale: 2,
-  roughness: 0.75,
-  aoMapIntensity: 1,
+  normalScale: 5,
+  roughness: 1,
+  aoMapIntensity: 2.2,
+  dispMapIntensity: 0.1,
 });
 
 onMounted(() => {
@@ -43,6 +44,7 @@ onMounted(() => {
   folder.addBinding(options, "normalScale", { min: 0, max: 5, step: 0.1 });
   folder.addBinding(options, "roughness", { min: 0, max: 1, step: 0.01 });
   folder.addBinding(options, "aoMapIntensity", { min: 0, max: 50, step: 0.1 });
+  folder.addBinding(options, "dispMapIntensity", { min: 0, max: 1, step: 0.01 });
 });
 
 const { textures: floorTextures, isLoading: floorTexturesLoading } = useTextures([
@@ -50,6 +52,7 @@ const { textures: floorTextures, isLoading: floorTexturesLoading } = useTextures
   "/textures/floor/floor_nor.jpg",
   "/textures/floor/floor_rough.jpg",
   "/textures/floor/floor_ao.jpg",
+  "/textures/floor/floor_height.png",
 ]);
 
 watch(floorTextures, (newTextures) => {
@@ -70,16 +73,17 @@ onBeforeRender(({ elapsed }) => {
   floorMaterial.value.normalMap.offset.y = elapsed * options.speed;
   floorMaterial.value.roughnessMap.offset.y = elapsed * options.speed;
   floorMaterial.value.aoMap.offset.y = elapsed * options.speed;
+  floorMaterial.value.displacementMap.offset.y = elapsed * options.speed;
 });
 </script>
 <template>
   <TresMesh
     v-if="!floorTexturesLoading"
-    :position="[0, -3, -20]"
+    :position="[0, -2, -20]"
     :rotate-x="Math.PI * -0.5"
     :visible="options.visibility"
   >
-    <TresPlaneGeometry :args="[25, 100, 10, 10]" />
+    <TresPlaneGeometry :args="[25, 100, 100, 100]" />
     <TresMeshPhysicalMaterial
       ref="floorMaterial"
       :map="floorTextures[0]"
@@ -89,6 +93,8 @@ onBeforeRender(({ elapsed }) => {
       :normal-scale="options.normalScale"
       :roughness="options.roughness"
       :aoMap-intensity="options.aoMapIntensity"
+      :displacement-map="floorTextures[4]"
+      :displacement-scale="options.dispMapIntensity"
     />
   </TresMesh>
 </template>

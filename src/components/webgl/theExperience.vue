@@ -7,6 +7,7 @@ import { PCFSoftShadowMap, SRGBColorSpace, ACESFilmicToneMapping } from "three";
 import Lights from "./components/Lights.vue";
 import Floor from './components/Floor.vue';
 import Trees from './components/Trees.vue';
+import Grass from './components/Grass.vue';
 import Precipitation from './components/Precipitation.vue';
 // import CameraMouse from "./components/CameraMouse.vue";
 
@@ -44,6 +45,7 @@ watch(cameraRef, (camera) => {
     <!-- <CameraMouse /> -->
     <Trees />
     <Precipitation />
+    <Grass />
     <Floor />
     <Lights />
     <!-- <TheEnvironment /> -->
