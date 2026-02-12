@@ -235,21 +235,6 @@ watch([width, height], ([w, h]) => {
 </script>
 
 <template>
-  <!-- Lights -->
-  <TresDirectionalLight
-    ref="directionalLightRef"
-    :args="[0xffffff, parameters.directionalLightIntensity]"
-    :position="[1, 1, 1]"
-    cast-shadow
-    :shadow-camera-near="0.5"
-    :shadow-camera-far="500"
-    :shadow-camera-left="-50"
-    :shadow-camera-right="50"
-    :shadow-camera-top="50"
-    :shadow-camera-bottom="-50"
-    :shadow-mapSize="[2048, 2048]"
-  />
-
   <!-- Volumetric Cloud Container (unit cube scaled up) -->
   <TresMesh ref="smokeRef" :scale="parameters.containerScale">
     <TresBoxGeometry :args="[1, 1, 1]" />

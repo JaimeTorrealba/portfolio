@@ -3,7 +3,7 @@ import { WebGPURenderer } from 'three/webgpu'
 import { ref, watch, toValue } from "vue";
 import { TresCanvas } from "@tresjs/core";
 import { Stats } from "@tresjs/cientos";
-import { PCFSoftShadowMap, SRGBColorSpace, ACESFilmicToneMapping } from "three";
+import { SRGBColorSpace, ACESFilmicToneMapping } from "three";
 import Lights from "./components/Lights.vue";
 import Floor from './components/Floor.vue';
 import Trees from './components/Trees.vue';
@@ -11,13 +11,15 @@ import Grass from './components/Grass.vue';
 import Precipitation from './components/Precipitation.vue';
 // import CameraMouse from "./components/CameraMouse.vue";
 
+// TODO: add custom fog to tsl
+
+
 const cameraRef = ref();
 
 const gl = {
   clearColor: "#111",
-  shadows: true,
+  shadows: false,
   alpha: false,
-  shadowMapType: PCFSoftShadowMap,
   outputColorSpace: SRGBColorSpace,
   toneMapping: ACESFilmicToneMapping,
   toneMappingExposure: 1.0,

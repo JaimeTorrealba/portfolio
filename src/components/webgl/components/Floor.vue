@@ -13,7 +13,7 @@ const options = reactive({
   repeatTexS: 2,
   repeatTexT: 2,
   speed: 0.25,
-  normalScale: 5,
+  normalScale: 0.2,
   roughness: 1,
   aoMapIntensity: 2.2,
   dispMapIntensity: 0.1,

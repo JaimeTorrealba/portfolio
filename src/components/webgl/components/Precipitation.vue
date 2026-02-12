@@ -9,7 +9,7 @@ const options = reactive({
     visibility: true,
   speed: 0.25,
   size: 0.15,
-  count: 100,
+  count: 200,
   opacity: 0.8,
 });
 
@@ -43,8 +43,8 @@ watch(pointRef, (point) => {
     v-if="options.visibility && !startParticleLoading"
     :rotate-x="Math.PI * -0.5"
     :position="[0, 10, 10]"
-    :area="[30, 30, 30]"
-    :randomness="0"
+    :area="[20, 20, 20]"
+    :randomness="1"
     :count="options.count"
     :size="options.size"
     :color="0xffd700"

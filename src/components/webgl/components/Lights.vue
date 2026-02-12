@@ -9,11 +9,11 @@ const store = usePaneStore();
 
 const options = reactive({
   // ambientLight
-  ambientIntensity: 0.75,
+  ambientIntensity: 0.9,
   ambientVisible: true,
   ambientColor: "#77A2E8",
   // directionalLight
-  directionalIntensity: 0.5,
+  directionalIntensity: 0.75,
   directionalVisible: true,
   directionalColor: "#ccc",
   directionalPosition: { x: 0, y: 5, z: -50 },
@@ -118,14 +118,6 @@ watch(
   { immediate: true }
 );
 
-watch(
-  renderer,
-  () => {
-    updateSpotTarget(x.value, y.value);
-  },
-  { immediate: true }
-);
-
 const { onBeforeRender } = useLoop();
 
 onBeforeRender(() => {
@@ -142,7 +134,6 @@ onBeforeRender(() => {
   <TresSpotLight
     v-if="options.spotVisible"
     ref="spotLightRef"
-    cast-shadow
     :color="options.spotColor"
     :intensity="options.spotIntensity"
     :penumbra="options.spotPenumbra"

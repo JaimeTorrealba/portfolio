@@ -45,8 +45,8 @@ const options = reactive({
   grassSpeed: 0.3,
   grassMovement: 6,
   visible: true,
-  grassHeight: 10,
-  grassWidth: 0.25,
+  grassHeight: 12,
+  grassWidth: 0.3,
 });
 
 onMounted(() => {
