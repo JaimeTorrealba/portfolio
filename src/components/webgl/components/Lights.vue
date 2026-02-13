@@ -9,7 +9,7 @@ const store = usePaneStore();
 
 const options = reactive({
   // ambientLight
-  ambientIntensity: 0.9,
+  ambientIntensity: 0.8,
   ambientVisible: true,
   ambientColor: "#77A2E8",
   // directionalLight
@@ -30,7 +30,7 @@ const options = reactive({
 onMounted(() => {
   if (!window.location.href.includes("#debug")) return;
   const pane = store.pane;
-  const folder = pane.addFolder({ title: "Lights" });
+  const folder = pane.addFolder({ title: "Lights", expanded: false });
 
   // Ambient Light
   const ambientFolder = folder.addFolder({ title: "Ambient Light" });

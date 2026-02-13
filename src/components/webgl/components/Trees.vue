@@ -21,7 +21,7 @@ onMounted(async () => {
   }
   if (!window.location.href.includes("#debug")) return;
   const pane = store.pane;
-  const folder = pane.addFolder({ title: "Trees" });
+  const folder = pane.addFolder({ title: "Trees", expanded: false });
   folder.addBinding(options, "visible");
   folder.addBinding(options, "speed", { min: 0, max: 50, step: 0.5 });
   folder.addBinding(options, "treeCount", { min: 1, max: 10, step: 1 });

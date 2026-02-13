@@ -22,7 +22,7 @@ const options = reactive({
 onMounted(() => {
   if (!window.location.href.includes("#debug")) return;
   const pane = store.pane;
-  const folder = pane.addFolder({ title: "Floor" });
+  const folder = pane.addFolder({ title: "Floor", expanded: false });
   folder.addBinding(options, "stop");
   folder.addBinding(options, "visibility");
   folder

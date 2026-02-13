@@ -16,7 +16,7 @@ const options = reactive({
 onMounted(() => {
   if (!window.location.href.includes("#debug")) return;
   const pane = store.pane;
-  const folder = pane.addFolder({ title: "Precipitation" });
+  const folder = pane.addFolder({ title: "Precipitation", expanded: false });
     folder.addBinding(options, "visibility");
   folder.addBinding(options, "speed", { min: 0, max: 1, step: 0.01 });
   folder.addBinding(options, "size", { min: 0, max: 1, step: 0.01 });

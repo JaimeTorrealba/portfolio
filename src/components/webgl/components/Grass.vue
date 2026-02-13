@@ -52,7 +52,7 @@ const options = reactive({
 onMounted(() => {
   if (!window.location.href.includes("#debug")) return;
   const pane = store.pane;
-  const folder = pane.addFolder({ title: "Grass" });
+  const folder = pane.addFolder({ title: "Grass", expanded: false });
   folder.addBinding(options, "visible");
   folder.addBinding(options, "grassSpeed", { min: 0, max: 2, step: 0.01 });
   folder.addBinding(options, "grassMovement", { min: 0, max: 20, step: 0.1 });
@@ -332,6 +332,6 @@ onBeforeRender(({ elapsed }) => {
 });
 </script>
 <template>
-  <TresMesh :geometry="geo" :position="[20, -5, 0]" :material :visible="options.visible" />
-  <TresMesh :geometry="geo" :position="[-20, -5, 0]" :material :visible="options.visible" />
+  <TresMesh :geometry="geo" :position="[19, -5, 0]" :material :visible="options.visible" />
+  <TresMesh :geometry="geo" :position="[-19, -5, 0]" :material :visible="options.visible" />
 </template>

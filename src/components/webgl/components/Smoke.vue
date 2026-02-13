@@ -1,30 +1,53 @@
 <script setup>
-import { shallowRef, watch, reactive } from "vue";
-import { useLoop, useTresContext, useTexture } from "@tresjs/core";
+import { reactive, watch, onMounted, toRaw } from "vue";
+import { useLoop } from "@tresjs/core";
+import { useTexture } from "@tresjs/cientos";
 import {
   DataTexture,
   RepeatWrapping,
   NearestFilter,
-  GLSL3,
   BackSide,
   Data3DTexture,
   RedFormat,
   LinearFilter,
-  WebGLRenderTarget,
-  DepthTexture,
-  DepthFormat,
-  UnsignedShortType,
   Vector3,
   Vector2,
   Color,
-  Matrix4
 } from "three";
+import { MeshBasicNodeMaterial } from "three/webgpu";
+import {
+  varying,
+  uniform,
+  vec2,
+  vec3,
+  vec4,
+  float,
+  int,
+  Fn,
+  Loop,
+  If,
+  Break,
+  Discard,
+  min,
+  max,
+  mix,
+  smoothstep,
+  dot,
+  normalize,
+  exp,
+  pow,
+  mod,
+  texture,
+  texture3D,
+  PI,
+  screenCoordinate,
+  modelWorldMatrixInverse,
+  cameraPosition,
+  positionGeometry,
+} from "three/tsl";
 import { VolumetricMaskController } from "../utils/SmokeUtils";
-import VERTEX_SHADER from "../shaders/smoke/vertex.glsl";
-import FRAGMENT_SHADER from "../shaders/smoke/fragment.glsl";
-import { useWindowSize } from "@vueuse/core";
 import { useMainStore } from "@/stores";
-import { Pane } from "tweakpane";
+import { usePaneStore } from "@/stores/pane";
 
 const parameters = reactive({
   // Texture Generation
@@ -43,128 +66,308 @@ const parameters = reactive({
 
   // Material & Rendering (Shader)
   densityThreshold: 0.1,
-  densityMultiplier: 3.0,
+  densityMultiplier: 1.1,
   opacity: 3.0,
   raymarchSteps: 44,
   lightSteps: 1,
 
   // Scale & Animation
-  containerScale: 128.0,
+  containerScale: 60.0,
+  positionX: 0,
+  positionY: 5,
+  positionZ: 1,
+
   animationSpeedX: 0.02,
   animationSpeedY: 0.0,
-  animationSpeedZ: -0.25,
+  animationSpeedZ: -0.4,
   isAnimating: true,
 
   // Lighting
   ambientLightIntensity: 1.75,
-  directionalLightIntensity: 1,
   // Debug / Features
   useDepthOcclusion: false, // set to true to re-enable depth based occlusion
 });
 
-const pane = new Pane({ title: "Volumetric Smoke" });
-const folderGen = pane.addFolder({ title: "Texture Generation" });
-folderGen.addBinding(parameters, "cloudCoverage", { min: 0, max: 1, step: 0.01 });
-folderGen.addBinding(parameters, "cloudSoftness", { min: 0.01, max: 0.2, step: 0.01 });
-folderGen.addBinding(parameters, "noiseScale", { min: 0.1, max: 10, step: 0.1 });
-folderGen.addBinding(parameters, "octaves", { min: 1, max: 8, step: 1 });
-folderGen.addBinding(parameters, "persistence", { min: 0.1, max: 1, step: 0.05 });
-folderGen.addBinding(parameters, "lacunarity", { min: 1, max: 5, step: 0.1 });
-folderGen.addBinding(parameters, "noiseIntensity", { min: 0.1, max: 5, step: 0.1 });
-folderGen.addBinding(parameters, "seed", { min: 0, max: 1000, step: 1 });
-const folderMat = pane.addFolder({ title: "Material & Rendering" });
-folderMat.addBinding(parameters, "textureTiling", { min: 0.1, max: 10, step: 0.1 });
-folderMat.addBinding(parameters, "densityThreshold", { min: 0.01, max: 1, step: 0.01 });
-folderMat.addBinding(parameters, "densityMultiplier", { min: 0.1, max: 10, step: 0.1 });
-folderMat.addBinding(parameters, "opacity", { min: 0.1, max: 10, step: 0.1 });
-folderMat.addBinding(parameters, "raymarchSteps", { min: 10, max: 100, step: 1 });
-folderMat.addBinding(parameters, "lightSteps", { min: 1, max: 10, step: 1 });
-const folderAnim = pane.addFolder({ title: "Scale & Animation" });
-folderAnim.addBinding(parameters, "containerScale", { min: 10, max: 300, step: 1 });
-folderAnim.addBinding(parameters, "animationSpeedX", { min: -1, max: 1, step: 0.01 });
-folderAnim.addBinding(parameters, "animationSpeedY", { min: -1, max: 1, step: 0.01 });
-folderAnim.addBinding(parameters, "animationSpeedZ", { min: -1, max: 1, step: 0.01 });
-const folderLight = pane.addFolder({ title: "Lighting" }); 
-folderLight.addBinding(parameters, "ambientLightIntensity", { min: 0, max: 5, step: 0.1 });
-folderLight.addBinding(parameters, "directionalLightIntensity", { min: 0, max: 5, step: 0.1 });
-
-
-// ------- Refs & Context -------
-const { width, height } = useWindowSize();
-const { camera } = useTresContext();
-const directionalLightRef = shallowRef();
-const smokeRef = shallowRef();
+const paneStore = usePaneStore();
 const store = useMainStore();
 
-// A tiny 1x1 fallback texture for unused sampler uniforms
-const fallbackTexture = new DataTexture(new Uint8Array([0, 0, 0, 255]), 1, 1);
-fallbackTexture.needsUpdate = true;
+onMounted(() => {
+  if (!window.location.href.includes("#debug")) return;
+  const pane = paneStore.pane;
+  const folder = pane.addFolder({ title: "Volumetric Smoke", expanded: false });
+
+  const folderGen = folder.addFolder({ title: "Texture Generation" });
+  folderGen.addBinding(parameters, "cloudCoverage", { min: 0, max: 1, step: 0.01 });
+  folderGen.addBinding(parameters, "cloudSoftness", { min: 0.01, max: 0.2, step: 0.01 });
+  folderGen.addBinding(parameters, "noiseScale", { min: 0.1, max: 10, step: 0.1 });
+  folderGen.addBinding(parameters, "octaves", { min: 1, max: 8, step: 1 });
+  folderGen.addBinding(parameters, "persistence", { min: 0.1, max: 1, step: 0.05 });
+  folderGen.addBinding(parameters, "lacunarity", { min: 1, max: 5, step: 0.1 });
+  folderGen.addBinding(parameters, "noiseIntensity", { min: 0.1, max: 5, step: 0.1 });
+  folderGen.addBinding(parameters, "seed", { min: 0, max: 1000, step: 1 });
+
+  const folderMat = folder.addFolder({ title: "Material & Rendering" });
+  folderMat.addBinding(parameters, "textureTiling", { min: 0.1, max: 10, step: 0.1 });
+  folderMat.addBinding(parameters, "densityThreshold", { min: 0.01, max: 1, step: 0.01 });
+  folderMat.addBinding(parameters, "densityMultiplier", { min: 0.1, max: 10, step: 0.1 });
+  folderMat.addBinding(parameters, "opacity", { min: 0.1, max: 10, step: 0.1 });
+  folderMat.addBinding(parameters, "raymarchSteps", { min: 10, max: 100, step: 1 });
+  folderMat.addBinding(parameters, "lightSteps", { min: 1, max: 10, step: 1 });
+
+  const folderAnim = folder.addFolder({ title: "Scale & Animation" });
+  folderAnim.addBinding(parameters, "containerScale", { min: 10, max: 300, step: 1 });
+  folderAnim.addBinding(parameters, "positionX", { min: -20, max: 20, step: 1 });
+  folderAnim.addBinding(parameters, "positionY", { min: -20, max: 20, step: 1 });
+  folderAnim.addBinding(parameters, "positionZ", { min: -20, max: 20, step: 1 });
+  folderAnim.addBinding(parameters, "animationSpeedX", { min: -1, max: 1, step: 0.01 });
+  folderAnim.addBinding(parameters, "animationSpeedY", { min: -1, max: 1, step: 0.01 });
+  folderAnim.addBinding(parameters, "animationSpeedZ", { min: -1, max: 1, step: 0.01 });
+
+  const folderLight = folder.addFolder({ title: "Lighting" });
+  folderLight.addBinding(parameters, "ambientLightIntensity", {
+    min: 0,
+    max: 5,
+    step: 0.1,
+  });
+});
+
+// A tiny 1x1 fallback 2D texture for sampler uniforms
+const fallbackBlueNoise = new DataTexture(new Uint8Array([0, 0, 0, 255]), 1, 1);
+fallbackBlueNoise.needsUpdate = true;
+
+// A tiny 1x1x1 fallback volume texture for sampler uniforms
+const fallbackVolumeTexture = new Data3DTexture(new Uint8Array([0]), 1, 1, 1);
+fallbackVolumeTexture.format = RedFormat;
+fallbackVolumeTexture.minFilter = LinearFilter;
+fallbackVolumeTexture.magFilter = LinearFilter;
+fallbackVolumeTexture.unpackAlignment = 1;
+fallbackVolumeTexture.needsUpdate = true;
 
 // Use a blue-noise-like texture (we reuse an available asset for jitter)
-const { map: blueNoise } = await useTexture({ map: "/textures/Cloud.png" });
+const { state: blueNoise } = useTexture("/textures/Cloud.png");
 
-blueNoise.wrapS = RepeatWrapping;
-blueNoise.wrapT = RepeatWrapping;
-blueNoise.minFilter = NearestFilter;
-blueNoise.magFilter = NearestFilter;
-blueNoise.needsUpdate = true;
+watch(blueNoise, (tex) => {
+  if (!tex) return;
+  tex.wrapS = RepeatWrapping;
+  tex.wrapT = RepeatWrapping;
+  tex.minFilter = NearestFilter;
+  tex.magFilter = NearestFilter;
+  tex.needsUpdate = true;
+  blueNoiseTex.value = tex;
+  if (tex.image?.width && tex.image?.height) {
+    uBlueNoiseSize.value.set(tex.image.width, tex.image.height);
+  }
+});
 
 // Mask controller creates u_mask_* uniforms and 3D shape noise textures
 const maskController = new VolumetricMaskController();
 
-// ------- Shader Material -------
-const shader = {
-  uniforms: {
-    ...maskController.uniforms,
-    uVolumeTexture: { value: null },
-    uTextureOffset: { value: new Vector3(0, 0, 0) },
-    uTextureTiling: { value: parameters.textureTiling },
-    uBlueNoise: { value: null },
-    uBlueNoiseSize: {
-      value: new Vector2(32, 32),
-    },
-    uResolution: { value: new Vector2(width.value, height.value) },
-    cameraPos: { value: camera.value.position },
-    uSunColor: { value: new Color(0xffffff) },
-    uSunIntensity: { value: parameters.directionalLightIntensity },
-    uLightDir: { value: new Vector3(0, 5, 25).normalize() },
-    uAmbientColor: { value: new Color(0xb8cde0) },
-    uAmbientIntensity: { value: parameters.ambientLightIntensity },
-    uOpacity: { value: parameters.opacity },
-    uMaxSteps: { value: parameters.raymarchSteps },
-    uLightSteps: { value: parameters.lightSteps },
-    uDensityThreshold: { value: parameters.densityThreshold },
-    uDensityMultiplier: { value: parameters.densityMultiplier },
-    uDepthTexture: { value: fallbackTexture },
-    uProjectionMatrixInverse: { value: camera.value.projectionMatrixInverse },
-    // We keep the inverse (camera.matrixWorld) but also send the actual viewMatrix to avoid per-fragment inversion cost
-    uViewMatrixInverse: { value: camera.value.matrixWorld },
-    uViewMatrix: { value: camera.value.matrixWorldInverse },
-    uModelMatrix: { value: new Matrix4() },
-    uContainerScale: { value: parameters.containerScale },
-    uProjectionMatrix: { value: camera.value.projectionMatrix },
-    uCameraNear: { value: camera.value.near },
-    uCameraFar: { value: camera.value.far },
-    uOcclusionMode: { value: false },
-    uDepthBias: { value: 0.5 }, // world-space bias to reduce popping holes when geometry moves
-    uUseDepthOcclusion: { value: parameters.useDepthOcclusion },
-  },
-  vertexShader: VERTEX_SHADER,
-  fragmentShader: FRAGMENT_SHADER,
-  glslVersion: GLSL3,
-  side: BackSide,
-  transparent: true,
-  depthWrite: false,
-  depthTest: false,
-};
+// ------- TSL Material (WebGPU) -------
+const material = new MeshBasicNodeMaterial();
+material.transparent = true;
+material.depthWrite = false;
+material.depthTest = false;
+material.side = BackSide;
 
-shader.uniforms.uBlueNoise.value = blueNoise;
-shader.uniforms.uBlueNoiseSize.value.x = blueNoise.width;
-shader.uniforms.uBlueNoiseSize.value.y = blueNoise.height;
+const volumeTex = texture3D(fallbackVolumeTexture);
+const uTextureOffset = uniform(new Vector3(0, 0, 0));
+const uTextureTiling = uniform(parameters.textureTiling);
+const uBlueNoiseSize = uniform(new Vector2(1, 1));
+const uSunColor = uniform(new Color(0xd0d4d8));
+const uSunIntensity = uniform(5);
+const uLightDir = uniform(new Vector3(0, 5, 25).normalize());
+const uAmbientColor = uniform(new Color(0xaeb3b8));
+const uAmbientIntensity = uniform(parameters.ambientLightIntensity);
+const uOpacity = uniform(parameters.opacity);
+const uMaxSteps = uniform(parameters.raymarchSteps);
+const uLightSteps = uniform(parameters.lightSteps);
+const uDensityThreshold = uniform(parameters.densityThreshold);
+const uDensityMultiplier = uniform(parameters.densityMultiplier);
+const uMaskRaio = uniform(maskController.uniforms.u_mask_raio.value);
+const uMaskAchatamentoCima = uniform(
+  maskController.uniforms.u_mask_achatamentoCima.value
+);
+const uMaskAchatamentoBaixo = uniform(
+  maskController.uniforms.u_mask_achatamentoBaixo.value
+);
+const uMaskAchatamentoXpos = uniform(
+  maskController.uniforms.u_mask_achatamentoXpos.value
+);
+const uMaskAchatamentoXneg = uniform(
+  maskController.uniforms.u_mask_achatamentoXneg.value
+);
+const uMaskAchatamentoZpos = uniform(
+  maskController.uniforms.u_mask_achatamentoZpos.value
+);
+const uMaskAchatamentoZneg = uniform(
+  maskController.uniforms.u_mask_achatamentoZneg.value
+);
+const uMaskSoftness = uniform(maskController.uniforms.u_mask_softness.value);
+const uMaskForcaRuido = uniform(maskController.uniforms.u_mask_forcaRuido.value);
+const maskNoiseTex = texture3D(
+  maskController.uniforms.u_mask_noiseMap.value ?? fallbackVolumeTexture
+);
+const uMaskForcaRuidoDetalhe = uniform(
+  maskController.uniforms.u_mask_forcaRuidoDetalhe.value
+);
+const maskNoiseDetailTex = texture3D(
+  maskController.uniforms.u_mask_noiseDetailMap.value ?? fallbackVolumeTexture
+);
+const uMaskVisualize = uniform(maskController.uniforms.u_mask_visualize.value);
+
+const blueNoiseTex = texture(fallbackBlueNoise);
+
+const EXTINCTION_MULT = vec3(0.6, 0.65, 0.7);
+const DUAL_LOBE_WEIGHT = float(0.8);
+
+const hitBox = Fn(({ orig, dir }) => {
+  const boxMin = vec3(-0.5);
+  const boxMax = vec3(0.5);
+  const invDir = dir.reciprocal();
+  const tminTmp = boxMin.sub(orig).mul(invDir);
+  const tmaxTmp = boxMax.sub(orig).mul(invDir);
+  const tmin = min(tminTmp, tmaxTmp);
+  const tmax = max(tminTmp, tmaxTmp);
+  const t0 = max(tmin.x, max(tmin.y, tmin.z));
+  const t1 = min(tmax.x, min(tmax.y, tmax.z));
+  return vec2(t0, t1);
+});
+
+const getMaskSDF = Fn(({ p }) => {
+  const q = vec3(p).toVar();
+  q.y.divAssign(p.y.greaterThan(0.0).select(uMaskAchatamentoCima, uMaskAchatamentoBaixo));
+  q.x.divAssign(p.x.greaterThan(0.0).select(uMaskAchatamentoXpos, uMaskAchatamentoXneg));
+  q.z.divAssign(p.z.greaterThan(0.0).select(uMaskAchatamentoZpos, uMaskAchatamentoZneg));
+  const dist = q.length();
+  const dir = q.div(dist);
+  const texCoord = dir.mul(uMaskRaio).mul(0.5).add(0.5);
+  const n1 = maskNoiseTex.sample(texCoord).r.mul(2.0).sub(1.0);
+  const n2 = maskNoiseDetailTex.sample(texCoord).r.mul(2.0).sub(1.0);
+  const disp = n1.mul(uMaskForcaRuido).add(n2.mul(uMaskForcaRuidoDetalhe));
+  const sdf = uMaskRaio.add(disp).sub(dist);
+  return uMaskRaio.lessThanEqual(0.0).select(float(-1.0), sdf);
+});
+
+const getMaskFactor = Fn(({ p }) => {
+  const sdf = getMaskSDF({ p });
+  return smoothstep(0.0, uMaskSoftness, sdf);
+});
+
+const HenyeyGreenstein = Fn(({ g, mu }) => {
+  const gg = g.mul(g);
+  const denom = pow(float(1.0).add(gg).sub(float(2.0).mul(g).mul(mu)), 1.5);
+  return float(1.0).div(float(4.0).mul(PI)).mul(float(1.0).sub(gg)).div(denom);
+});
+
+const PhaseFunction = Fn(({ g, costh }) => {
+  const hgBack = HenyeyGreenstein({ g: g.negate(), mu: costh });
+  const hgForward = HenyeyGreenstein({ g, mu: costh });
+  return mix(hgBack, hgForward, DUAL_LOBE_WEIGHT);
+});
+
+const getDensity = Fn(({ p }) => {
+  const mask = getMaskFactor({ p });
+  const texCoord = p.add(0.5).mul(uTextureTiling).add(uTextureOffset);
+  const d = volumeTex.sample(texCoord).r;
+  const filtered = d.lessThan(uDensityThreshold).select(float(0.0), d);
+  const base = uMaskVisualize.select(float(1.0), filtered);
+  return base.mul(uDensityMultiplier).mul(mask);
+});
+
+const CalculateLightEnergy = Fn(({ samplePos, lightDir }) => {
+  const stepLength = float(1.0).div(float(uLightSteps));
+  const acc = float(0.0).toVar();
+
+  Loop(int(uLightSteps), ({ i }) => {
+    const stepT = float(i).add(0.5).mul(stepLength);
+    const p = samplePos.add(lightDir.mul(stepT));
+    const inside = p.x
+      .greaterThan(-0.5)
+      .and(p.x.lessThan(0.5))
+      .and(p.y.greaterThan(-0.5))
+      .and(p.y.lessThan(0.5))
+      .and(p.z.greaterThan(-0.5))
+      .and(p.z.lessThan(0.5));
+
+    If(inside, () => {
+      acc.addAssign(getDensity({ p }).mul(stepLength));
+    });
+  });
+
+  return exp(acc.negate());
+});
+
+const vOrigin = varying(vec3(modelWorldMatrixInverse.mul(vec4(cameraPosition, 1.0))));
+const vDirection = varying(positionGeometry.sub(vOrigin));
+
+material.colorNode = Fn(() => {
+  const rayDir = normalize(vDirection);
+  const bounds = vec2(hitBox({ orig: vOrigin, dir: rayDir })).toVar();
+
+  If(bounds.x.greaterThanEqual(bounds.y), () => {
+    Discard();
+  });
+
+  bounds.assign(vec2(max(bounds.x, 0.0), bounds.y));
+
+  const rayLength = bounds.y.sub(bounds.x).toVar();
+  If(rayLength.lessThan(0.001), () => {
+    Discard();
+  });
+
+  const stepSize = rayLength.div(float(uMaxSteps));
+  const jitterUv = mod(screenCoordinate, uBlueNoiseSize).div(uBlueNoiseSize);
+  const jitter = blueNoiseTex.sample(jitterUv).r;
+  const p = vec3(vOrigin.add(bounds.x.add(jitter.mul(stepSize)).mul(rayDir))).toVar();
+
+  const accumulatedColor = vec3(0.0).toVar();
+  const transmittance = vec3(1.0).toVar();
+  const mu = dot(rayDir, uLightDir);
+  const fadeZone = stepSize.mul(2.0);
+
+  Loop(int(uMaxSteps), ({ i }) => {
+    const distTraveled = float(i).mul(stepSize).add(jitter.mul(stepSize));
+    const distRemaining = rayLength.sub(distTraveled);
+
+    If(distRemaining.lessThan(0.0), () => {
+      Break();
+    });
+
+    const density = getDensity({ p });
+
+    If(density.greaterThan(0.01), () => {
+      const lightEnergy = CalculateLightEnergy({ samplePos: p, lightDir: uLightDir });
+      const sunL = uSunColor.mul(uSunIntensity).mul(lightEnergy);
+      const phase = PhaseFunction({ g: float(0.3), costh: mu });
+      const sunScatter = sunL.mul(phase);
+      const ambScatter = uAmbientColor.mul(uAmbientIntensity);
+      const total = sunScatter.add(ambScatter).mul(density).mul(stepSize);
+      const fadeA = smoothstep(0.0, fadeZone, distRemaining);
+      const faded = total.mul(fadeA);
+      const stepT = exp(
+        density.mul(stepSize).mul(EXTINCTION_MULT).mul(uOpacity).negate()
+      );
+
+      accumulatedColor.addAssign(transmittance.mul(faded));
+      transmittance.mulAssign(stepT);
+
+      If(transmittance.length().lessThan(0.01), () => {
+        Break();
+      });
+    });
+
+    p.addAssign(rayDir.mul(stepSize));
+  });
+
+  return vec4(accumulatedColor, float(1.0).sub(transmittance.x));
+})();
 
 // WEB WORKER
 
-const parametersClone = { ...parameters };
+const parametersClone =
+  typeof structuredClone === "function"
+    ? structuredClone(toRaw(parameters))
+    : JSON.parse(JSON.stringify(toRaw(parameters)));
 const myWorker = new Worker(new URL("SmokeWorker.js", import.meta.url));
 myWorker.postMessage(parametersClone);
 myWorker.onmessage = (e) => {
@@ -178,66 +381,37 @@ myWorker.onmessage = (e) => {
   texture.wrapT = RepeatWrapping;
   texture.wrapR = RepeatWrapping;
   texture.needsUpdate = true;
-  store.finishLoading = true;
+  // store.finishLoading = true;
   set3DTexture(texture);
 };
 
 const set3DTexture = (texture) => {
-  shader.uniforms.uVolumeTexture.value = texture;
+  volumeTex.value = texture;
 };
-
-// Create a depth render target for occlusion
-let depthTarget = new WebGLRenderTarget(width.value, height.value);
-depthTarget.depthTexture = new DepthTexture(width.value, height.value);
-depthTarget.depthTexture.format = DepthFormat;
-depthTarget.depthTexture.type = UnsignedShortType;
-depthTarget.depthBuffer = true;
-shader.uniforms.uDepthTexture.value = depthTarget.depthTexture;
 
 // Animate offsets + update matrices and light dir
 const animatedOffset = new Vector3();
 const { onBeforeRender } = useLoop();
 onBeforeRender(({ delta }) => {
-  // matrices and camera
-  shader.uniforms.uProjectionMatrixInverse.value.copy(
-    camera.value.projectionMatrixInverse
-  );
-  shader.uniforms.uViewMatrixInverse.value.copy(camera.value.matrixWorld);
-  shader.uniforms.uViewMatrix.value.copy(camera.value.matrixWorldInverse);
-  if (smokeRef.value) {
-    shader.uniforms.uModelMatrix.value.copy(smokeRef.value.matrixWorld);
-  }
-  shader.uniforms.uProjectionMatrix.value.copy(camera.value.projectionMatrix);
-  shader.uniforms.cameraPos.value.copy(camera.value.position);
-
-  // light direction as normalized vector
-  if (directionalLightRef.value?.position) {
-    shader.uniforms.uLightDir.value.copy(
-      directionalLightRef.value.position.clone().normalize()
-    );
-  }
-
   const dt = delta ?? 0.016;
   animatedOffset.x += parameters.animationSpeedX * dt;
   animatedOffset.y += parameters.animationSpeedY * dt;
   animatedOffset.z += parameters.animationSpeedZ * dt;
-  shader.uniforms.uTextureOffset.value.copy(animatedOffset);
-});
+  uTextureOffset.value.copy(animatedOffset);
 
-// Keep resolution uniform in sync
-watch([width, height], ([w, h]) => {
-  shader.uniforms.uResolution.value.set(w, h);
-  // Resize the depth render target to match the canvas size
-  if (depthTarget) {
-    depthTarget.setSize(w, h);
-  }
+  // uTextureTiling.value = parameters.textureTiling;
+  // uAmbientIntensity.value = parameters.ambientLightIntensity;
+  // uOpacity.value = parameters.opacity;
+  // uMaxSteps.value = parameters.raymarchSteps;
+  // uLightSteps.value = parameters.lightSteps;
+  // uDensityThreshold.value = parameters.densityThreshold;
+  // uDensityMultiplier.value = parameters.densityMultiplier;
 });
 </script>
 
 <template>
   <!-- Volumetric Cloud Container (unit cube scaled up) -->
-  <TresMesh ref="smokeRef" :scale="parameters.containerScale">
+  <TresMesh :position="[parameters.positionX, parameters.positionY, parameters.positionZ]" :scale="parameters.containerScale" :material>
     <TresBoxGeometry :args="[1, 1, 1]" />
-    <TresShaderMaterial v-bind="shader" />
   </TresMesh>
 </template>

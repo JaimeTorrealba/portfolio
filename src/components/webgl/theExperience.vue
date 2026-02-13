@@ -7,12 +7,12 @@ import { SRGBColorSpace, ACESFilmicToneMapping } from "three";
 import Lights from "./components/Lights.vue";
 import Floor from './components/Floor.vue';
 import Trees from './components/Trees.vue';
+import Smoke from './components/Smoke.vue';
 import Grass from './components/Grass.vue';
 import Precipitation from './components/Precipitation.vue';
 // import CameraMouse from "./components/CameraMouse.vue";
 
 // TODO: add custom fog to tsl
-
 
 const cameraRef = ref();
 
@@ -46,6 +46,7 @@ watch(cameraRef, (camera) => {
     <Stats />
     <!-- <CameraMouse /> -->
     <Trees />
+    <Smoke />
     <Precipitation />
     <Grass />
     <Floor />
