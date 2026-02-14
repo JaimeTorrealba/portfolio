@@ -75,7 +75,7 @@ const parameters = reactive({
   containerScale: 60.0,
   positionX: 0,
   positionY: 3,
-  positionZ: 1,
+  positionZ: 3.5,
 
   animationSpeedX: 0.02,
   animationSpeedY: 0.0,

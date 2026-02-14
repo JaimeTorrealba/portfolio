@@ -61,7 +61,7 @@ onMounted(() => {
 });
 
 const NUM_GRASS = 30000;
-const GRASS_SEGMENTS = 10;
+const GRASS_SEGMENTS = 12;
 const GRASS_PATCH_SIZE = 15;
 
 const VERTICES = (GRASS_SEGMENTS + 1) * 2;

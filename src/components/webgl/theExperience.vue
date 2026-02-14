@@ -10,10 +10,11 @@ import Trees from './components/Trees.vue';
 import Smoke from './components/Smoke.vue';
 import Grass from './components/Grass.vue';
 import Precipitation from './components/Precipitation.vue';
-// import CameraMouse from "./components/CameraMouse.vue";
+import CameraMouse from "./components/CameraMouse.vue";
 
-// TODO: is too fast
-// TODO: add camera headBobbing
+// TODO: post processing
+// TODO: Card intro
+// TODO: addons like SPACE for running
 
 const cameraRef = ref();
 
@@ -45,7 +46,7 @@ watch(cameraRef, (camera) => {
     <TresPerspectiveCamera ref="cameraRef" :position="[0, 5, 25]" />
     <TresFog color="#111" :near="8" :far="95" />
     <Stats />
-    <!-- <CameraMouse /> -->
+    <CameraMouse />
     <Trees />
     <Smoke />
     <Precipitation />

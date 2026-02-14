@@ -1,61 +1,54 @@
 <script setup>
-import { useLoop, useTresContext } from "@tresjs/core";
+import { useLoop, useTres } from "@tresjs/core";
 import { useMouse, useWindowSize } from "@vueuse/core";
-import { computed, shallowRef, watch } from "vue";
-import { useMainStore } from "@/stores";
-import gsap from "gsap";
+import { computed, reactive, onMounted } from "vue";
+import { usePaneStore } from "@/stores/pane";
 
-const store = useMainStore();
-const { camera } = useTresContext();
+const paneStore = usePaneStore();
+const { camera } = useTres();
 
-watch(
-  () => store.isHovered,
-  (newVal) => {
-    if (newVal) {
-      gsap.to(camera.value, {
-        fov: 35,
-        duration: 1,
-        ease: "power2.out",
-        onUpdate: () => {
-          camera.value.updateProjectionMatrix();
-        },
-      });
-    } else {
-      gsap.to(camera.value, {
-        fov: 45,
-        duration: 1,
-        ease: "power2.out",
-        onUpdate: () => {
-          camera.value.updateProjectionMatrix();
-        },
-      });
-    }
-  }
-);
+const options = reactive({
+  factor: 0.25,
+  ease: 2.5,
+  headbobIntensity: 0.3,
+  headbobFrequency: 4,
+  headbobEnabled: true,
+});
+
+onMounted(() => {
+  if (!window.location.href.includes("#debug")) return;
+  const pane = paneStore.pane;
+  const folder = pane.addFolder({ title: "Camera Mouse", expanded: false });
+
+  folder.addBinding(options, "factor", { min: 0, max: 1, step: 0.01 });
+  folder.addBinding(options, "ease", { min: 0, max: 10, step: 0.1 });
+  folder.addBinding(options, "headbobIntensity", { min: 0, max: 1, step: 0.01 });
+  folder.addBinding(options, "headbobFrequency", { min: 0, max: 20, step: 0.5 });
+  folder.addBinding(options, "headbobEnabled");
+});
+
 
 const { x, y } = useMouse();
 const { width, height } = useWindowSize();
 
-const cameraGroupRef = shallowRef();
-const _factor = 0.5;
-const _ease = 1.5;
-
-const cursorX = computed(() => -(x.value / width.value - 0.5) * _factor);
-const cursorY = computed(() => -(y.value / height.value - 0.5) * _factor);
+const cursorX = computed(() => -(x.value / width.value - 0.5) * options.factor);
+const cursorY = computed(() => -(y.value / height.value - 0.5) * options.factor);
 
 const { onBeforeRender } = useLoop();
 
 onBeforeRender(({ elapsed, delta }) => {
-  const xMove = (cursorX.value - camera.value.rotation.y) * delta * _ease;
-  const yMove = (cursorY.value - camera.value.rotation.x) * delta * _ease;
+  const xMove = (cursorX.value - camera.value.rotation.y) * delta * options.ease;
+  const yMove = (cursorY.value - camera.value.rotation.x) * delta * options.ease;
   camera.value.rotation.x +=  yMove;
   camera.value.rotation.x = Math.max(-0.25, Math.min(0.25, camera.value.rotation.x));
   camera.value.rotation.y += xMove;
   camera.value.rotation.y = Math.max(-0.25, Math.min(0.25, camera.value.rotation.y));
-  camera.value.position.y = 5 + Math.sin(elapsed * 4) * 0.3;
+  if (options.headbobEnabled) {
+    camera.value.position.y = 5 + Math.sin(elapsed * options.headbobFrequency) * options.headbobIntensity;
+  }
 });
 </script>
 
 <template>
-  <TresGroup ref="cameraGroupRef" />
+  <TresGroup />
 </template>
