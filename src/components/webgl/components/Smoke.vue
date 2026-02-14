@@ -45,7 +45,7 @@ import {
   cameraPosition,
   positionGeometry,
 } from "three/tsl";
-import { VolumetricMaskController } from "../utils/SmokeUtils";
+import { VolumetricMaskController } from "../../../utils/SmokeUtils";
 import { useMainStore } from "@/stores";
 import { usePaneStore } from "@/stores/pane";
 
@@ -74,7 +74,7 @@ const parameters = reactive({
   // Scale & Animation
   containerScale: 60.0,
   positionX: 0,
-  positionY: 5,
+  positionY: 3,
   positionZ: 1,
 
   animationSpeedX: 0.02,
@@ -381,7 +381,7 @@ myWorker.onmessage = (e) => {
   texture.wrapT = RepeatWrapping;
   texture.wrapR = RepeatWrapping;
   texture.needsUpdate = true;
-  // store.finishLoading = true;
+  store.finishLoading = true;
   set3DTexture(texture);
 };
 

@@ -12,7 +12,8 @@ import Grass from './components/Grass.vue';
 import Precipitation from './components/Precipitation.vue';
 // import CameraMouse from "./components/CameraMouse.vue";
 
-// TODO: add custom fog to tsl
+// TODO: is too fast
+// TODO: add camera headBobbing
 
 const cameraRef = ref();
 

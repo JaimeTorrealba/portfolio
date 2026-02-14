@@ -23,9 +23,6 @@ importers:
       '@vueuse/core':
         specifier: ^10.11.1
         version: 10.11.1(vue@3.5.27)
-      bulma:
-        specifier: ^1.0.4
-        version: 1.0.4
       gsap:
         specifier: ^3.14.2
         version: 3.14.2
@@ -38,18 +35,12 @@ importers:
       three:
         specifier: ^0.182.0
         version: 0.182.0
-      three-hex-tiling:
-        specifier: ^0.1.5
-        version: 0.1.5(three@0.182.0)
       vite-plugin-glsl:
         specifier: ^1.5.5
         version: 1.5.5(@rollup/pluginutils@5.1.4(rollup@3.29.5))(vite@4.5.14(sass@1.97.3))
       vue:
         specifier: ^3.5.27
         version: 3.5.27
-      vue-router:
-        specifier: ^4.6.4
-        version: 4.6.4(vue@3.5.27)
     devDependencies:
       '@rushstack/eslint-patch':
         specifier: ^1.15.0
@@ -550,9 +541,6 @@ packages:
 
   brace-expansion@1.1.12:
     resolution: {integrity: sha512-9T9UjW3r0UW5c1Q7GTwllptXwhvYmEzFhzMfZ9H7FQWt+uZePjZPjBP/W1ZEyZ1twGWom5/56TF4lPcqjnDHcg==}
-
-  bulma@1.0.4:
-    resolution: {integrity: sha512-Ffb6YGXDiZYX3cqvSbHWqQ8+LkX6tVoTcZuVB3lm93sbAVXlO0D6QlOTMnV6g18gILpAXqkG2z9hf9z4hCjz2g==}
 
   callsites@3.1.0:
     resolution: {integrity: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==}
@@ -1112,11 +1100,6 @@ packages:
       react:
         optional: true
 
-  three-hex-tiling@0.1.5:
-    resolution: {integrity: sha512-c38BKK3IV/AplEoO0DlUof3e5ikHEKW3XnKkuOt9PqLz7QRoc4ZuYnBqfoaXe3rctLmFztnEiiPRRGSR34mPgA==}
-    peerDependencies:
-      three: '>=0.151'
-
   three-stdlib@2.36.1:
     resolution: {integrity: sha512-XyGQrFmNQ5O/IoKm556ftwKsBg11TIb301MB5dWNicziQBEs2g3gtOYIf7pFiLa0zI2gUwhtCjv9fmjnxKZ1Cg==}
     peerDependencies:
@@ -1202,11 +1185,6 @@ packages:
     engines: {node: ^14.17.0 || >=16.0.0}
     peerDependencies:
       eslint: '>=6.0.0'
-
-  vue-router@4.6.4:
-    resolution: {integrity: sha512-Hz9q5sa33Yhduglwz6g9skT8OBPii+4bFn88w6J+J4MfEo4KRRpmiNG/hHHkdbRFlLBOqxN8y8gf2Fb0MTUgVg==}
-    peerDependencies:
-      vue: ^3.5.0
 
   vue@3.5.27:
     resolution: {integrity: sha512-aJ/UtoEyFySPBGarREmN4z6qNKpbEguYHMmXSiOGk69czc+zhs0NF6tEFrY8TZKAl8N/LYAkd4JHVd5E/AsSmw==}
@@ -1663,8 +1641,6 @@ snapshots:
     dependencies:
       balanced-match: 1.0.2
       concat-map: 0.0.1
-
-  bulma@1.0.4: {}
 
   callsites@3.1.0: {}
 
@@ -2186,10 +2162,6 @@ snapshots:
       object-hash: 3.0.0
       three: 0.182.0
 
-  three-hex-tiling@0.1.5(three@0.182.0):
-    dependencies:
-      three: 0.182.0
-
   three-stdlib@2.36.1(three@0.182.0):
     dependencies:
       '@types/draco3d': 1.4.10
@@ -2252,11 +2224,6 @@ snapshots:
       semver: 7.7.3
     transitivePeerDependencies:
       - supports-color
-
-  vue-router@4.6.4(vue@3.5.27):
-    dependencies:
-      '@vue/devtools-api': 6.6.4
-      vue: 3.5.27
 
   vue@3.5.27:
     dependencies:
