@@ -11,10 +11,11 @@ import Smoke from './components/Smoke.vue';
 import Grass from './components/Grass.vue';
 import Precipitation from './components/Precipitation.vue';
 import CameraMouse from "./components/CameraMouse.vue";
+import PostProcessing from "./components/PostProcessing.vue";
 
-// TODO: post processing
 // TODO: Card intro
 // TODO: addons like SPACE for running
+// TODO: Vignette & depth of field post processing
 
 const cameraRef = ref();
 
@@ -53,7 +54,7 @@ watch(cameraRef, (camera) => {
     <Grass />
     <Floor />
     <Lights />
-    <!-- <TheEnvironment /> -->
+    <PostProcessing />
   </TresCanvas>
 </template>
 <style>
