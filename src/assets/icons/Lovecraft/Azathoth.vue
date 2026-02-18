@@ -1,11 +1,71 @@
 <script setup>
+import { onMounted, ref } from "vue";
+import { gsap } from "gsap";
+import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
+
 defineProps({
   width: { type: String, default: "48" },
   height: { type: String, default: "48" },
 });
+
+const svgRef = ref(null);
+
+gsap.registerPlugin(DrawSVGPlugin);
+
+onMounted(() => {
+  const svgEl = svgRef.value;
+  if (!svgEl) {
+    return;
+  }
+
+  const cls1 = svgEl.querySelectorAll(".cls-1");
+  const cls2 = svgEl.querySelectorAll(".cls-2");
+  const tl = gsap.timeline();
+
+  gsap.set([cls1, cls2], {
+    fill: "none",
+    strokeWidth: 1,
+    strokeLinecap: "round",
+  });
+  gsap.set(cls1, {
+    stroke: "#ccc",
+    drawSVG: "0% 0%",
+  });
+  gsap.set(cls2, {
+    stroke: "#b2b2b2",
+    drawSVG: "0% 0%",
+  });
+  tl.to(cls1, {
+    duration: 1.6,
+    delay: 0.5,
+    drawSVG: "0% 100%",
+    ease: "power2.inOut",
+  });
+  tl.to(cls2, {
+    duration: 1.9,
+    drawSVG: "0% 100%",
+    ease: "power2.inOut",
+  }, "-=1.25");
+  tl.to(cls1, {
+    duration: 0.25,
+    fill: "#ccc",
+    stroke: "none",
+  });
+  tl.to(cls2, {
+    duration: 0.25,
+    fill: "#b2b2b2",
+    stroke: "none",
+  }, "-=0.25");
+});
 </script>
 <template>
-  <svg id="cthulhu" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" :width="width">
+  <svg
+    ref="svgRef"
+    id="cthulhu"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 150 150"
+    :width="width"
+  >
     <path
       class="cls-1"
       d="M75,39.43A35.57,35.57,0,1,0,110.57,75,35.56,35.56,0,0,0,75,39.43Zm0,52.45A16.88,16.88,0,1,1,91.88,75,16.88,16.88,0,0,1,75,91.88Z"

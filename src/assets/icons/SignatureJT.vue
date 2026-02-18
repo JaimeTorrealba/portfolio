@@ -1,36 +1,27 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { nextTick, ref, watchEffect } from "vue";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-gsap.registerPlugin(ScrollTrigger);
+import { useMainStore } from "@/stores";
 
+const store = useMainStore();
 const pathRef = ref(null);
-const svgRef = ref(null);
-onMounted(() => {
-  const tl = gsap.timeline();
-  const tween = tl.to(
-    pathRef.value,
-    {
-      attr: {
-        "stroke-dashoffset": 0,
-      },
-      duration: 1,
-      delay: 0,
-      ease: "power2.in",
-    }
-  );
-  tween.from(svgRef.value, {
-    duration: 1,
-    y: 50,
-    transformOrigin: "50% 50%",
-    ease: "power2.in",
-  }, "<");
 
-  ScrollTrigger.create({
-    trigger: pathRef.value,
-    start: "top 80%",
-    animation: tween,
+const playAnimation = async () => {
+  await nextTick();
+  gsap.to(pathRef.value, {
+    attr: {
+      "stroke-dashoffset": 0,
+    },
+    duration: 1,
+    delay: 0.75,
+    ease: "power2.in",
   });
+};
+
+watchEffect(() => {
+  if (store.finishLoading) {
+    playAnimation();
+  }
 });
 </script>
 <template>

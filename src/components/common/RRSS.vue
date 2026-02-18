@@ -1,47 +1,45 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { ref, watchEffect, nextTick } from "vue";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-// import Tooltip from "@/components/common/Tooltip.vue";
+import { useMainStore } from "@/stores";
+import Tooltip from "@/components/common/Tooltip.vue";
 import Twitter from "@/assets/icons/RRSS/Twitter.vue";
 import Github from "@/assets/icons/RRSS/Github.vue";
 import Linkedin from "@/assets/icons/RRSS/Linkedin.vue";
 import Codepen from "@/assets/icons/RRSS/Codepen.vue";
 import BlueSky from "@/assets/icons/RRSS/Bluesky.vue";
 
-const titleRef = ref(null);
 
-onMounted(() => {
-  gsap.registerPlugin(ScrollTrigger);
-  gsap.from(titleRef.value, {
-    yPercent: 200,
-    ease: "Power3.out",
-    duration: 1,
-    scrollTrigger: ".icon-containers",
-  });
+const store = useMainStore();
 
+const playAnimation = async () => {
+  await nextTick();
   gsap.from(".icon-container", {
-    scrollTrigger: ".icon-containers",
-    duration: 1,
+    duration: 1.5,
+    delay: 1,
     y: 100,
     opacity: 0,
-    stagger: 0.1,
+    stagger: 0.15,
+    ease: "bounce.out",
   });
+};
+
+watchEffect(() => {
+  if (store.finishLoading) {
+    playAnimation();
+  }
 });
 
-// const showTooltipBlueSky = ref(false);
-// const showTooltipTwitter = ref(false);
-// const showTooltipGithub = ref(false);
-// const showTooltipLinkedin = ref(false);
-// const showTooltipCodepen = ref(false);
-// const showTooltipEmail = ref(false);
+const showTooltipBlueSky = ref(false);
+const showTooltipTwitter = ref(false);
+const showTooltipGithub = ref(false);
+const showTooltipLinkedin = ref(false);
+const showTooltipCodepen = ref(false);
+const showTooltipEmail = ref(false);
 </script>
 <template>
   <section class="icon-containers radial-gradient pt-6">
-    <div class="overflow-hidden">
-      <h4 ref="titleRef" id="rrss" class="title px-2 py-4 is-relative has-text-centered">Say hi!</h4>
-    </div>
-    <div class="is-flex is-justify-content-space-between py-4">
+    <div class="rrss-container">
       <a
         href="https://bsky.app/profile/jaimebboyjt.bsky.social"
         target="_blank"
@@ -50,9 +48,9 @@ onMounted(() => {
         @mouseleave="showTooltipBlueSky = false"
       >
         <div class="icon-container">
-          <!-- <Tooltip text="Bluesky" :show="showTooltipBlueSky" anchor="top center"> -->
+          <Tooltip text="Bluesky" :show="showTooltipBlueSky" anchor="top center">
           <BlueSky />
-          <!-- </Tooltip> -->
+          </Tooltip>
         </div>
       </a>
       <a
@@ -63,13 +61,13 @@ onMounted(() => {
         @mouseleave="showTooltipTwitter = false"
       >
         <div class="icon-container">
-          <!-- <Tooltip text="Twitter" :show="showTooltipTwitter" anchor="top center"> -->
+          <Tooltip text="Twitter" :show="showTooltipTwitter" anchor="top center">
           <Twitter />
-          <!-- </Tooltip> -->
+          </Tooltip>
         </div>
       </a>
 
-      <!-- <Tooltip text="Github" :show="showTooltipGithub" anchor="top center"> -->
+      <Tooltip text="Github" :show="showTooltipGithub" anchor="top center">
       <a
         href="https://github.com/JaimeTorrealba"
         target="_blank"
@@ -81,8 +79,8 @@ onMounted(() => {
           <Github />
         </div>
       </a>
-      <!-- </Tooltip> -->
-      <!-- <Tooltip text="LinkedIn" :show="showTooltipLinkedin" anchor="top center"> -->
+      </Tooltip>
+      <Tooltip text="LinkedIn" :show="showTooltipLinkedin" anchor="top center">
       <a
         href="https://www.linkedin.com/in/jaime-torrealba-cordova/"
         target="_blank"
@@ -94,8 +92,8 @@ onMounted(() => {
           <Linkedin />
         </div>
       </a>
-      <!-- </Tooltip> -->
-      <!-- <Tooltip text="CodePen" :show="showTooltipCodepen" anchor="top center"> -->
+      </Tooltip>
+      <Tooltip text="CodePen" :show="showTooltipCodepen" anchor="top center">
       <a
         href="https://codepen.io/jaime_torrealba"
         target="_blank"
@@ -107,8 +105,8 @@ onMounted(() => {
           <Codepen />
         </div>
       </a>
-      <!-- </Tooltip> -->
-      <!-- <Tooltip text="Email" :show="showTooltipEmail" anchor="top center"> -->
+      </Tooltip>
+      <Tooltip text="Email" :show="showTooltipEmail" anchor="top center">
       <a
         href="mailto:solucionesinformaticasjtc@gmail.com"
         target="_blank"
@@ -134,7 +132,7 @@ onMounted(() => {
           </svg>
         </div>
       </a>
-      <!-- </Tooltip> -->
+      </Tooltip>
     </div>
   </section>
 </template>
@@ -158,5 +156,12 @@ a {
 }
 a:hover {
   scale: 1.1;
+}
+
+.rrss-container {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1rem 0.5rem;
 }
 </style>

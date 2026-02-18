@@ -8,10 +8,6 @@ const store = useMainStore();
 
 onMounted(async () => {
   await nextTick();
-  gsap.from("#Azathoth", {
-    duration: 1.5,
-    opacity: 0,
-  });
   gsap.from(["#innerText", "#secondText", "#outerText"], {
     duration: 3,
     opacity: 0,
@@ -43,7 +39,7 @@ onMounted(async () => {
     <div v-if="!store.finishLoading" class="perfect-center">
       <div class="relative">
         <div class="flex flex-center-column flex-column">
-          <Azathoth id="Azathoth" />
+          <Azathoth id="Azathoth" width="92" height="92" />
         </div>
         <svg
           class="center-svg-inner"
@@ -158,22 +154,26 @@ onMounted(async () => {
   filter: blur(1px);
 }
 
-.center-svg-inner {
+.center-svg-inner,
+.center-svg-second,
+.center-svg-outer {
   position: absolute;
-  top: -75%;
-  left: -75%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: auto;
+}
+
+.center-svg-inner {
+  width: 40vmin;
 }
 
 .center-svg-second {
-  position: absolute;
-  top: -150%;
-  left: -150%;
+  width: 70vmin;
 }
 
 .center-svg-outer {
-  position: absolute;
-  top: -225%;
-  left: -225%;
+  width: 95vmin;
 }
 
 .v-enter-active,
