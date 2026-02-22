@@ -8,7 +8,6 @@ import { usePaneStore } from '@/stores/pane'
 
 const { render } = useLoop()
 const { renderer, scene, camera } = useTresContext()
-const store = usePaneStore()
 
 const postProcessing = shallowRef(null)
 const focusDistanceUniform = shallowRef(null)
@@ -32,6 +31,7 @@ const vignetteOptions = reactive({
 
 onMounted(() => {
   if (!window.location.href.includes('#debug')) return
+  const store = usePaneStore()
   const pane = store.pane
   const folder = pane.addFolder({ title: 'Post Processing', expanded: false })
   const dofFolder = folder.addFolder({ title: 'Depth Of Field' })

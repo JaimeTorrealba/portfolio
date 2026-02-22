@@ -1,6 +1,6 @@
 <script setup>
 import { WebGPURenderer } from 'three/webgpu'
-import { ref, watch, toValue } from "vue";
+import { ref, watch, toValue, onMounted } from "vue";
 import { TresCanvas } from "@tresjs/core";
 import { Stats } from "@tresjs/cientos";
 import { SRGBColorSpace, ACESFilmicToneMapping } from "three";
@@ -13,9 +13,10 @@ import Precipitation from './components/Precipitation.vue';
 import CameraMouse from "./components/CameraMouse.vue";
 import PostProcessing from "./components/PostProcessing.vue";
 
-// TODO: Card intro
+// TODO: Remove stats(only on debug)
+// TODO: Remove tweakpane remainder (only on debug)
+// TODO: Improve performance
 // TODO: addons like SPACE for running
-// TODO: Vignette & depth of field post processing
 
 const cameraRef = ref();
 
@@ -41,24 +42,33 @@ watch(cameraRef, (camera) => {
   camera.setFocalLength(45);
   camera.updateProjectionMatrix();
 });
+
+const showDebug = ref(false);
+onMounted(() => {
+  if (window.location.href.includes("#debug")) {
+    showDebug.value = true;
+  };
+})
 </script>
 <template>
   <TresCanvas v-bind="gl" window-size :renderer="createWebGPURenderer">
     <TresPerspectiveCamera ref="cameraRef" :position="[0, 5, 25]" />
     <TresFog color="#111" :near="8" :far="95" />
-    <Stats />
+    <Stats v-if="showDebug" />
     <CameraMouse />
     <Trees />
     <Smoke />
     <Precipitation />
     <Grass />
-    <Floor />
+    <Suspense>
+      <Floor />
+    </Suspense>
     <Lights />
     <PostProcessing />
   </TresCanvas>
 </template>
 <style>
 .tp-dfwv {
-  z-index: 999999;
+  z-index: 9999;
 }
 </style>

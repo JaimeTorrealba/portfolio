@@ -38,7 +38,7 @@ import {
   modelWorldMatrix,
 } from "three/tsl";
 
-const store = usePaneStore();
+
 
 const options = reactive({
   // grass
@@ -51,6 +51,7 @@ const options = reactive({
 
 onMounted(() => {
   if (!window.location.href.includes("#debug")) return;
+  const store = usePaneStore();
   const pane = store.pane;
   const folder = pane.addFolder({ title: "Grass", expanded: false });
   folder.addBinding(options, "visible");
@@ -60,8 +61,8 @@ onMounted(() => {
   folder.addBinding(options, "grassWidth", { min: 0.05, max: 1, step: 0.01 });
 });
 
-const NUM_GRASS = 30000;
-const GRASS_SEGMENTS = 12;
+const NUM_GRASS = 25000;
+const GRASS_SEGMENTS = 10;
 const GRASS_PATCH_SIZE = 15;
 
 const VERTICES = (GRASS_SEGMENTS + 1) * 2;

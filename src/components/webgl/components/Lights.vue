@@ -5,8 +5,6 @@ import { useMouse, useWindowSize } from "@vueuse/core";
 import { Object3D, Plane, Raycaster, Vector2, Vector3 } from "three";
 import { usePaneStore } from "@/stores/pane";
 
-const store = usePaneStore();
-
 const options = reactive({
   // ambientLight
   ambientIntensity: 0.8,
@@ -29,6 +27,7 @@ const options = reactive({
 
 onMounted(() => {
   if (!window.location.href.includes("#debug")) return;
+  const store = usePaneStore();
   const pane = store.pane;
   const folder = pane.addFolder({ title: "Lights", expanded: false });
 

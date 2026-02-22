@@ -3,8 +3,6 @@ import { reactive, onMounted } from "vue";
 import { Precipitation } from "@tresjs/cientos";
 import { usePaneStore } from "@/stores/pane";
 
-const store = usePaneStore();
-
 const options = reactive({
     visibility: true,
   speed: 0.25,
@@ -15,6 +13,7 @@ const options = reactive({
 
 onMounted(() => {
   if (!window.location.href.includes("#debug")) return;
+  const store = usePaneStore();
   const pane = store.pane;
   const folder = pane.addFolder({ title: "Precipitation", expanded: false });
     folder.addBinding(options, "visibility");

@@ -5,8 +5,6 @@ import { useTextures } from "@tresjs/cientos";
 import { RepeatWrapping } from "three";
 import { usePaneStore } from '@/stores/pane'
 
-const store = usePaneStore()
-
 const options = reactive({
   stop: false,
   visibility: true,
@@ -21,6 +19,7 @@ const options = reactive({
 
 onMounted(() => {
   if (!window.location.href.includes("#debug")) return;
+  const store = usePaneStore();
   const pane = store.pane;
   const folder = pane.addFolder({ title: "Floor", expanded: false });
   folder.addBinding(options, "stop");

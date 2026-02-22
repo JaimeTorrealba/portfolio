@@ -51,7 +51,7 @@ import { usePaneStore } from "@/stores/pane";
 
 const parameters = reactive({
   // Texture Generation
-  textureSize: 64,
+  textureSize: 32,
   cloudCoverage: 0.55,
   cloudSoftness: 0.05,
   noiseScale: 3.5,
@@ -88,11 +88,11 @@ const parameters = reactive({
   useDepthOcclusion: false, // set to true to re-enable depth based occlusion
 });
 
-const paneStore = usePaneStore();
 const store = useMainStore();
 
 onMounted(() => {
   if (!window.location.href.includes("#debug")) return;
+  const paneStore = usePaneStore();
   const pane = paneStore.pane;
   const folder = pane.addFolder({ title: "Volumetric Smoke", expanded: false });
 

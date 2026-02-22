@@ -1,19 +1,16 @@
 <script setup>
-import { nextTick, watchEffect, ref, computed } from "vue";
+import { nextTick, watchEffect, ref } from "vue";
 import { gsap } from "gsap";
 import { SplitText } from "gsap/SplitText";
-import { useWindowSize } from "@vueuse/core";
 import { useMainStore } from "@/stores";
 import { showText } from "@/utils/gsaps.js";
-import GlassSurface from "@/components/common/GlassSurface.vue";
 import RRSS from "@/components/common/RRSS.vue";
 import SignatureJT from "@/assets/icons/SignatureJT.vue";
 gsap.registerPlugin(SplitText);
 
 const store = useMainStore();
-const { width } = useWindowSize();
 
-const cardWidth = computed(() => Math.max(width.value / 2, 400));
+
 
 const titleRef = ref(null);
 const subTitleRef = ref(null);
@@ -60,7 +57,7 @@ watchEffect(() => {
 </script>
 <template>
   <section v-if="store.finishLoading" class="container">
-    <GlassSurface
+    <!-- <GlassSurface
       :width="cardWidth"
       :height="400"
       :border-radius="16"
@@ -68,7 +65,8 @@ watchEffect(() => {
       :displace="2"
       :background-opacity="0.25"
       style="custom-style"
-    >
+    > -->
+    <div class="glass3d">
       <div class="glass-content">
         <div class="img-container">
           <img ref="perfilRef" src="/img/Foto_Perfil.png" alt="Image of my face" />
@@ -92,7 +90,8 @@ watchEffect(() => {
         </span>
         <RRSS class="rrss" />
       </div>
-    </GlassSurface>
+    </div>
+    <!-- </GlassSurface> -->
   </section>
 </template>
 <style scoped>
@@ -103,6 +102,7 @@ watchEffect(() => {
   transform: translate(-50%, -50%);
   z-index: 10;
   overflow: visible;
+  width: 50%;
 }
 
 .glass-content {
@@ -191,5 +191,71 @@ watchEffect(() => {
 
 .overflow-hidden {
   overflow: hidden;
+}
+
+.glass3d {
+  --filter-glass3d: blur(8px) brightness(0.4) saturate(1.5);
+  --color-glass3d: hsl(189 80% 10% / 0.2);
+  border-radius: 1rem;
+  min-width: 400px;
+
+  position: relative;
+  z-index: 4;
+  box-shadow: 0 0 0.75px hsl(205 20% 10% / 0.2),
+    0.7px 0.8px 1.2px -0.4px hsl(205 20% 10% / 0.1),
+    1.3px 1.5px 2.2px -0.8px hsl(205 20% 10% / 0.1),
+    2.3px 2.6px 3.9px -1.2px hsl(205 20% 10% / 0.1),
+    3.9px 4.4px 6.6px -1.7px hsl(205 20% 10% / 0.1),
+    6.5px 7.2px 10.9px -2.1px hsl(205 20% 10% / 0.1),
+    8px 9px 14px -2.5px hsl(205 20% 10% / 0.2);
+}
+
+.glass3d {
+  --filter-glass3d: blur(8px) brightness(0.4) saturate(1.5);
+  --color-glass3d: hsl(189 80% 10% / 0.2);
+
+  position: relative;
+  z-index: 4;
+  box-shadow: 0 0 0.75px hsl(205 20% 10% / 0.2),
+    0.7px 0.8px 1.2px -0.4px hsl(205 20% 10% / 0.1),
+    1.3px 1.5px 2.2px -0.8px hsl(205 20% 10% / 0.1),
+    2.3px 2.6px 3.9px -1.2px hsl(205 20% 10% / 0.1),
+    3.9px 4.4px 6.6px -1.7px hsl(205 20% 10% / 0.1),
+    6.5px 7.2px 10.9px -2.1px hsl(205 20% 10% / 0.1),
+    8px 9px 14px -2.5px hsl(205 20% 10% / 0.2);
+}
+
+.glass3d::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  overflow: hidden;
+  z-index: 3;
+
+  -webkit-backdrop-filter: var(--filter-glass3d);
+  backdrop-filter: var(--filter-glass3d);
+}
+
+.glass3d::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  overflow: hidden;
+  z-index: 5;
+
+  box-shadow: inset 2px 2px 1px -3px hsl(205 20% 90% / 0.8),
+    inset 4px 4px 2px -6px hsl(205 20% 90% / 0.3),
+    inset 1.5px 1.5px 1.5px -0.75px hsl(205 20% 90% / 0.15),
+    inset 1.5px 1.5px 0.25px hsl(205 20% 90% / 0.03),
+    inset 0 0 0.25px 0.5px hsl(205 20% 90% / 0.03);
+}
+
+.glass3d > * {
+  position: relative;
+  z-index: 6;
 }
 </style>

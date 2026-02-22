@@ -4,7 +4,7 @@ import { useTres, useLoop } from "@tresjs/core";
 import { Tree } from "@dgreenheck/ez-tree";
 import { usePaneStore } from "@/stores/pane";
 
-const store = usePaneStore();
+
 const { camera } = useTres();
 const options = reactive({
   treeCount: 1,
@@ -20,6 +20,7 @@ onMounted(async () => {
     createTree(xPos);
   }
   if (!window.location.href.includes("#debug")) return;
+  const store = usePaneStore();
   const pane = store.pane;
   const folder = pane.addFolder({ title: "Trees", expanded: false });
   folder.addBinding(options, "visible");

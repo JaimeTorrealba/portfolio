@@ -4,7 +4,6 @@ import { useMouse, useWindowSize } from "@vueuse/core";
 import { computed, reactive, onMounted } from "vue";
 import { usePaneStore } from "@/stores/pane";
 
-const paneStore = usePaneStore();
 const { camera } = useTres();
 
 const options = reactive({
@@ -17,6 +16,7 @@ const options = reactive({
 
 onMounted(() => {
   if (!window.location.href.includes("#debug")) return;
+  const paneStore = usePaneStore();
   const pane = paneStore.pane;
   const folder = pane.addFolder({ title: "Camera Mouse", expanded: false });
 
