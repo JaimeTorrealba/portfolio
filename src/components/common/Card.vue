@@ -10,26 +10,28 @@ gsap.registerPlugin(SplitText);
 
 const store = useMainStore();
 
-
-
 const titleRef = ref(null);
 const subTitleRef = ref(null);
 const firstTextRef = ref(null);
 const secondTextRef = ref(null);
 const perfilRef = ref(null);
+let firstTextSplit = null;
+let secondTextSplit = null;
 
 const playAnimation = async () => {
   await nextTick();
+  firstTextSplit?.revert();
+  secondTextSplit?.revert();
   const master = gsap.timeline();
   master.add(showText(titleRef.value));
   master.add(showText(subTitleRef.value), "-=0.5");
-  const firstText = SplitText.create(firstTextRef.value, {
+  firstTextSplit = SplitText.create(firstTextRef.value, {
     type: "lines",
   });
-  const secondText = SplitText.create(secondTextRef.value, {
+  secondTextSplit = SplitText.create(secondTextRef.value, {
     type: "lines",
   });
-  const lines = [firstText.lines, secondText.lines].flat();
+  const lines = [firstTextSplit.lines, secondTextSplit.lines].flat();
   gsap.from(lines, {
     y: 100,
     opacity: 0,
@@ -37,6 +39,12 @@ const playAnimation = async () => {
     duration: 1,
     delay: 0.5,
     ease: "power2.out",
+    onComplete: () => {
+      firstTextSplit?.revert();
+      secondTextSplit?.revert();
+      firstTextSplit = null;
+      secondTextSplit = null;
+    },
   });
   gsap.from(perfilRef.value, {
     duration: 0.5,
@@ -57,15 +65,6 @@ watchEffect(() => {
 </script>
 <template>
   <section v-if="store.finishLoading" class="container">
-    <!-- <GlassSurface
-      :width="cardWidth"
-      :height="400"
-      :border-radius="16"
-      :border-width="0.1"
-      :displace="2"
-      :background-opacity="0.25"
-      style="custom-style"
-    > -->
     <div class="glass3d">
       <div class="glass-content">
         <div class="img-container">
@@ -77,12 +76,11 @@ watchEffect(() => {
             <h2 ref="subTitleRef" class="is-size-2 has-text-light">Creative developer</h2>
           </div>
           <p ref="firstTextRef" class="text-container">
-            Creative developer with a strong background in creating interactive
-            experiences on the web using 3D scenes, GPU image manipulations,
-            micro-interactions, and well craft animations.
+            Creative developer focused on immersive web experiences, real-time 3D, micro-interactions and
+            expressive animations.
           </p>
           <p ref="secondTextRef">
-            I love using Vue.js, JavaScript, CSS, Three.js and GSAP.
+            I enjoy blending design and code using Vue.js, Three.js, Tres.js, and GSAP.
           </p>
         </div>
         <span class="signature">
@@ -91,7 +89,6 @@ watchEffect(() => {
         <RRSS class="rrss" />
       </div>
     </div>
-    <!-- </GlassSurface> -->
   </section>
 </template>
 <style scoped>
@@ -103,6 +100,17 @@ watchEffect(() => {
   z-index: 10;
   overflow: visible;
   width: 50%;
+  @media screen and (max-width: 1024px) {
+    display: grid;
+    place-items: center;
+    position: relative;
+    top: 0;
+    left: 0;
+    transform: translate(0, 0);
+    min-height: 100vh;
+    width: 100%;
+    margin: 0.5rem;
+  }
 }
 
 .glass-content {

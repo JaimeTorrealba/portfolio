@@ -27,6 +27,10 @@ defineProps({
 <style scoped>
 .trigger {
   anchor-name: v-bind(text);
+  transition: scale 0.15s ease;
+}
+.trigger:hover {
+  scale: 1.1;
 }
 .tooltip-styles {
   position: absolute;
