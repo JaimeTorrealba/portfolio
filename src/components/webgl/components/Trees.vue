@@ -12,12 +12,17 @@ const options = reactive({
   visible: true,
 });
 
+const TREE_SIDE_MIN = 10;
+const TREE_SIDE_SPREAD = 7.5;
+
+const getRandomTreeX = (side = Math.random() < 0.5 ? -1 : 1) =>
+  side * (TREE_SIDE_MIN + Math.random() * TREE_SIDE_SPREAD);
+
 onMounted(async () => {
   await nextTick();
-    for (let i = 0; i < options.treeCount; i++){
-    let xPos = Math.random() * (20 * i) - 20;
-    if (xPos > -5 && xPos < 5) xPos *= 1.5;
-    createTree(xPos);
+  for (let i = 0; i < options.treeCount; i++) {
+    const side = i < 2 ? (i === 0 ? -1 : 1) : Math.random() < 0.5 ? -1 : 1;
+    createTree(getRandomTreeX(side));
   }
   if (!window.location.href.includes("#debug")) return;
   const store = usePaneStore();
@@ -45,24 +50,16 @@ const createTree = (_x) => {
 
 const trees = [];
 
-setTimeout(() => {
-  for (let i = 0; i < options.treeCount; i++){
-    createTree(Math.random() * 10 + 20);
-  }
-}, Math.random() * 5000);
-
 const { onBeforeRender } = useLoop();
 
 onBeforeRender(({ delta }) => {
   if (trees.length > 0) {
-    trees.forEach((tree) => {;
+    trees.forEach((tree) => {
       tree.position.z += delta * options.speed;
       if (tree.position.z > camera.value.position.z + 15) {
         treesRef.value.remove(tree);
         trees.splice(trees.indexOf(tree), 1);
-        const leftRight =
-          tree.position.x < 0 ? Math.random() * 10 - 20 : Math.random() * 10 + 20;
-        createTree(leftRight);
+        createTree(getRandomTreeX());
       }
     });
   }

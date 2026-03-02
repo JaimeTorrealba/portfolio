@@ -37,7 +37,37 @@ import {
   vertexIndex,
   modelWorldMatrix,
 } from "three/tsl";
+import { getGPUTier } from 'detect-gpu';
 
+const tier = await getGPUTier();
+
+const getGrassCountSize = () => {
+  switch (tier.tier) {
+    case 0:
+      return 3000;
+    case 1:
+    case 2:
+      return 3500;
+    case 3:
+      return 4500;
+    default:
+      return 6000;
+  }
+};
+
+const getGrassSegments = () => {
+  switch (tier.tier) {
+    case 0:
+      return 6;
+    case 1:
+    case 2:
+      return 8;
+    case 3:
+      return 12;
+    default:
+      return 16;
+  }
+};
 
 
 const options = reactive({
@@ -46,7 +76,7 @@ const options = reactive({
   grassMovement: 6,
   visible: true,
   grassHeight: 12,
-  grassWidth: 0.3,
+  grassWidth: 0.75,
 });
 
 onMounted(() => {
@@ -61,9 +91,9 @@ onMounted(() => {
   folder.addBinding(options, "grassWidth", { min: 0.05, max: 1, step: 0.01 });
 });
 
-const NUM_GRASS = 25000;
-const GRASS_SEGMENTS = 10;
-const GRASS_PATCH_SIZE = 15;
+const NUM_GRASS = getGrassCountSize();
+const GRASS_SEGMENTS = getGrassSegments();
+const GRASS_PATCH_SIZE = 10;
 
 const VERTICES = (GRASS_SEGMENTS + 1) * 2;
 const indices = [];
@@ -333,6 +363,6 @@ onBeforeRender(({ elapsed }) => {
 });
 </script>
 <template>
-  <TresMesh :geometry="geo" :position="[19, -5, 0]" :material :visible="options.visible" />
-  <TresMesh :geometry="geo" :position="[-19, -5, 0]" :material :visible="options.visible" />
+  <TresMesh :geometry="geo" :position="[15, -5, 0]" :material :visible="options.visible" />
+  <TresMesh :geometry="geo" :position="[-15, -5, 0]" :material :visible="options.visible" />
 </template>

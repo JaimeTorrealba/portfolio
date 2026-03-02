@@ -206,6 +206,7 @@ watchEffect(() => {
   --color-glass3d: hsl(189 80% 10% / 0.2);
   border-radius: 1rem;
   min-width: 400px;
+  border: 1px solid hsla(0, 0%, 35%, 0.5);
 
   position: relative;
   z-index: 4;

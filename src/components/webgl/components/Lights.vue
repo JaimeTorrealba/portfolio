@@ -1,6 +1,6 @@
 <script setup>
 import { shallowRef, watch, reactive, onMounted } from "vue";
-import { useTres, useLoop } from "@tresjs/core";
+import { useTres } from "@tresjs/core";
 import { useMouse, useWindowSize } from "@vueuse/core";
 import { Object3D, Plane, Raycaster, Vector2, Vector3 } from "three";
 import { usePaneStore } from "@/stores/pane";
@@ -116,18 +116,6 @@ watch(
   },
   { immediate: true }
 );
-
-const { onBeforeRender } = useLoop();
-
-onBeforeRender(() => {
-  if (spotLightRef.value) {
-    if (Math.random() > 0.995) {
-      spotLightRef.value.intensity = 1;
-    } else {
-      spotLightRef.value.intensity = 1250;
-    }
-  }
-});
 </script>
 <template>
   <TresSpotLight

@@ -48,10 +48,39 @@ import {
 import { VolumetricMaskController } from "../../../utils/SmokeUtils";
 import { useMainStore } from "@/stores";
 import { usePaneStore } from "@/stores/pane";
+import { getGPUTier } from 'detect-gpu';
 
+const tier = await getGPUTier();
+
+const getTextureSize = () => {
+  switch (tier.tier) {
+    case 0:
+      return 4;
+    case 1:
+    case 2:
+      return 8;
+    case 3:
+      return 16;
+    default:
+      return 64;
+  }
+};
+const getRayMarchSteps = () => {
+  switch (tier.tier) {
+    case 0:
+      return 4;
+    case 1:
+    case 2:
+      return 8;
+    case 3:
+      return 16;
+    default:
+      return 64;
+  }
+};
 const parameters = reactive({
   // Texture Generation
-  textureSize: 32,
+  textureSize: getTextureSize(),
   cloudCoverage: 0.55,
   cloudSoftness: 0.05,
   noiseScale: 3.5,
@@ -68,7 +97,7 @@ const parameters = reactive({
   densityThreshold: 0.1,
   densityMultiplier: 1.1,
   opacity: 3.0,
-  raymarchSteps: 44,
+  raymarchSteps: getRayMarchSteps(),
   lightSteps: 1,
 
   // Scale & Animation

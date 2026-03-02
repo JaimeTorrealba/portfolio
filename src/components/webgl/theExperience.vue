@@ -57,9 +57,13 @@ onMounted(() => {
     <Stats v-if="showDebug" />
     <CameraMouse />
     <Trees />
-    <Smoke />
+    <Suspense>
+      <Smoke />
+    </Suspense>
     <Precipitation />
-    <Grass />
+    <Suspense>
+      <Grass />
+    </Suspense>
     <Suspense>
       <Floor />
     </Suspense>
