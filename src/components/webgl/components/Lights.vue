@@ -22,7 +22,7 @@ const options = reactive({
   spotPosition: { x: 0, y: 5, z: 25 },
   spotDecay: 1.5,
   spotAngle: 0.12,
-  spotPenumbra: 0.21,
+  spotPenumbra: 0.7,
 });
 
 onMounted(() => {

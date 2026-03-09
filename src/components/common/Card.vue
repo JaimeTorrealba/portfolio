@@ -101,15 +101,13 @@ watchEffect(() => {
   overflow: visible;
   width: 50%;
   @media screen and (max-width: 1024px) {
-    display: grid;
-    place-items: center;
-    position: relative;
-    top: 0;
+    position: fixed;
+    top: 5%;
     left: 0;
     transform: translate(0, 0);
     min-height: 100vh;
     width: 100%;
-    margin: 0.5rem;
+    padding: 0 0.5rem;
   }
 }
 
