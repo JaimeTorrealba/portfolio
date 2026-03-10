@@ -1,6 +1,8 @@
 <script setup>
 import { shallowRef, watch, reactive, onMounted } from "vue";
-import { useTres } from "@tresjs/core";
+import { useTres, useLoader } from "@tresjs/core";
+import { IESLoader } from "three/addons/loaders/IESLoader.js";
+import { IESSpotLight } from "three/webgpu";
 import { useMouse, useWindowSize } from "@vueuse/core";
 import { Object3D, Plane, Raycaster, Vector2, Vector3 } from "three";
 import { usePaneStore } from "@/stores/pane";
@@ -67,7 +69,7 @@ onMounted(() => {
   spotFolder.addBinding(options, "spotPenumbra", { min: 0, max: 1, step: 0.01 });
 });
 
-const { scene, camera, renderer } = useTres();
+const { scene, camera, renderer, extend } = useTres();
 const spotLightRef = shallowRef(null);
 const { x, y } = useMouse();
 const { width, height } = useWindowSize();
@@ -79,6 +81,13 @@ const raycaster = new Raycaster();
 const mouseNdc = new Vector2();
 const hitPoint = new Vector3();
 const targetPlane = new Plane(new Vector3(0, 0, 1), 25);
+
+extend({ IESSpotLight });
+
+const { state: iesMap, isLoading: isLoadingIES } = useLoader(
+  IESLoader,
+  "/textures/light.ies"
+);
 
 const updateSpotTarget = (mouseX, mouseY) => {
   if (!camera.value) return;
@@ -118,8 +127,9 @@ watch(
 );
 </script>
 <template>
-  <TresSpotLight
-    v-if="options.spotVisible"
+  <TresIESSpotLight
+    v-if="!isLoadingIES && options.spotVisible"
+    :iesMap="iesMap"
     ref="spotLightRef"
     :color="options.spotColor"
     :intensity="options.spotIntensity"
