@@ -15,12 +15,12 @@ const store = useMainStore();
 const playAnimation = async () => {
   await nextTick();
   gsap.from(".icon-container", {
-    duration: 1.5,
-    delay: 1,
-    y: 100,
+    duration: 1,
+    delay: 0.75,
+    y: 15,
     opacity: 0,
     stagger: 0.15,
-    ease: "bounce.out",
+    ease: "elastic.out",
   });
 };
 

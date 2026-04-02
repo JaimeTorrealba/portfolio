@@ -13,9 +13,6 @@ import Precipitation from './components/Precipitation.vue';
 import CameraMouse from "./components/CameraMouse.vue";
 import PostProcessing from "./components/PostProcessing.vue";
 
-// TODO: Remove stats(only on debug)
-// TODO: Remove tweakpane remainder (only on debug)
-// TODO: Improve performance
 // TODO: addons like SPACE for running
 
 const cameraRef = ref();

@@ -7,7 +7,7 @@ export const showText = (elem) => {
     yPercent: 200,
     ease: 'Power3.out',
     stagger: 0.01,
-    duration: 1,
+    duration: 0.75,
     delay: 0,
   })
 }

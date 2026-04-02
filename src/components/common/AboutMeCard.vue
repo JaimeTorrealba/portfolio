@@ -1,14 +1,14 @@
 <script setup>
-import { nextTick, watchEffect, ref } from "vue";
+import { nextTick, onMounted, ref } from "vue";
 import { gsap } from "gsap";
 import { SplitText } from "gsap/SplitText";
-import { useMainStore } from "@/stores";
 import { showText } from "@/utils/gsaps.js";
 import RRSS from "@/components/common/RRSS.vue";
 import SignatureJT from "@/assets/icons/SignatureJT.vue";
+import CloseButton from "@/components/common/CloseButton.vue";
 gsap.registerPlugin(SplitText);
 
-const store = useMainStore();
+const emit = defineEmits(["close"]);
 
 const titleRef = ref(null);
 const subTitleRef = ref(null);
@@ -36,8 +36,8 @@ const playAnimation = async () => {
     y: 100,
     opacity: 0,
     stagger: 0.1,
-    duration: 1,
-    delay: 0.5,
+    duration: 0.75,
+    delay: 0.25,
     ease: "power2.out",
     onComplete: () => {
       firstTextSplit?.revert();
@@ -48,7 +48,6 @@ const playAnimation = async () => {
   });
   gsap.from(perfilRef.value, {
     duration: 0.5,
-    delay: 0.5,
     opacity: 0,
     transformOrigin: "50% 50%",
     scale: 0.5,
@@ -57,15 +56,14 @@ const playAnimation = async () => {
   });
 };
 
-watchEffect(() => {
-  if (store.finishLoading) {
-    playAnimation();
-  }
+onMounted(() => {
+  playAnimation();
 });
 </script>
 <template>
-  <section v-if="store.finishLoading" class="container">
+  <section class="container">
     <div class="glass3d">
+      <CloseButton @click="emit('close')" />
       <div class="glass-content">
         <div class="img-container">
           <img ref="perfilRef" src="/img/Foto_Perfil.png" alt="Image of my face" />
@@ -76,8 +74,8 @@ watchEffect(() => {
             <h2 ref="subTitleRef" class="is-size-2 has-text-light">Creative developer</h2>
           </div>
           <p ref="firstTextRef" class="text-container">
-            Creative developer focused on immersive web experiences, real-time 3D, micro-interactions and
-            expressive animations.
+            Creative developer focused on immersive web experiences, real-time 3D,
+            micro-interactions and expressive animations.
           </p>
           <p ref="secondTextRef">
             I enjoy blending design and code using Vue.js, Three.js, Tres.js, and GSAP.
