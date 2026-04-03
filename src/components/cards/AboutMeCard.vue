@@ -215,21 +215,6 @@ onMounted(() => {
     8px 9px 14px -2.5px hsl(205 20% 10% / 0.2);
 }
 
-.glass3d {
-  --filter-glass3d: blur(8px) brightness(0.4) saturate(1.5);
-  --color-glass3d: hsl(189 80% 10% / 0.2);
-
-  position: relative;
-  z-index: 4;
-  box-shadow: 0 0 0.75px hsl(205 20% 10% / 0.2),
-    0.7px 0.8px 1.2px -0.4px hsl(205 20% 10% / 0.1),
-    1.3px 1.5px 2.2px -0.8px hsl(205 20% 10% / 0.1),
-    2.3px 2.6px 3.9px -1.2px hsl(205 20% 10% / 0.1),
-    3.9px 4.4px 6.6px -1.7px hsl(205 20% 10% / 0.1),
-    6.5px 7.2px 10.9px -2.1px hsl(205 20% 10% / 0.1),
-    8px 9px 14px -2.5px hsl(205 20% 10% / 0.2);
-}
-
 .glass3d::before {
   content: "";
   position: absolute;
