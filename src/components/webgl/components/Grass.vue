@@ -251,8 +251,8 @@ const bezier = Fn(([P0, P1, P2, P3, t]) => {
     .add(P3.mul(t.mul(t).mul(t)));
 });
 
-const TIP_COLOUR = vec3(0.27, 0.24, 0.15);
-const BASE_COLOUR = vec3(0.14, 0.11, 0.04);
+const TIP_COLOUR = vec3(0.72, 0.58, 0.28);
+const BASE_COLOUR = vec3(0.32, 0.20, 0.07);
 
 material.positionNode = Fn(() => {
   const PI = vec2(3.14159, 0.0).x;

@@ -7,7 +7,7 @@ const options = reactive({
     visibility: true,
   speed: 0.25,
   size: 0.15,
-  count: 150,
+  count: 100,
   opacity: 0.8,
 });
 

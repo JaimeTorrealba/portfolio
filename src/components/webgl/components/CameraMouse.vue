@@ -32,7 +32,7 @@ const { x, y } = useMouse();
 const { width, height } = useWindowSize();
 
 const cursorX = computed(() => -(x.value / width.value - 0.5) * options.factor);
-const cursorY = computed(() => -(y.value / height.value - 0.5) * options.factor);
+const cursorY = computed(() => -(y.value / height.value - 0.5) * options.factor * 0.5);
 
 const { onBeforeRender } = useLoop();
 
