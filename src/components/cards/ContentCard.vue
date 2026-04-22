@@ -9,10 +9,6 @@ gsap.registerPlugin(SplitText);
 
 const emit = defineEmits(["close"]);
 
-const talksItems = items.filter(
-  (item) => item.type === "Talk" || item.type === "Podcast"
-);
-
 const titleRef = ref(null);
 const listRef = ref(null);
 
@@ -34,10 +30,10 @@ onMounted(() => {
       <CloseButton @click="emit('close')" />
       <div class="glass-content">
         <div class="overflow-hidden">
-          <h1 ref="titleRef" class="is-size-1 has-text-light">Talks & Podcasts</h1>
+          <h1 ref="titleRef" class="is-size-1 has-text-light">Content</h1>
         </div>
         <ul ref="listRef" class="talks-list">
-          <li v-for="item in talksItems" :key="item.id" class="talk-item">
+          <li v-for="item in items" :key="item.id" class="talk-item">
             <a
               :href="item.url"
               target="_blank"
@@ -147,6 +143,24 @@ onMounted(() => {
   color: hsl(280 70% 80%);
   background: hsl(280 70% 10% / 0.4);
   border-color: hsl(280 70% 40% / 0.3);
+}
+
+.talk-type[data-type="Course"] {
+  color: hsl(38 90% 80%);
+  background: hsl(38 90% 10% / 0.4);
+  border-color: hsl(38 90% 40% / 0.3);
+}
+
+.talk-type[data-type="OSS"] {
+  color: hsl(142 60% 75%);
+  background: hsl(142 60% 8% / 0.4);
+  border-color: hsl(142 60% 35% / 0.3);
+}
+
+.talk-type[data-type="game"] {
+  color: hsl(340 75% 80%);
+  background: hsl(340 75% 10% / 0.4);
+  border-color: hsl(340 75% 40% / 0.3);
 }
 
 .talk-body {
