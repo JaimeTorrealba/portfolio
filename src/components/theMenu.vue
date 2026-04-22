@@ -4,23 +4,23 @@ import { gsap } from "gsap";
 import { useWindowSize } from "@vueuse/core";
 import { useMainStore } from "@/stores";
 import AboutMeCard from "@/components/cards/AboutMeCard.vue";
-import TalksCard from "@/components/cards/TalksCard.vue";
+import ContentCard from "@/components/cards/ContentCard.vue";
 
 const store = useMainStore();
 const showAboutMeCard = ref(false);
-const showTalksCard = ref(false);
+const showContentCard = ref(false);
 
 const { width } = useWindowSize();
 watch(width, () => {
   showAboutMeCard.value = false;
-  showTalksCard.value = false;
+  showContentCard.value = false;
 });
 
 const onEnter = (el, done) => {
   gsap.fromTo(
     el,
-    { opacity: 0, scale: 0.88, y: 48 },
-    { opacity: 1, scale: 1, y: 0, duration: 0.65, ease: "power3.out", onComplete: done }
+    { scale: 0.88, y: 48 },
+    { scale: 1, y: 0, duration: 0.65, ease: "power3.out", onComplete: done }
   );
 };
 
@@ -72,7 +72,7 @@ const onBtnLeave = (el, done) => {
   </Transition>
 
   <Transition :css="false" @enter="onEnter" @leave="onLeave">
-    <TalksCard v-if="showTalksCard" @close="showTalksCard = false" />
+    <ContentCard v-if="showContentCard" @close="showContentCard = false" />
   </Transition>
 
   <TransitionGroup
@@ -83,7 +83,7 @@ const onBtnLeave = (el, done) => {
     class="btn-group"
   >
     <button
-      v-if="store.finishLoading && !showAboutMeCard && !showTalksCard"
+      v-if="store.finishLoading && !showAboutMeCard && !showContentCard"
       key="about"
       data-index="0"
       class="menu-btn"
@@ -93,14 +93,14 @@ const onBtnLeave = (el, done) => {
       About me
     </button>
     <button
-      v-if="store.finishLoading && !showAboutMeCard && !showTalksCard"
-      key="talks"
+      v-if="store.finishLoading && !showAboutMeCard && !showContentCard"
+      key="content"
       data-index="1"
       class="menu-btn"
-      @click="showTalksCard = true"
-      aria-label="Open talks card"
+      @click="showContentCard = true"
+      aria-label="Open content card"
     >
-      Talks
+      Content
     </button>
   </TransitionGroup>
 </template>
