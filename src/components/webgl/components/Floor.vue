@@ -9,12 +9,10 @@ const options = reactive({
   stop: false,
   visibility: true,
   repeatTexS: 2,
-  repeatTexT: 2,
-  speed: 0.25,
-  normalScale: 0.2,
+  repeatTexT: 1,
+  speed: 0.24,
+  normalScale: 0.75,
   roughness: 1,
-  aoMapIntensity: 2.2,
-  dispMapIntensity: 0.1,
 });
 
 onMounted(() => {
@@ -42,16 +40,12 @@ onMounted(() => {
 
   folder.addBinding(options, "normalScale", { min: 0, max: 5, step: 0.1 });
   folder.addBinding(options, "roughness", { min: 0, max: 1, step: 0.01 });
-  folder.addBinding(options, "aoMapIntensity", { min: 0, max: 50, step: 0.1 });
-  folder.addBinding(options, "dispMapIntensity", { min: 0, max: 1, step: 0.01 });
 });
 
 const { textures: floorTextures, isLoading: floorTexturesLoading } = useTextures([
-  "/textures/floor/floor.jpg",
-  "/textures/floor/floor_nor.jpg",
-  "/textures/floor/floor_rough.jpg",
-  "/textures/floor/floor_ao.jpg",
-  "/textures/floor/floor_height.png",
+  "/textures/floor/color.jpg",
+  "/textures/floor/normal.jpg",
+  "/textures/floor/roughness.jpg",
 ]);
 
 watch(floorTextures, (newTextures) => {
@@ -59,6 +53,8 @@ watch(floorTextures, (newTextures) => {
     tex.wrapS = RepeatWrapping;
     tex.wrapT = RepeatWrapping;
     tex.repeat.set(options.repeatTexS, options.repeatTexT);
+    tex.center.set(0.5, 0.5);
+    tex.rotation = Math.PI / 2;
   });
 });
 
@@ -68,11 +64,9 @@ const { onBeforeRender } = useLoop();
 
 onBeforeRender(({ elapsed }) => {
   if (!floorMaterial.value || options.stop) return;
-  floorMaterial.value.map.offset.y = elapsed * options.speed;
-  floorMaterial.value.normalMap.offset.y = elapsed * options.speed;
-  floorMaterial.value.roughnessMap.offset.y = elapsed * options.speed;
-  floorMaterial.value.aoMap.offset.y = elapsed * options.speed;
-  floorMaterial.value.displacementMap.offset.y = elapsed * options.speed;
+  floorMaterial.value.map.offset.x = elapsed * options.speed;
+  floorMaterial.value.normalMap.offset.x = elapsed * options.speed;
+  floorMaterial.value.roughnessMap.offset.x = elapsed * options.speed;
 });
 </script>
 <template>
@@ -86,14 +80,10 @@ onBeforeRender(({ elapsed }) => {
     <TresMeshPhysicalMaterial
       ref="floorMaterial"
       :map="floorTextures[0]"
-      :ao-map="floorTextures[3]"
       :normal-map="floorTextures[1]"
       :roughness-map="floorTextures[2]"
       :normal-scale="options.normalScale"
       :roughness="options.roughness"
-      :aoMap-intensity="options.aoMapIntensity"
-      :displacement-map="floorTextures[4]"
-      :displacement-scale="options.dispMapIntensity"
     />
   </TresMesh>
 </template>

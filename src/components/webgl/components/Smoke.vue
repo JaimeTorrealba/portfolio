@@ -112,7 +112,7 @@ const parameters = reactive({
   isAnimating: true,
 
   // Lighting
-  ambientLightIntensity: 1.75,
+  ambientLightIntensity: 1,
   // Debug / Features
   useDepthOcclusion: false, // set to true to re-enable depth based occlusion
 });
@@ -203,7 +203,7 @@ const uTextureOffset = uniform(new Vector3(0, 0, 0));
 const uTextureTiling = uniform(parameters.textureTiling);
 const uBlueNoiseSize = uniform(new Vector2(1, 1));
 const uSunColor = uniform(new Color(0xd0d4d8));
-const uSunIntensity = uniform(5);
+const uSunIntensity = uniform(1.5);
 const uLightDir = uniform(new Vector3(0, 5, 25).normalize());
 const uAmbientColor = uniform(new Color(0xaeb3b8));
 const uAmbientIntensity = uniform(parameters.ambientLightIntensity);
@@ -352,7 +352,7 @@ material.colorNode = Fn(() => {
   const accumulatedColor = vec3(0.0).toVar();
   const transmittance = vec3(1.0).toVar();
   const mu = dot(rayDir, uLightDir);
-  const fadeZone = stepSize.mul(2.0);
+  const fadeZone = float(0.05);
 
   Loop(int(uMaxSteps), ({ i }) => {
     const distTraveled = float(i).mul(stepSize).add(jitter.mul(stepSize));
@@ -388,7 +388,8 @@ material.colorNode = Fn(() => {
     p.addAssign(rayDir.mul(stepSize));
   });
 
-  return vec4(accumulatedColor, float(1.0).sub(transmittance.x));
+  const tonemapped = accumulatedColor.div(accumulatedColor.add(vec3(1.0)));
+  return vec4(tonemapped, float(1.0).sub(transmittance.x));
 })();
 
 // WEB WORKER

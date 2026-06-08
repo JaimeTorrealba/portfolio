@@ -363,6 +363,6 @@ onBeforeRender(({ elapsed }) => {
 });
 </script>
 <template>
-  <TresMesh :geometry="geo" :position="[15, -5, 0]" :material :visible="options.visible" />
-  <TresMesh :geometry="geo" :position="[-15, -5, 0]" :material :visible="options.visible" />
+  <TresMesh :geometry="geo" :position="[14.5, -5, 0]" :material :visible="options.visible" />
+  <TresMesh :geometry="geo" :position="[-14.5, -5, 0]" :material :visible="options.visible" />
 </template>

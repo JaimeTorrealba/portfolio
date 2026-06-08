@@ -2,6 +2,7 @@
 import theExperience from "@/components/webgl/theExperience.vue";
 import LoadingScreen from "@/components/common/LoadingScreen.vue";
 import Menu from "@/components/theMenu.vue";
+import SoundToggle from "@/components/SoundToggle.vue";
 </script>
 
 <template>
@@ -12,4 +13,5 @@ import Menu from "@/components/theMenu.vue";
   <Suspense>
     <theExperience />
   </Suspense>
+  <SoundToggle />
 </template>
