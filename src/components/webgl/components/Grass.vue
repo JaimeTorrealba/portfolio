@@ -138,7 +138,6 @@ const uGrassParams = uniform(
   new Vector4(GRASS_SEGMENTS, GRASS_PATCH_SIZE, options.grassWidth, options.grassHeight)
 );
 
-const vColour = varying(vec3(), "vColour");
 const vGrassData = varying(vec4(), "vGrassData");
 const vNormal = varying(vec3(), "vNormal");
 
@@ -251,8 +250,6 @@ const bezier = Fn(([P0, P1, P2, P3, t]) => {
     .add(P3.mul(t.mul(t).mul(t)));
 });
 
-const TIP_COLOUR = vec3(0.72, 0.58, 0.28);
-const BASE_COLOUR = vec3(0.32, 0.20, 0.07);
 
 material.positionNode = Fn(() => {
   const PI = vec2(3.14159, 0.0).x;
@@ -324,21 +321,17 @@ material.positionNode = Fn(() => {
   const distFromEdge = halfRange.sub(abs(wrappedZ));
   const edgeFade = smoothstep(0.0, fadeMargin, distFromEdge);
 
-  const colour = mix(BASE_COLOUR, TIP_COLOUR, heightPercent.mul(0.5));
-  vColour.assign(mix(vec3(1.0, 0.0, 0.0), colour, stiffness));
   vNormal.assign(normalize(grassMat.mul(vec3(0.0, 1.0, 0.0))));
-  vGrassData.assign(vec4(x, heightPercent, xSide, edgeFade));
+  vGrassData.assign(vec4(xSide.sub(0.5), heightPercent, xSide, edgeFade));
 
   return wrappedPosition;
 })();
 
 material.colorNode = Fn(() => {
   const grassX = vGrassData.x;
-  const baseColour = mix(
-    vColour.mul(2.0),
-    vColour,
-    smoothstep(0.125, 0.0, abs(grassX))
-  );
+  const heightPercent = vGrassData.y;
+  const gray = mix(vec3(0.15), vec3(0.50), heightPercent.mul(0.5));
+  const baseColour = mix(gray.mul(1.3), gray, smoothstep(0.5, 0.0, abs(grassX)));
   const alpha = vGrassData.w;
   If(alpha.lessThan(0.01), () => {
     Discard();

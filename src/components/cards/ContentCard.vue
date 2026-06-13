@@ -58,7 +58,7 @@ onMounted(() => {
   position: fixed;
   top: 25%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -25%);
   z-index: 10;
   overflow: visible;
   width: 50%;

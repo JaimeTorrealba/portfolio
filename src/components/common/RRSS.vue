@@ -108,7 +108,7 @@ const showTooltipLab = ref(false);
       </Tooltip>
       <Tooltip text="Lab" :show="showTooltipLab" anchor="top center">
         <a
-          href="mailto:solucionesinformaticasjtc@gmail.com"
+          href="https://lab.jaimetorrealba.com/"
           target="_blank"
           rel="noopener noreferrer"
           @mouseenter="showTooltipLab = true"

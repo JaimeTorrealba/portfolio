@@ -2,7 +2,7 @@
 import { shallowRef, watch, onUnmounted, reactive, onMounted } from 'vue'
 import { useLoop, useTresContext } from '@tresjs/core'
 import { PostProcessing } from 'three/webgpu'
-import { pass, uniform, uv, length, smoothstep, mix, vec4 } from 'three/tsl'
+import { pass, uniform, uv, mix, vec4, vec2, vec3, dot, fract, sin, time } from 'three/tsl'
 import { dof } from 'three/addons/tsl/display/DepthOfFieldNode.js'
 import { usePaneStore } from '@/stores/pane'
 
@@ -13,9 +13,12 @@ const postProcessing = shallowRef(null)
 const focusDistanceUniform = shallowRef(null)
 const focalLengthUniform = shallowRef(null)
 const bokehScaleUniform = shallowRef(null)
-const vignetteOffsetUniform = shallowRef(null)
-const vignetteSoftnessUniform = shallowRef(null)
-const vignetteDarknessUniform = shallowRef(null)
+const grainIntensityUniform = shallowRef(null)
+const desatAmountUniform = shallowRef(null)
+const warmAmountUniform = shallowRef(null)
+
+const grainOptions = reactive({ intensity: 0.075 })
+const gradeOptions = reactive({ desaturation: 0.7, warmth: 0.0 })
 
 const dofOptions = reactive({
   focusDistance: 33.0,
@@ -23,11 +26,6 @@ const dofOptions = reactive({
   bokehScale: 1.5,
 })
 
-const vignetteOptions = reactive({
-  offset: 0.45,
-  softness: 0.25,
-  darkness: 1.0,
-})
 
 onMounted(() => {
   if (!window.location.href.includes('#debug')) return
@@ -38,10 +36,11 @@ onMounted(() => {
   dofFolder.addBinding(dofOptions, 'focusDistance', { min: 1, max: 100, step: 0.5 })
   dofFolder.addBinding(dofOptions, 'focalLength', { min: 0.1, max: 50, step: 0.1 })
   dofFolder.addBinding(dofOptions, 'bokehScale', { min: 0, max: 5, step: 0.05 })
-  const vignetteFolder = folder.addFolder({ title: 'Vignette' })
-  vignetteFolder.addBinding(vignetteOptions, 'offset', { min: 0, max: 1, step: 0.01 })
-  vignetteFolder.addBinding(vignetteOptions, 'softness', { min: 0, max: 1, step: 0.01 })
-  vignetteFolder.addBinding(vignetteOptions, 'darkness', { min: 0, max: 1, step: 0.01 })
+  const grainFolder = folder.addFolder({ title: 'Film Grain' })
+  grainFolder.addBinding(grainOptions, 'intensity', { min: 0, max: 0.3, step: 0.005 })
+  const gradeFolder = folder.addFolder({ title: 'Color Grade' })
+  gradeFolder.addBinding(gradeOptions, 'desaturation', { min: 0, max: 1, step: 0.01 })
+  gradeFolder.addBinding(gradeOptions, 'warmth', { min: 0, max: 0.1, step: 0.001 })
 })
 
 const setupPostProcessing = () => {
@@ -59,27 +58,35 @@ const setupPostProcessing = () => {
   const focalLength = uniform(dofOptions.focalLength)
   const bokehScale = uniform(dofOptions.bokehScale)
 
-  const vignetteOffset = uniform(vignetteOptions.offset)
-  const vignetteSoftness = uniform(vignetteOptions.softness)
-  const vignetteDarkness = uniform(vignetteOptions.darkness)
+  const grainIntensity = uniform(grainOptions.intensity)
+  const desatAmount = uniform(gradeOptions.desaturation)
+  const warmAmount = uniform(gradeOptions.warmth)
 
   const viewZ = scenePass.getViewZNode()
   const dofPass = dof(sceneColor, viewZ, focusDistance, focalLength, bokehScale)
 
-  const dist = length(uv().sub(0.5))
-  const vignette = smoothstep(vignetteOffset, vignetteOffset.add(vignetteSoftness), dist)
-  const vignetteStrength = vignette.mul(vignetteDarkness)
+  // Color grading: mild desaturation + warm tint
+  const luma = dot(dofPass.rgb, vec3(0.299, 0.587, 0.114))
+  const desaturated = mix(dofPass.rgb, vec3(luma), desatAmount)
+  const warmTint = vec3(warmAmount, 0.0, warmAmount.negate().mul(0.5))
+  const graded = vec4(desaturated.add(warmTint), dofPass.a)
 
-  postProcessingInstance.outputNode = mix(dofPass, vec4(0, 0, 0, 1), vignetteStrength)
+  // Film grain: animated hash noise centered on 0
+  const grainTime = time
+  const grainSeed = uv().add(fract(grainTime))
+  const grain = fract(sin(dot(grainSeed, vec2(12.9898, 78.233))).mul(43758.5453)).sub(0.5)
+  const grained = vec4(graded.rgb.add(grain.mul(grainIntensity)), graded.a)
+
+  postProcessingInstance.outputNode = grained
   postProcessingInstance.needsUpdate = true
 
   postProcessing.value = postProcessingInstance
   focusDistanceUniform.value = focusDistance
   focalLengthUniform.value = focalLength
   bokehScaleUniform.value = bokehScale
-  vignetteOffsetUniform.value = vignetteOffset
-  vignetteSoftnessUniform.value = vignetteSoftness
-  vignetteDarknessUniform.value = vignetteDarkness
+  grainIntensityUniform.value = grainIntensity
+  desatAmountUniform.value = desatAmount
+  warmAmountUniform.value = warmAmount
 }
 
 watch(
@@ -108,11 +115,18 @@ watch(
 )
 
 watch(
-  () => [vignetteOptions.offset, vignetteOptions.softness, vignetteOptions.darkness],
-  ([offset, softness, darkness]) => {
-    if (vignetteOffsetUniform.value) vignetteOffsetUniform.value.value = offset
-    if (vignetteSoftnessUniform.value) vignetteSoftnessUniform.value.value = softness
-    if (vignetteDarknessUniform.value) vignetteDarknessUniform.value.value = darkness
+  () => grainOptions.intensity,
+  (intensity) => {
+    if (grainIntensityUniform.value) grainIntensityUniform.value.value = intensity
+    if (postProcessing.value) postProcessing.value.needsUpdate = true
+  }
+)
+
+watch(
+  () => [gradeOptions.desaturation, gradeOptions.warmth],
+  ([desat, warmth]) => {
+    if (desatAmountUniform.value) desatAmountUniform.value.value = desat
+    if (warmAmountUniform.value) warmAmountUniform.value.value = warmth
     if (postProcessing.value) postProcessing.value.needsUpdate = true
   }
 )

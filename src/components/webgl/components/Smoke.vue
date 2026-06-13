@@ -112,7 +112,7 @@ const parameters = reactive({
   isAnimating: true,
 
   // Lighting
-  ambientLightIntensity: 1,
+  ambientLightIntensity: 1.75,
   // Debug / Features
   useDepthOcclusion: false, // set to true to re-enable depth based occlusion
 });

@@ -12,8 +12,11 @@ import Grass from './components/Grass.vue';
 import Precipitation from './components/Precipitation.vue';
 import CameraMouse from "./components/CameraMouse.vue";
 import PostProcessing from "./components/PostProcessing.vue";
+import Moon from "./components/Moon.vue";
 
 // TODO: addons like SPACE for running
+// TODO: Add variation to the floor
+// TODO: Clipping on the clouds to the grass
 
 const cameraRef = ref();
 
@@ -64,6 +67,7 @@ onMounted(() => {
     <Suspense>
       <Floor />
     </Suspense>
+    <Moon />
     <Lights />
     <PostProcessing />
   </TresCanvas>
