@@ -13,6 +13,7 @@ import Precipitation from './components/Precipitation.vue';
 import CameraMouse from "./components/CameraMouse.vue";
 import PostProcessing from "./components/PostProcessing.vue";
 import Moon from "./components/Moon.vue";
+import Clouds from "./components/Clouds.vue";
 
 // TODO: addons like SPACE for running
 // TODO: Add variation to the floor
@@ -68,6 +69,7 @@ onMounted(() => {
       <Floor />
     </Suspense>
     <Moon />
+    <Clouds />
     <Lights />
     <PostProcessing />
   </TresCanvas>
