@@ -16,7 +16,7 @@ const bokehScaleUniform = shallowRef(null)
 const grainIntensityUniform = shallowRef(null)
 const desatAmountUniform = shallowRef(null)
 
-const grainOptions = reactive({ intensity: 0.05 })
+const grainOptions = reactive({ intensity: 0.025 })
 const gradeOptions = reactive({ desaturation: 0.7 })
 
 const dofOptions = reactive({
