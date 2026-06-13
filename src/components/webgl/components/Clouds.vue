@@ -120,6 +120,6 @@ onUnmounted(() => {
 
 <template>
   <TresMesh :render-order="-1" :material="material">
-    <TresSphereGeometry ref="geometryRef" :args="[449, 16, 8]" />
+    <TresSphereGeometry ref="geometryRef" :args="[449, 48, 24]" />
   </TresMesh>
 </template>

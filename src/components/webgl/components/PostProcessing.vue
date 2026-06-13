@@ -15,10 +15,9 @@ const focalLengthUniform = shallowRef(null)
 const bokehScaleUniform = shallowRef(null)
 const grainIntensityUniform = shallowRef(null)
 const desatAmountUniform = shallowRef(null)
-const warmAmountUniform = shallowRef(null)
 
-const grainOptions = reactive({ intensity: 0.075 })
-const gradeOptions = reactive({ desaturation: 0.7, warmth: 0.0 })
+const grainOptions = reactive({ intensity: 0.05 })
+const gradeOptions = reactive({ desaturation: 0.7 })
 
 const dofOptions = reactive({
   focusDistance: 33.0,
@@ -40,7 +39,6 @@ onMounted(() => {
   grainFolder.addBinding(grainOptions, 'intensity', { min: 0, max: 0.3, step: 0.005 })
   const gradeFolder = folder.addFolder({ title: 'Color Grade' })
   gradeFolder.addBinding(gradeOptions, 'desaturation', { min: 0, max: 1, step: 0.01 })
-  gradeFolder.addBinding(gradeOptions, 'warmth', { min: 0, max: 0.1, step: 0.001 })
 })
 
 const setupPostProcessing = () => {
@@ -60,16 +58,14 @@ const setupPostProcessing = () => {
 
   const grainIntensity = uniform(grainOptions.intensity)
   const desatAmount = uniform(gradeOptions.desaturation)
-  const warmAmount = uniform(gradeOptions.warmth)
 
   const viewZ = scenePass.getViewZNode()
   const dofPass = dof(sceneColor, viewZ, focusDistance, focalLength, bokehScale)
 
-  // Color grading: mild desaturation + warm tint
+  // Color grading: mild desaturation
   const luma = dot(dofPass.rgb, vec3(0.299, 0.587, 0.114))
   const desaturated = mix(dofPass.rgb, vec3(luma), desatAmount)
-  const warmTint = vec3(warmAmount, 0.0, warmAmount.negate().mul(0.5))
-  const graded = vec4(desaturated.add(warmTint), dofPass.a)
+  const graded = vec4(desaturated, dofPass.a)
 
   // Film grain: animated hash noise centered on 0
   const grainTime = time
@@ -86,7 +82,6 @@ const setupPostProcessing = () => {
   bokehScaleUniform.value = bokehScale
   grainIntensityUniform.value = grainIntensity
   desatAmountUniform.value = desatAmount
-  warmAmountUniform.value = warmAmount
 }
 
 watch(
@@ -123,10 +118,9 @@ watch(
 )
 
 watch(
-  () => [gradeOptions.desaturation, gradeOptions.warmth],
-  ([desat, warmth]) => {
+  () => gradeOptions.desaturation,
+  (desat) => {
     if (desatAmountUniform.value) desatAmountUniform.value.value = desat
-    if (warmAmountUniform.value) warmAmountUniform.value.value = warmth
     if (postProcessing.value) postProcessing.value.needsUpdate = true
   }
 )

@@ -76,7 +76,7 @@ onBeforeRender(({ elapsed }) => {
     :rotate-x="Math.PI * -0.5"
     :visible="options.visibility"
   >
-    <TresPlaneGeometry :args="[25, 100, 50, 50]" />
+    <TresPlaneGeometry :args="[25, 100, 2, 2]" />
     <TresMeshPhysicalMaterial
       ref="floorMaterial"
       :map="floorTextures[0]"
