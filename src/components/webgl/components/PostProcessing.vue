@@ -1,14 +1,17 @@
 <script setup>
-import { shallowRef, watch, onUnmounted, reactive, onMounted } from 'vue'
+import { shallowRef, ref, watch, onUnmounted, reactive, onMounted } from 'vue'
 import { useLoop, useTresContext } from '@tresjs/core'
 import { PostProcessing } from 'three/webgpu'
 import { pass, uniform, uv, mix, vec4, vec2, vec3, dot, fract, sin, time } from 'three/tsl'
 import { dof } from 'three/addons/tsl/display/DepthOfFieldNode.js'
 import { usePaneStore } from '@/stores/pane'
+import { useMainStore } from '@/stores'
 
 const { render } = useLoop()
 const { renderer, scene, camera } = useTresContext()
 
+const mainStore = useMainStore()
+const gpuTier = ref(null)
 const postProcessing = shallowRef(null)
 const focusDistanceUniform = shallowRef(null)
 const focalLengthUniform = shallowRef(null)
@@ -27,25 +30,59 @@ const dofOptions = reactive({
 })
 
 
-onMounted(() => {
-  if (!window.location.href.includes('#debug')) return
-  const store = usePaneStore()
-  const pane = store.pane
-  const folder = pane.addFolder({ title: 'Post Processing', expanded: false })
-  const dofFolder = folder.addFolder({ title: 'Depth Of Field' })
-  dofFolder.addBinding(dofOptions, 'enabled', { label: 'enabled' })
-  dofFolder.addBinding(dofOptions, 'focusDistance', { min: 1, max: 100, step: 0.5 })
-  dofFolder.addBinding(dofOptions, 'focalLength', { min: 0.1, max: 50, step: 0.1 })
-  dofFolder.addBinding(dofOptions, 'bokehScale', { min: 0, max: 5, step: 0.05 })
-  const grainFolder = folder.addFolder({ title: 'Film Grain' })
-  grainFolder.addBinding(grainOptions, 'enabled', { label: 'enabled' })
-  grainFolder.addBinding(grainOptions, 'intensity', { min: 0, max: 0.3, step: 0.005 })
-  const gradeFolder = folder.addFolder({ title: 'Color Grade' })
-  gradeFolder.addBinding(gradeOptions, 'enabled', { label: 'enabled' })
-  gradeFolder.addBinding(gradeOptions, 'desaturation', { min: 0, max: 1, step: 0.01 })
+onMounted(async () => {
+  if (window.location.href.includes('#debug')) {
+    const store = usePaneStore()
+    const pane = store.pane
+    const folder = pane.addFolder({ title: 'Post Processing', expanded: false })
+    const dofFolder = folder.addFolder({ title: 'Depth Of Field' })
+    dofFolder.addBinding(dofOptions, 'enabled', { label: 'enabled' })
+    dofFolder.addBinding(dofOptions, 'focusDistance', { min: 1, max: 100, step: 0.5 })
+    dofFolder.addBinding(dofOptions, 'focalLength', { min: 0.1, max: 50, step: 0.1 })
+    dofFolder.addBinding(dofOptions, 'bokehScale', { min: 0, max: 5, step: 0.05 })
+    const grainFolder = folder.addFolder({ title: 'Film Grain' })
+    grainFolder.addBinding(grainOptions, 'enabled', { label: 'enabled' })
+    grainFolder.addBinding(grainOptions, 'intensity', { min: 0, max: 0.3, step: 0.005 })
+    const gradeFolder = folder.addFolder({ title: 'Color Grade' })
+    gradeFolder.addBinding(gradeOptions, 'enabled', { label: 'enabled' })
+    gradeFolder.addBinding(gradeOptions, 'desaturation', { min: 0, max: 1, step: 0.01 })
+  }
+
+  const result = await mainStore.resolveGPUTier()
+  const tier = result.tier
+
+  if (tier <= 0) {
+    dofOptions.enabled = false
+    grainOptions.enabled = false
+    gradeOptions.enabled = false
+  } else if (tier <= 2) {
+    dofOptions.enabled = false
+    grainOptions.enabled = false
+    gradeOptions.enabled = true
+  } else if (tier === 3) {
+    dofOptions.enabled = true
+    grainOptions.enabled = false
+    gradeOptions.enabled = true
+  } else {
+    dofOptions.enabled = true
+    grainOptions.enabled = true
+    gradeOptions.enabled = true
+  }
+
+  gpuTier.value = tier
+
+  if (renderer.isInitialized.value && camera.activeCamera.value) {
+    setupPostProcessing()
+  }
 })
 
 const setupPostProcessing = () => {
+  if (gpuTier.value === null) return
+  if (gpuTier.value <= 0) {
+    if (postProcessing.value?.dispose) postProcessing.value.dispose()
+    postProcessing.value = null
+    return
+  }
   if (!renderer.isInitialized.value || !camera.activeCamera.value) return
 
   if (postProcessing.value?.dispose) {
@@ -94,7 +131,7 @@ const setupPostProcessing = () => {
 watch(
   () => renderer.isInitialized.value,
   (isReady) => {
-    if (isReady) setupPostProcessing()
+    if (isReady && gpuTier.value !== null) setupPostProcessing()
   },
   { immediate: true }
 )
@@ -102,7 +139,7 @@ watch(
 watch(
   () => camera.activeCamera.value,
   (activeCamera) => {
-    if (activeCamera) setupPostProcessing()
+    if (activeCamera && gpuTier.value !== null) setupPostProcessing()
   }
 )
 

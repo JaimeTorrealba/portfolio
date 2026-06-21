@@ -62,7 +62,7 @@ const getTextureSize = () => {
     case 3:
       return 16;
     default:
-      return 64;
+      return 32;
   }
 };
 const getRayMarchSteps = () => {
@@ -75,7 +75,7 @@ const getRayMarchSteps = () => {
     case 3:
       return 16;
     default:
-      return 64;
+      return 32;
   }
 };
 const parameters = reactive({
