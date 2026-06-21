@@ -111,6 +111,6 @@ onUnmounted(() => {
 
 <template>
   <TresMesh v-if="noiseTex" :render-order="-1" :material="material">
-    <TresSphereGeometry ref="geometryRef" :args="[449, 48, 24]" />
+    <TresSphereGeometry ref="geometryRef" :args="[449, 24, 12]" />
   </TresMesh>
 </template>

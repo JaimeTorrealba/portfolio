@@ -16,10 +16,11 @@ const bokehScaleUniform = shallowRef(null)
 const grainIntensityUniform = shallowRef(null)
 const desatAmountUniform = shallowRef(null)
 
-const grainOptions = reactive({ intensity: 0.025 })
-const gradeOptions = reactive({ desaturation: 0.7 })
+const grainOptions = reactive({ enabled: true, intensity: 0.025 })
+const gradeOptions = reactive({ enabled: true, desaturation: 0.7 })
 
 const dofOptions = reactive({
+  enabled: true,
   focusDistance: 33.0,
   focalLength: 27.0,
   bokehScale: 1.5,
@@ -32,12 +33,15 @@ onMounted(() => {
   const pane = store.pane
   const folder = pane.addFolder({ title: 'Post Processing', expanded: false })
   const dofFolder = folder.addFolder({ title: 'Depth Of Field' })
+  dofFolder.addBinding(dofOptions, 'enabled', { label: 'enabled' })
   dofFolder.addBinding(dofOptions, 'focusDistance', { min: 1, max: 100, step: 0.5 })
   dofFolder.addBinding(dofOptions, 'focalLength', { min: 0.1, max: 50, step: 0.1 })
   dofFolder.addBinding(dofOptions, 'bokehScale', { min: 0, max: 5, step: 0.05 })
   const grainFolder = folder.addFolder({ title: 'Film Grain' })
+  grainFolder.addBinding(grainOptions, 'enabled', { label: 'enabled' })
   grainFolder.addBinding(grainOptions, 'intensity', { min: 0, max: 0.3, step: 0.005 })
   const gradeFolder = folder.addFolder({ title: 'Color Grade' })
+  gradeFolder.addBinding(gradeOptions, 'enabled', { label: 'enabled' })
   gradeFolder.addBinding(gradeOptions, 'desaturation', { min: 0, max: 1, step: 0.01 })
 })
 
@@ -60,20 +64,23 @@ const setupPostProcessing = () => {
   const desatAmount = uniform(gradeOptions.desaturation)
 
   const viewZ = scenePass.getViewZNode()
-  const dofPass = dof(sceneColor, viewZ, focusDistance, focalLength, bokehScale)
+  const afterDof = dofOptions.enabled
+    ? dof(sceneColor, viewZ, focusDistance, focalLength, bokehScale)
+    : sceneColor
 
   // Color grading: mild desaturation
-  const luma = dot(dofPass.rgb, vec3(0.299, 0.587, 0.114))
-  const desaturated = mix(dofPass.rgb, vec3(luma), desatAmount)
-  const graded = vec4(desaturated, dofPass.a)
+  const luma = dot(afterDof.rgb, vec3(0.299, 0.587, 0.114))
+  const desaturated = mix(afterDof.rgb, vec3(luma), desatAmount)
+  const afterGrade = gradeOptions.enabled ? vec4(desaturated, afterDof.a) : afterDof
 
   // Film grain: animated hash noise centered on 0
-  const grainTime = time
-  const grainSeed = uv().add(fract(grainTime))
+  const grainSeed = uv().add(fract(time))
   const grain = fract(sin(dot(grainSeed, vec2(12.9898, 78.233))).mul(43758.5453)).sub(0.5)
-  const grained = vec4(graded.rgb.add(grain.mul(grainIntensity)), graded.a)
+  const afterGrain = grainOptions.enabled
+    ? vec4(afterGrade.rgb.add(grain.mul(grainIntensity)), afterGrade.a)
+    : afterGrade
 
-  postProcessingInstance.outputNode = grained
+  postProcessingInstance.outputNode = afterGrain
   postProcessingInstance.needsUpdate = true
 
   postProcessing.value = postProcessingInstance
@@ -97,6 +104,11 @@ watch(
   (activeCamera) => {
     if (activeCamera) setupPostProcessing()
   }
+)
+
+watch(
+  () => [dofOptions.enabled, grainOptions.enabled, gradeOptions.enabled],
+  () => setupPostProcessing()
 )
 
 watch(

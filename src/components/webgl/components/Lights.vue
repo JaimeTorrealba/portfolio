@@ -1,5 +1,5 @@
 <script setup>
-import { shallowRef, watch, reactive, onMounted } from "vue";
+import { shallowRef, watch, reactive, onMounted, onUnmounted } from "vue";
 import { useTres, useLoader } from "@tresjs/core";
 import { IESLoader } from "three/addons/loaders/IESLoader.js";
 import { IESSpotLight } from "three/webgpu";
@@ -114,6 +114,10 @@ watch(
   },
   { immediate: true }
 );
+
+onUnmounted(() => {
+  iesMap.value?.dispose();
+});
 
 watch(
   spotLightRef,

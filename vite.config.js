@@ -1,5 +1,6 @@
 import { fileURLToPath, URL } from 'node:url'
-import glsl from 'vite-plugin-glsl';
+import glsl from 'vite-plugin-glsl'
+import compression from 'vite-plugin-compression'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -14,10 +15,23 @@ export default defineConfig({
         },
       },
     }),
-    glsl()],
+    glsl(),
+    compression({ algorithm: 'brotliCompress' }),
+  ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
-  }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-three': ['three'],
+          'vendor-tresjs': ['@tresjs/core', '@tresjs/cientos'],
+          'vendor-gsap': ['gsap'],
+        },
+      },
+    },
+  },
 })

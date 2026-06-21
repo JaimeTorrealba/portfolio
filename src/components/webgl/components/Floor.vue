@@ -1,5 +1,5 @@
 <script setup>
-import { shallowRef, watch, reactive, onMounted } from "vue";
+import { shallowRef, watch, reactive, onMounted, onUnmounted } from "vue";
 import { useLoop } from "@tresjs/core";
 import { useTextures } from "@tresjs/cientos";
 import { RepeatWrapping } from "three";
@@ -64,9 +64,13 @@ const { onBeforeRender } = useLoop();
 
 onBeforeRender(({ elapsed }) => {
   if (!floorMaterial.value || options.stop) return;
-  floorMaterial.value.map.offset.x = elapsed * options.speed;
-  floorMaterial.value.normalMap.offset.x = elapsed * options.speed;
-  floorMaterial.value.roughnessMap.offset.x = elapsed * options.speed;
+  const off = elapsed * options.speed;
+  const m = floorMaterial.value;
+  m.map.offset.x = m.normalMap.offset.x = m.roughnessMap.offset.x = off;
+});
+
+onUnmounted(() => {
+  floorTextures.value?.forEach(t => t.dispose());
 });
 </script>
 <template>

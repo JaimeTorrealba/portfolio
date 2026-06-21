@@ -5,8 +5,7 @@ export const usePaneStore = defineStore('pane', () => {
   //debug
   // import { usePaneStore } from '@/stores/pane'
   // const store = usePaneStore()
-  const pane = new Pane()
-
+  const pane = window.location.href.includes('#debug') ? new Pane() : null
 
   return { pane }
 })

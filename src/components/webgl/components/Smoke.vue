@@ -48,9 +48,9 @@ import {
 import { VolumetricMaskController } from "../../../utils/SmokeUtils";
 import { useMainStore } from "@/stores";
 import { usePaneStore } from "@/stores/pane";
-import { getGPUTier } from 'detect-gpu';
 
-const tier = await getGPUTier();
+const mainStore = useMainStore();
+const tier = await mainStore.resolveGPUTier();
 
 const getTextureSize = () => {
   switch (tier.tier) {

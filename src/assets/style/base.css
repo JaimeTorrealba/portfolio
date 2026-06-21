@@ -18,9 +18,16 @@ body {
 
 @font-face {
   font-family: sentient;
-  src: url("/fonts/Sentient-Regular.woff2") format("woff2"),
-    url("/fonts/Sentient-Bold.woff") format("woff");
-    font-swap: swap;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Sentient-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: sentient;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/Sentient-Bold.woff2") format("woff2");
 }
 
 body {

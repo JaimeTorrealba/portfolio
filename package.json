@@ -30,6 +30,7 @@
     "eslint-plugin-vue": "^9.33.0",
     "prettier": "^3.8.1",
     "tweakpane": "^4.0.5",
-    "vite": "^4.5.14"
+    "vite": "^4.5.14",
+    "vite-plugin-compression": "^0.5.1"
   }
 }

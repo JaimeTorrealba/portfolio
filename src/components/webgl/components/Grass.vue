@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, onMounted } from "vue";
+import { reactive, watch, onMounted, onUnmounted } from "vue";
 import { BufferAttribute, InstancedBufferGeometry, Sphere, Vector3, Vector4 } from "three";
 import { useLoop } from "@tresjs/core";
 import { MeshStandardNodeMaterial } from "three/webgpu";
@@ -37,9 +37,10 @@ import {
   vertexIndex,
   modelWorldMatrix,
 } from "three/tsl";
-import { getGPUTier } from 'detect-gpu';
+import { useMainStore } from '@/stores';
 
-const tier = await getGPUTier();
+const mainStore = useMainStore();
+const tier = await mainStore.resolveGPUTier();
 
 const getGrassCountSize = () => {
   switch (tier.tier) {
@@ -342,17 +343,22 @@ material.colorNode = Fn(() => {
 
 material.normalNode = normalize(vNormal);
 
+uGrassParams.value.set(GRASS_SEGMENTS, GRASS_PATCH_SIZE, options.grassWidth, options.grassHeight);
+
+watch(() => [options.grassWidth, options.grassHeight], () => {
+  uGrassParams.value.set(GRASS_SEGMENTS, GRASS_PATCH_SIZE, options.grassWidth, options.grassHeight);
+});
+
+onUnmounted(() => {
+  geo.dispose();
+  material.dispose();
+});
+
 const { onBeforeRender } = useLoop();
 
 onBeforeRender(({ elapsed }) => {
   uTime.value = elapsed * options.grassSpeed;
   uTimeMove.value = elapsed * options.grassMovement;
-  uGrassParams.value.set(
-    GRASS_SEGMENTS,
-    GRASS_PATCH_SIZE,
-    options.grassWidth,
-    options.grassHeight
-  );
 });
 </script>
 <template>
