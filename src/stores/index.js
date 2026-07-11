@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { getGPUTier } from 'detect-gpu'
 
 export const useMainStore = defineStore('main', () => {
-  const finishLoading = ref(false)
+  const finishLoading = ref(false) // to false
   const gpuTier = ref(null)
 
   let _gpuTierPromise = null

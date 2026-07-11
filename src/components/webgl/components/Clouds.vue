@@ -14,7 +14,7 @@ const options = reactive({
   smoothMin: 0.6,
   smoothMax: 0,
   uvScale: 0.1,
-  speed: 0.012,
+  speed: 0.005,
   intensity: 0.5,
   horizonStart: -0.05,
   horizonEnd: 0.15,

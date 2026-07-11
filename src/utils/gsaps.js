@@ -17,6 +17,5 @@ export const appear = (elem) => {
   return tl.to(elem, {
     opacity: 1,
     duration: 1,
-    delay: 1,
   })
 }
