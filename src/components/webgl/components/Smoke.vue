@@ -96,7 +96,7 @@ const parameters = reactive({
   // Material & Rendering (Shader)
   densityThreshold: 0.1,
   densityMultiplier: 1.1,
-  opacity: 3.0,
+  opacity: 4.0,
   raymarchSteps: getRayMarchSteps(),
   lightSteps: 1,
 
@@ -108,7 +108,7 @@ const parameters = reactive({
 
   animationSpeedX: 0.02,
   animationSpeedY: 0.0,
-  animationSpeedZ: -0.4,
+  animationSpeedZ: -0.6,
   isAnimating: true,
 
   // Lighting
@@ -423,6 +423,7 @@ const set3DTexture = (texture) => {
 const animatedOffset = new Vector3();
 const { onBeforeRender } = useLoop();
 onBeforeRender(({ delta }) => {
+  if (mainStore.reducedMotion) return;
   const dt = delta ?? 0.016;
   animatedOffset.x += parameters.animationSpeedX * dt;
   animatedOffset.y += parameters.animationSpeedY * dt;

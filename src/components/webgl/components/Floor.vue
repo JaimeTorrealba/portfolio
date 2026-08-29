@@ -4,6 +4,9 @@ import { useLoop } from "@tresjs/core";
 import { useTextures } from "@tresjs/cientos";
 import { RepeatWrapping } from "three";
 import { usePaneStore } from '@/stores/pane'
+import { useMainStore } from '@/stores'
+
+const mainStore = useMainStore()
 
 const options = reactive({
   stop: false,
@@ -63,7 +66,7 @@ const floorMaterial = shallowRef();
 const { onBeforeRender } = useLoop();
 
 onBeforeRender(({ elapsed }) => {
-  if (!floorMaterial.value || options.stop) return;
+  if (!floorMaterial.value || options.stop || mainStore.reducedMotion) return;
   const off = elapsed * options.speed;
   const m = floorMaterial.value;
   m.map.offset.x = m.normalMap.offset.x = m.roughnessMap.offset.x = off;

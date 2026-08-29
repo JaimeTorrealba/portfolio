@@ -6,6 +6,9 @@ import {
   Sprite, SpriteMaterial,
   SphereGeometry, MeshBasicMaterial, Mesh,
 } from "three";
+import { useMainStore } from "@/stores";
+
+const mainStore = useMainStore();
 
 function createGlowTexture() {
   const size = 256;
@@ -40,6 +43,8 @@ const moonMesh = new Mesh(
   new MeshBasicMaterial({ color: 0xdce8f5, fog: false })
 );
 moonMesh.position.set(0, 45, -450);
+// Resting scale, so the moon is correctly sized even if the pulse never runs.
+moonMesh.scale.setScalar(4.5);
 
 const groupRef = shallowRef();
 
@@ -50,6 +55,7 @@ onMounted(() => {
 
 const { onBeforeRender } = useLoop();
 onBeforeRender(({ elapsed }) => {
+  if (mainStore.reducedMotion) return;
   const s = 1.0 + Math.sin(elapsed * 0.11) * 0.018;
   moonMesh.scale.setScalar(s * 4.5);
 });

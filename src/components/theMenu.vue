@@ -3,6 +3,7 @@ import { ref, watch } from "vue";
 import { gsap } from "gsap";
 import { useWindowSize } from "@vueuse/core";
 import { useMainStore } from "@/stores";
+import { prefersReducedMotion } from "@/utils/motion.js";
 import AboutMeCard from "@/components/cards/AboutMeCard.vue";
 import ContentCard from "@/components/cards/ContentCard.vue";
 import ExperienceCard from "@/components/cards/ExperienceCard.vue";
@@ -20,6 +21,11 @@ watch(width, () => {
 });
 
 const onEnter = (el, done) => {
+  if (prefersReducedMotion()) {
+    gsap.set(el, { scale: 1, y: 0 });
+    done();
+    return;
+  }
   gsap.fromTo(
     el,
     { scale: 0.88, y: 48 },
@@ -28,6 +34,10 @@ const onEnter = (el, done) => {
 };
 
 const onLeave = (el, done) => {
+  if (prefersReducedMotion()) {
+    done();
+    return;
+  }
   gsap.to(el, {
     opacity: 0,
     scale: 0.92,
@@ -39,6 +49,11 @@ const onLeave = (el, done) => {
 };
 
 const onBtnEnter = (el, done) => {
+  if (prefersReducedMotion()) {
+    gsap.set(el, { opacity: 1, scale: 1, y: 0 });
+    done();
+    return;
+  }
   const index = parseInt(el.dataset.index || "0");
   gsap.fromTo(
     el,
@@ -56,6 +71,10 @@ const onBtnEnter = (el, done) => {
 };
 
 const onBtnLeave = (el, done) => {
+  if (prefersReducedMotion()) {
+    done();
+    return;
+  }
   const index = parseInt(el.dataset.index || "0");
   gsap.to(el, {
     opacity: 0,

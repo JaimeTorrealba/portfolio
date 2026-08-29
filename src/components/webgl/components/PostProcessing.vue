@@ -69,6 +69,10 @@ onMounted(async () => {
     gradeOptions.enabled = true
   }
 
+  // Animated hash noise is motion in its own right; the TSL `time` node it
+  // samples also advances on every render, so drop it entirely.
+  if (mainStore.reducedMotion) grainOptions.enabled = false
+
   gpuTier.value = tier
 
   if (renderer.isInitialized.value && camera.activeCamera.value) {
@@ -155,6 +159,16 @@ watch(
     if (focalLengthUniform.value) focalLengthUniform.value.value = focalLength
     if (bokehScaleUniform.value) bokehScaleUniform.value.value = bokehScale
     if (postProcessing.value) postProcessing.value.needsUpdate = true
+  }
+)
+
+// Grain is decided once by GPU tier at mount; re-derive it when the reduced
+// motion preference flips at runtime (the #debug pane can toggle it).
+watch(
+  () => mainStore.reducedMotion,
+  (reduce) => {
+    if (gpuTier.value === null) return
+    grainOptions.enabled = reduce ? false : gpuTier.value > 3
   }
 )
 

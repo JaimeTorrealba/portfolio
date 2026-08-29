@@ -1,5 +1,8 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
+import { useMainStore } from "@/stores";
+
+const store = useMainStore();
 
 const audio = new Audio('/walking-sound.mp3');
 audio.loop = true;
@@ -7,10 +10,20 @@ audio.loop = true;
 const playing = ref(false);
 
 onMounted(() => {
+  // The loop is a walking sound: with the scene frozen there is nothing to be
+  // walking through, so never arm the autoplay under reduced motion.
+  if (store.reducedMotion) return;
   document.addEventListener('pointerdown', () => {
+    if (store.reducedMotion) return;
     audio.play();
     playing.value = true;
   }, { once: true });
+});
+
+watch(() => store.reducedMotion, (reduce) => {
+  if (!reduce) return;
+  audio.pause();
+  playing.value = false;
 });
 
 function toggle() {
@@ -26,6 +39,7 @@ function toggle() {
 
 <template>
   <button
+    v-if="!store.reducedMotion"
     @pointerdown.stop
     @click="toggle"
     class="sound-btn"

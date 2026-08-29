@@ -2,6 +2,7 @@
 import { onMounted, ref } from "vue";
 import { gsap } from "gsap";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
+import { prefersReducedMotion } from "@/utils/motion.js";
 
 defineProps({
   width: { type: String, default: "48" },
@@ -20,6 +21,13 @@ onMounted(() => {
 
   const cls1 = svgEl.querySelectorAll(".cls-1");
   const cls2 = svgEl.querySelectorAll(".cls-2");
+  if (prefersReducedMotion()) {
+    // Skip the draw-on entirely and land on the filled end state.
+    gsap.set(cls1, { fill: "#ccc", stroke: "none" });
+    gsap.set(cls2, { fill: "#b2b2b2", stroke: "none" });
+    return;
+  }
+
   const tl = gsap.timeline();
 
   gsap.set([cls1, cls2], {

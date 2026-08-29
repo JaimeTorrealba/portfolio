@@ -2,12 +2,16 @@
 import { onMounted, nextTick } from "vue";
 import { gsap } from "gsap";
 import { useMainStore } from "@/stores";
+import { prefersReducedMotion } from "@/utils/motion.js";
 import Azathoth from "@/assets/icons/Lovecraft/Azathoth.vue";
 
 const store = useMainStore();
 
 onMounted(async () => {
   await nextTick();
+  // Elements already sit at their resting opacity/rotation; the ring spins are
+  // infinite, so there is no end state to jump to -- skip the whole sequence.
+  if (prefersReducedMotion()) return;
   gsap.from(["#innerText", "#secondText", "#outerText"], {
     duration: 3,
     opacity: 0,

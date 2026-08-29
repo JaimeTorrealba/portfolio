@@ -357,6 +357,8 @@ onUnmounted(() => {
 const { onBeforeRender } = useLoop();
 
 onBeforeRender(({ elapsed }) => {
+  // Frozen at the uniforms' initial 0, which is a valid static grass field.
+  if (mainStore.reducedMotion) return;
   uTime.value = elapsed * options.grassSpeed;
   uTimeMove.value = elapsed * options.grassMovement;
 });

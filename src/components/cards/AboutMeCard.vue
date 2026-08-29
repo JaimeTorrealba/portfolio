@@ -3,6 +3,7 @@ import { nextTick, onMounted, ref } from "vue";
 import { gsap } from "gsap";
 import { SplitText } from "gsap/SplitText";
 import { showText } from "@/utils/gsaps.js";
+import { prefersReducedMotion } from "@/utils/motion.js";
 import RRSS from "@/components/common/RRSS.vue";
 import SignatureJT from "@/assets/icons/SignatureJT.vue";
 import CloseButton from "@/components/common/CloseButton.vue";
@@ -15,8 +16,36 @@ const subTitleRef = ref(null);
 const firstTextRef = ref(null);
 const secondTextRef = ref(null);
 const perfilRef = ref(null);
+const imgContainerRef = ref(null);
+const imgReady = ref(false);
 let firstTextSplit = null;
 let secondTextSplit = null;
+
+const revealImage = () => {
+  if (!imgContainerRef.value) return;
+  if (prefersReducedMotion()) {
+    gsap.set(imgContainerRef.value, { opacity: 1, scale: 1, y: 0 });
+    return;
+  }
+  gsap.fromTo(
+    imgContainerRef.value,
+    { opacity: 0, scale: 0.5, y: 50 },
+    {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      duration: 0.5,
+      transformOrigin: "50% 50%",
+      ease: "power2.out",
+    }
+  );
+};
+
+const onImgLoad = () => {
+  if (imgReady.value) return;
+  imgReady.value = true;
+  revealImage();
+};
 
 const playAnimation = async () => {
   await nextTick();
@@ -32,6 +61,14 @@ const playAnimation = async () => {
     type: "lines",
   });
   const lines = [firstTextSplit.lines, secondTextSplit.lines].flat();
+  if (prefersReducedMotion()) {
+    // Reverting restores the original markup, so the copy reads normally.
+    firstTextSplit.revert();
+    secondTextSplit.revert();
+    firstTextSplit = null;
+    secondTextSplit = null;
+    return;
+  }
   gsap.from(lines, {
     y: 100,
     opacity: 0,
@@ -46,18 +83,11 @@ const playAnimation = async () => {
       secondTextSplit = null;
     },
   });
-  gsap.from(perfilRef.value, {
-    duration: 0.5,
-    opacity: 0,
-    transformOrigin: "50% 50%",
-    scale: 0.5,
-    y: 50,
-    ease: "power2.out",
-  });
 };
 
 onMounted(() => {
   playAnimation();
+  if (perfilRef.value?.complete && perfilRef.value.naturalWidth > 0) onImgLoad();
 });
 </script>
 <template>
@@ -65,8 +95,17 @@ onMounted(() => {
     <div class="glass3d">
       <CloseButton @click="emit('close')" />
       <div class="glass-content">
-        <div class="img-container">
-          <img ref="perfilRef" src="/img/Foto_Perfil.png" alt="Image of my face" />
+        <div ref="imgContainerRef" class="img-container" :class="{ 'is-ready': imgReady }">
+          <img
+            ref="perfilRef"
+            src="/img/Foto_Perfil.png"
+            alt="Image of my face"
+            width="547"
+            height="456"
+            decoding="async"
+            fetchpriority="high"
+            @load="onImgLoad"
+          />
         </div>
         <div class="content-glass">
           <div class="overflow-hidden">
@@ -135,6 +174,7 @@ onMounted(() => {
   height: 100%;
   position: relative;
   overflow: hidden;
+  opacity: 0;
   img {
     display: block;
     border-radius: 0.75rem;
@@ -159,6 +199,12 @@ onMounted(() => {
   border-radius: inherit;
   background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.img-container.is-ready::after {
+  opacity: 1;
 }
 
 .rrss {

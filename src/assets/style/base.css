@@ -68,3 +68,20 @@ button {
 p {
   max-width: 75ch;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  /* `scroll-behavior: smooth !important` above needs an !important to beat it */
+  html,
+  body {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}

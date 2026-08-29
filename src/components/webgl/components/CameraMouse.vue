@@ -3,8 +3,10 @@ import { useLoop, useTres } from "@tresjs/core";
 import { useMouse, useWindowSize } from "@vueuse/core";
 import { computed, reactive, onMounted } from "vue";
 import { usePaneStore } from "@/stores/pane";
+import { useMainStore } from "@/stores";
 
 const { camera } = useTres();
+const mainStore = useMainStore();
 
 const options = reactive({
   factor: 0.25,
@@ -37,6 +39,9 @@ const cursorY = computed(() => -(y.value / height.value - 0.5) * options.factor 
 const { onBeforeRender } = useLoop();
 
 onBeforeRender(({ elapsed, delta }) => {
+  // Unrequested viewpoint motion is the main vestibular trigger here: keep the
+  // camera locked to its resting transform when reduced motion is preferred.
+  if (mainStore.reducedMotion) return;
   const xMove = (cursorX.value - camera.value.rotation.y) * delta * options.ease;
   const yMove = (cursorY.value - camera.value.rotation.x) * delta * options.ease;
   camera.value.rotation.x +=  yMove;

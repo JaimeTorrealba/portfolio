@@ -3,6 +3,7 @@ import { onMounted, ref } from "vue";
 import { gsap } from "gsap";
 import { SplitText } from "gsap/SplitText";
 import { showText } from "@/utils/gsaps.js";
+import { prefersReducedMotion } from "@/utils/motion.js";
 import { items } from "@/utils/items.js";
 import CloseButton from "@/components/common/CloseButton.vue";
 gsap.registerPlugin(SplitText);
@@ -15,6 +16,10 @@ const listRef = ref(null);
 onMounted(() => {
   const master = gsap.timeline();
   master.add(showText(titleRef.value));
+  if (prefersReducedMotion()) {
+    gsap.set(listRef.value.children, { opacity: 1, y: 0 });
+    return;
+  }
   master.fromTo(
     listRef.value.children,
     { opacity: 0, y: 40 },

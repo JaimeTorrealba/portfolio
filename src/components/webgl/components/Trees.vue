@@ -3,10 +3,12 @@ import { reactive, onMounted, shallowRef, nextTick } from "vue";
 import { useTres, useLoop } from "@tresjs/core";
 import { Tree } from "@dgreenheck/ez-tree";
 import { usePaneStore } from "@/stores/pane";
+import { useMainStore } from "@/stores";
 import gsap from "gsap";
 
 
 const { camera } = useTres();
+const mainStore = useMainStore();
 const options = reactive({
   treeCount: 1,
   speed: 12.5,
@@ -54,6 +56,13 @@ const fadeInTree = (tree) => {
     if (!child.isMesh) return;
     const mats = Array.isArray(child.material) ? child.material : [child.material];
     mats.forEach((mat) => {
+      // A GSAP tween on a raw material does not invalidate the TresJS scene, so
+      // in on-demand mode the fade would never repaint. Land on the end state.
+      if (mainStore.reducedMotion) {
+        mat.opacity = 1;
+        mat.transparent = false;
+        return;
+      }
       mat.transparent = true;
       mat.opacity = 0;
       gsap.to(mat, {
@@ -118,7 +127,7 @@ const respawnTree = (_x) => {
 const { onBeforeRender } = useLoop();
 
 onBeforeRender(({ delta }) => {
-  if (trees.length === 0) return;
+  if (trees.length === 0 || mainStore.reducedMotion) return;
   for (let i = trees.length - 1; i >= 0; i--) {
     const tree = trees[i];
     tree.position.z += delta * options.speed;

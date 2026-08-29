@@ -2,6 +2,7 @@
 import { ref, watchEffect, nextTick } from "vue";
 import gsap from "gsap";
 import { useMainStore } from "@/stores";
+import { prefersReducedMotion } from "@/utils/motion.js";
 import Tooltip from "@/components/common/Tooltip.vue";
 import Twitter from "@/assets/icons/RRSS/Twitter.vue";
 import Github from "@/assets/icons/RRSS/Github.vue";
@@ -14,6 +15,7 @@ const store = useMainStore();
 
 const playAnimation = async () => {
   await nextTick();
+  if (prefersReducedMotion()) return;
   gsap.from(".icon-container", {
     duration: 1,
     delay: 0.75,

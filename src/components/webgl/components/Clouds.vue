@@ -1,13 +1,17 @@
 <script setup>
 import { ref, reactive, watch, onMounted, onUnmounted } from 'vue'
+import { useLoop } from '@tresjs/core'
 import { useTexture } from '@tresjs/cientos'
 import { MeshBasicNodeMaterial } from 'three/webgpu'
 import { BackSide, AdditiveBlending, Color, RepeatWrapping } from 'three'
 import {
   positionLocal, normalLocal,
-  time, vec4, vec2, smoothstep, Fn, uniform, texture
+  vec4, vec2, smoothstep, Fn, uniform, texture
 } from 'three/tsl'
 import { usePaneStore } from '@/stores/pane'
+import { useMainStore } from '@/stores'
+
+const mainStore = useMainStore()
 
 const options = reactive({
   color: '#e4e4e4',
@@ -28,6 +32,10 @@ const uSpeed        = uniform(options.speed)
 const uIntensity    = uniform(options.intensity)
 const uHorizonStart = uniform(options.horizonStart)
 const uHorizonEnd   = uniform(options.horizonEnd)
+// Driven from the render loop rather than TSL's `time`, so the drift can be
+// frozen for reduced motion. `time` is a GPU-side clock that advances on every
+// render and would keep the sky moving no matter what the loop callbacks do.
+const uClock        = uniform(0)
 
 const material = new MeshBasicNodeMaterial()
 material.transparent = true
@@ -50,7 +58,7 @@ watch(noiseTex, (tex) => {
 
   material.colorNode = Fn(() => {
     const pos  = positionLocal.mul(uUvScale.mul(0.009))
-    const anim = vec2(time.mul(uSpeed), time.mul(uSpeed.mul(0.5)))
+    const anim = vec2(uClock.mul(uSpeed), uClock.mul(uSpeed.mul(0.5)))
 
     const nx = sample(pos.yz.add(anim))
     const ny = sample(pos.xz)
@@ -65,6 +73,12 @@ watch(noiseTex, (tex) => {
   })()
   material.needsUpdate = true
 }, { immediate: true })
+
+const { onBeforeRender } = useLoop()
+onBeforeRender(({ elapsed }) => {
+  if (mainStore.reducedMotion) return
+  uClock.value = elapsed
+})
 
 onMounted(() => {
   if (!window.location.href.includes('#debug')) return

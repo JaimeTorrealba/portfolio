@@ -2,12 +2,17 @@
 import { nextTick, ref, watchEffect } from "vue";
 import { gsap } from "gsap";
 import { useMainStore } from "@/stores";
+import { prefersReducedMotion } from "@/utils/motion.js";
 
 const store = useMainStore();
 const pathRef = ref(null);
 
 const playAnimation = async () => {
   await nextTick();
+  if (prefersReducedMotion()) {
+    gsap.set(pathRef.value, { attr: { "stroke-dashoffset": 0 } });
+    return;
+  }
   gsap.to(pathRef.value, {
     attr: {
       "stroke-dashoffset": 0,

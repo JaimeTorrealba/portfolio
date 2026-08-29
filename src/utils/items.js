@@ -55,6 +55,13 @@ const talks = [
         url: 'https://github.com/JaimeTorrealba/three-double-texture-material',
         type: 'OSS'
     },
+    {
+        id: 9,
+        title: 'S3 E13: 3D en el browser con Jaime Torrealba',
+        description: 'Spanish podcast with My Typeof Radio.',
+        url: 'https://www.youtube.com/watch?v=InP3xzPDKTE',
+        type: 'Podcast'
+    },
 ]
 
 export const items = [

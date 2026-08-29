@@ -7,6 +7,9 @@ import {
   Matrix4, Vector3, Quaternion, Color,
 } from 'three'
 import { usePaneStore } from '@/stores/pane'
+import { useMainStore } from '@/stores'
+
+const mainStore = useMainStore()
 
 const options = {
   speed:   0.25,
@@ -101,7 +104,7 @@ onUnmounted(() => {
 
 const { onBeforeRender } = useLoop()
 onBeforeRender(({ elapsed }) => {
-  if (!mesh || !camera.activeCamera.value) return
+  if (!mesh || !camera.activeCamera.value || mainStore.reducedMotion) return
 
   camera.activeCamera.value.getWorldQuaternion(_camQuat)
 
