@@ -15,7 +15,7 @@ const options = reactive({
   visibility: true,
   repeatTexS: 2,
   repeatTexT: 1,
-  speed: 0.24,
+  speed: 0.19,
   normalScale: 0.75,
   roughness: 1,
   fadeStart: 0.80,
