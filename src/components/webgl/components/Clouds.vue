@@ -14,12 +14,13 @@ import { useMainStore } from '@/stores'
 const mainStore = useMainStore()
 
 const options = reactive({
+  visible: true,
   color: '#e4e4e4',
   smoothMin: 0.6,
   smoothMax: 0,
   uvScale: 0.1,
   speed: 0.005,
-  intensity: 0.5,
+  intensity: 0.25,
   horizonStart: -0.05,
   horizonEnd: 0.15,
 })
@@ -86,6 +87,7 @@ onMounted(() => {
   const pane = store.pane
   const folder = pane.addFolder({ title: 'Clouds', expanded: false })
 
+  folder.addBinding(options, 'visible')
   folder.addBinding(options, 'color').on('change', ({ value }) => {
     uColor.value.set(value)
   })
@@ -124,7 +126,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <TresMesh v-if="noiseTex" :render-order="-1" :material="material">
+  <TresMesh v-if="noiseTex" :visible="options.visible" :render-order="-1" :material="material">
     <TresSphereGeometry ref="geometryRef" :args="[449, 24, 12]" />
   </TresMesh>
 </template>

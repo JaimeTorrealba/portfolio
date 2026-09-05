@@ -11,7 +11,7 @@ const mainStore = useMainStore();
 const options = reactive({
   factor: 0.25,
   ease: 2.5,
-  headbobIntensity: 0.3,
+  headbobIntensity: 0.2,
   headbobFrequency: 4,
   headbobEnabled: true,
 });

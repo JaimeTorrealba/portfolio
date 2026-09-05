@@ -36,7 +36,9 @@ const glowSprite = new Sprite(
   })
 );
 glowSprite.position.set(0, 45, -449.8);
-glowSprite.scale.set(32, 32, 1);
+glowSprite.scale.set(12, 12, 1);
+
+const MOON_SCALE = 2.53125;
 
 const moonMesh = new Mesh(
   new SphereGeometry(1, 16, 16),
@@ -44,7 +46,7 @@ const moonMesh = new Mesh(
 );
 moonMesh.position.set(0, 45, -450);
 // Resting scale, so the moon is correctly sized even if the pulse never runs.
-moonMesh.scale.setScalar(4.5);
+moonMesh.scale.setScalar(MOON_SCALE);
 
 const groupRef = shallowRef();
 
@@ -57,7 +59,7 @@ const { onBeforeRender } = useLoop();
 onBeforeRender(({ elapsed }) => {
   if (mainStore.reducedMotion) return;
   const s = 1.0 + Math.sin(elapsed * 0.11) * 0.018;
-  moonMesh.scale.setScalar(s * 4.5);
+  moonMesh.scale.setScalar(s * MOON_SCALE);
 });
 </script>
 

@@ -12,6 +12,7 @@ import { useMainStore } from '@/stores'
 const mainStore = useMainStore()
 
 const options = {
+  visible: true,
   speed:   0.25,
   size:    0.1,
   opacity: 0.5,
@@ -87,6 +88,9 @@ onMounted(() => {
   const store = usePaneStore()
   const pane = store.pane
   const folder = pane.addFolder({ title: 'Fireflies', expanded: false })
+  folder.addBinding(options, 'visible').on('change', ({ value }) => {
+    mesh.visible = value
+  })
   folder.addBinding(options, 'speed',   { min: 0,    max: 0.5, step: 0.01 })
   folder.addBinding(options, 'size',    { min: 0.1,  max: 5,   step: 0.05 })
   folder.addBinding(options, 'opacity', { min: 0,    max: 1,   step: 0.01 }).on('change', ({ value }) => {
@@ -104,7 +108,7 @@ onUnmounted(() => {
 
 const { onBeforeRender } = useLoop()
 onBeforeRender(({ elapsed }) => {
-  if (!mesh || !camera.activeCamera.value || mainStore.reducedMotion) return
+  if (!mesh || !mesh.visible || !camera.activeCamera.value || mainStore.reducedMotion) return
 
   camera.activeCamera.value.getWorldQuaternion(_camQuat)
 

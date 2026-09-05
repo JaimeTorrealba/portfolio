@@ -1,448 +1,252 @@
 <script setup>
-import { reactive, watch, onMounted, toRaw } from "vue";
-import { useLoop } from "@tresjs/core";
-import { useTexture } from "@tresjs/cientos";
+import { reactive, shallowRef, onMounted, onUnmounted } from "vue";
+import { useLoop, useTresContext } from "@tresjs/core";
 import {
-  DataTexture,
-  RepeatWrapping,
-  NearestFilter,
-  BackSide,
-  Data3DTexture,
-  RedFormat,
-  LinearFilter,
-  Vector3,
-  Vector2,
-  Color,
+  InstancedMesh, PlaneGeometry, CanvasTexture,
+  Matrix4, Vector3, Quaternion, Color, LinearFilter, ClampToEdgeWrapping,
 } from "three";
 import { MeshBasicNodeMaterial } from "three/webgpu";
 import {
-  varying,
-  uniform,
-  vec2,
-  vec3,
-  vec4,
-  float,
-  int,
-  Fn,
-  Loop,
-  If,
-  Break,
-  Discard,
-  min,
-  max,
-  mix,
-  smoothstep,
-  dot,
-  normalize,
-  exp,
-  pow,
-  mod,
-  texture,
-  texture3D,
-  PI,
-  screenCoordinate,
-  modelWorldMatrixInverse,
-  cameraPosition,
-  positionGeometry,
+  Fn, vec4, uniform, texture, uv, positionView, positionWorld, smoothstep, mix,
 } from "three/tsl";
-import { VolumetricMaskController } from "../../../utils/SmokeUtils";
 import { useMainStore } from "@/stores";
 import { usePaneStore } from "@/stores/pane";
 
 const mainStore = useMainStore();
 const tier = await mainStore.resolveGPUTier();
 
-const getTextureSize = () => {
+// Billboard mist, after mrdoob's WebGL Clouds. The cost is overdraw rather than shader
+// complexity -- one texture fetch and three smoothsteps per fragment -- so the quad count
+// is the knob that matters, and it is what the GPU tier scales.
+const MAX_COUNT = 140;
+const getCount = () => {
   switch (tier.tier) {
-    case 0:
-      return 4;
+    case 0: return 40;
     case 1:
-    case 2:
-      return 8;
-    case 3:
-      return 16;
-    default:
-      return 32;
+    case 2: return 70;
+    case 3: return 105;
+    default: return MAX_COUNT;
   }
 };
-const getRayMarchSteps = () => {
-  switch (tier.tier) {
-    case 0:
-      return 4;
-    case 1:
-    case 2:
-      return 8;
-    case 3:
-      return 16;
-    default:
-      return 32;
+
+// Travel range. Quads spawn at Z_FAR, drift toward the viewer, and recycle once past
+// Z_NEAR -- the same infinite loop the fireflies use in Precipitation.vue.
+const Z_FAR = -80;
+const Z_NEAR = 22;
+const AREA_X = 80;
+const Y_MIN = 2;
+const Y_SPREAD = 8;
+
+// The camera lives at z = 25 (theExperience.vue) and never translates.
+const CAMERA_Z = 25;
+// The floor is a horizontal plane at y = -2 (Floor.vue).
+const FLOOR_Y = -2;
+const GROUND_FADE = 5;
+
+// Both depth fades are derived from the travel range rather than exposed as sliders: they
+// exist purely to hide the spawn and the recycle, so there is only ever one correct
+// setting. A quad must be fully transparent before it reaches Z_NEAR, and must not pop in
+// at Z_FAR.
+const NEAR_FADE_START = (CAMERA_Z - Z_NEAR) * 2;
+const NEAR_FADE_END = NEAR_FADE_START + 16;
+const FAR_FADE_END = CAMERA_Z - Z_FAR;
+const FAR_FADE_START = FAR_FADE_END - 35;
+
+const options = reactive({
+  opacity: 0.3,
+  tint: "#5a6370",
+  size: 18,
+  speed: 12.5,
+  count: getCount(),
+});
+
+// --- Texture -------------------------------------------------------------------------
+// Drawn as opaque greyscale on black and read from .r, which sidesteps any premultiplied
+// alpha ambiguity in CanvasTexture. Same canvas approach as Moon.vue's glow sprite.
+const createPuffTexture = () => {
+  const size = 128;
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext("2d");
+
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, size, size);
+
+  // A single radial gradient reads as a soft ball; several offset ones added together
+  // give the irregular edge that makes a flat quad read as vapour.
+  ctx.globalCompositeOperation = "lighter";
+  const blob = (cx, cy, r, a) => {
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+    g.addColorStop(0, "rgba(255,255,255," + a + ")");
+    g.addColorStop(0.45, "rgba(255,255,255," + a * 0.35 + ")");
+    g.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, size, size);
+  };
+
+  const c = size / 2;
+  blob(c, c, c * 0.92, 0.20);
+  for (let i = 0; i < 6; i++) {
+    const angle = (i / 6) * Math.PI * 2 + Math.random() * 0.6;
+    const dist = c * (0.18 + Math.random() * 0.22);
+    blob(
+      c + Math.cos(angle) * dist,
+      c + Math.sin(angle) * dist,
+      c * (0.3 + Math.random() * 0.25),
+      0.09
+    );
   }
-};
-const parameters = reactive({
-  // Texture Generation
-  textureSize: getTextureSize(),
-  cloudCoverage: 0.55,
-  cloudSoftness: 0.05,
-  noiseScale: 3.5,
-  octaves: 5,
-  persistence: 0.5,
-  lacunarity: 3.0,
-  noiseIntensity: 1.0,
-  seed: Math.random() * 1000.0,
 
-  // Cloud Shape (Shader)
-  textureTiling: 2.0,
-
-  // Material & Rendering (Shader)
-  densityThreshold: 0.1,
-  densityMultiplier: 1.1,
-  opacity: 4.0,
-  raymarchSteps: getRayMarchSteps(),
-  lightSteps: 1,
-
-  // Scale & Animation
-  containerScale: 60.0,
-  positionX: 0,
-  positionY: 3,
-  positionZ: 3.5,
-
-  animationSpeedX: 0.02,
-  animationSpeedY: 0.0,
-  animationSpeedZ: -0.6,
-  isAnimating: true,
-
-  // Lighting
-  ambientLightIntensity: 1.75,
-  // Debug / Features
-  useDepthOcclusion: false, // set to true to re-enable depth based occlusion
-});
-
-const store = useMainStore();
-
-onMounted(() => {
-  if (!window.location.href.includes("#debug")) return;
-  const paneStore = usePaneStore();
-  const pane = paneStore.pane;
-  const folder = pane.addFolder({ title: "Volumetric Smoke", expanded: false });
-
-  const folderGen = folder.addFolder({ title: "Texture Generation" });
-  folderGen.addBinding(parameters, "cloudCoverage", { min: 0, max: 1, step: 0.01 });
-  folderGen.addBinding(parameters, "cloudSoftness", { min: 0.01, max: 0.2, step: 0.01 });
-  folderGen.addBinding(parameters, "noiseScale", { min: 0.1, max: 10, step: 0.1 });
-  folderGen.addBinding(parameters, "octaves", { min: 1, max: 8, step: 1 });
-  folderGen.addBinding(parameters, "persistence", { min: 0.1, max: 1, step: 0.05 });
-  folderGen.addBinding(parameters, "lacunarity", { min: 1, max: 5, step: 0.1 });
-  folderGen.addBinding(parameters, "noiseIntensity", { min: 0.1, max: 5, step: 0.1 });
-  folderGen.addBinding(parameters, "seed", { min: 0, max: 1000, step: 1 });
-
-  const folderMat = folder.addFolder({ title: "Material & Rendering" });
-  folderMat.addBinding(parameters, "textureTiling", { min: 0.1, max: 10, step: 0.1 });
-  folderMat.addBinding(parameters, "densityThreshold", { min: 0.01, max: 1, step: 0.01 });
-  folderMat.addBinding(parameters, "densityMultiplier", { min: 0.1, max: 10, step: 0.1 });
-  folderMat.addBinding(parameters, "opacity", { min: 0.1, max: 10, step: 0.1 });
-  folderMat.addBinding(parameters, "raymarchSteps", { min: 10, max: 100, step: 1 });
-  folderMat.addBinding(parameters, "lightSteps", { min: 1, max: 10, step: 1 });
-
-  const folderAnim = folder.addFolder({ title: "Scale & Animation" });
-  folderAnim.addBinding(parameters, "containerScale", { min: 10, max: 300, step: 1 });
-  folderAnim.addBinding(parameters, "positionX", { min: -20, max: 20, step: 1 });
-  folderAnim.addBinding(parameters, "positionY", { min: -20, max: 20, step: 1 });
-  folderAnim.addBinding(parameters, "positionZ", { min: -20, max: 20, step: 1 });
-  folderAnim.addBinding(parameters, "animationSpeedX", { min: -1, max: 1, step: 0.01 });
-  folderAnim.addBinding(parameters, "animationSpeedY", { min: -1, max: 1, step: 0.01 });
-  folderAnim.addBinding(parameters, "animationSpeedZ", { min: -1, max: 1, step: 0.01 });
-
-  const folderLight = folder.addFolder({ title: "Lighting" });
-  folderLight.addBinding(parameters, "ambientLightIntensity", {
-    min: 0,
-    max: 5,
-    step: 0.1,
-  });
-});
-
-// A tiny 1x1 fallback 2D texture for sampler uniforms
-const fallbackBlueNoise = new DataTexture(new Uint8Array([0, 0, 0, 255]), 1, 1);
-fallbackBlueNoise.needsUpdate = true;
-
-// A tiny 1x1x1 fallback volume texture for sampler uniforms
-const fallbackVolumeTexture = new Data3DTexture(new Uint8Array([0]), 1, 1, 1);
-fallbackVolumeTexture.format = RedFormat;
-fallbackVolumeTexture.minFilter = LinearFilter;
-fallbackVolumeTexture.magFilter = LinearFilter;
-fallbackVolumeTexture.unpackAlignment = 1;
-fallbackVolumeTexture.needsUpdate = true;
-
-// Use a blue-noise-like texture (we reuse an available asset for jitter)
-const { state: blueNoise } = useTexture("/textures/Cloud.png");
-
-watch(blueNoise, (tex) => {
-  if (!tex) return;
-  tex.wrapS = RepeatWrapping;
-  tex.wrapT = RepeatWrapping;
-  tex.minFilter = NearestFilter;
-  tex.magFilter = NearestFilter;
+  const tex = new CanvasTexture(canvas);
+  tex.minFilter = LinearFilter;
+  tex.magFilter = LinearFilter;
+  tex.wrapS = tex.wrapT = ClampToEdgeWrapping;
   tex.needsUpdate = true;
-  blueNoiseTex.value = tex;
-  if (tex.image?.width && tex.image?.height) {
-    uBlueNoiseSize.value.set(tex.image.width, tex.image.height);
-  }
-});
+  return tex;
+};
 
-// Mask controller creates u_mask_* uniforms and 3D shape noise textures
-const maskController = new VolumetricMaskController();
+const puffTexture = createPuffTexture();
 
-// ------- TSL Material (WebGPU) -------
+// --- Per-quad state ------------------------------------------------------------------
+// Allocated at the tier maximum so `count` can be raised live from the pane without
+// rebuilding anything -- only `mesh.count` changes.
+const positions = new Float32Array(MAX_COUNT * 3);
+const scales = new Float32Array(MAX_COUNT);
+const rolls = new Float32Array(MAX_COUNT);
+
+const respawn = (i, initial) => {
+  positions[i * 3] = (Math.random() - 0.5) * AREA_X;
+  positions[i * 3 + 1] = Y_MIN + Math.random() * Math.random() * Y_SPREAD;
+  // On the first fill, scatter through the corridor; afterwards always re-enter at the back.
+  positions[i * 3 + 2] = initial ? Z_FAR + Math.random() * (Z_NEAR - Z_FAR) : Z_FAR;
+};
+
+for (let i = 0; i < MAX_COUNT; i++) {
+  respawn(i, true);
+  scales[i] = Math.random() * Math.random() * 1.2 + 0.5;
+  rolls[i] = Math.random() * Math.PI;
+}
+
+// --- Material ------------------------------------------------------------------------
+const uOpacity = uniform(options.opacity);
+const uTint = uniform(new Color(options.tint));
+// Matches the canvas clear colour, so distant quads dissolve into the background.
+const uFogColor = uniform(new Color(0x111111));
+
 const material = new MeshBasicNodeMaterial();
 material.transparent = true;
 material.depthWrite = false;
-material.depthTest = false;
-material.side = BackSide;
-
-const volumeTex = texture3D(fallbackVolumeTexture);
-const uTextureOffset = uniform(new Vector3(0, 0, 0));
-const uTextureTiling = uniform(parameters.textureTiling);
-const uBlueNoiseSize = uniform(new Vector2(1, 1));
-const uSunColor = uniform(new Color(0xd0d4d8));
-const uSunIntensity = uniform(1.5);
-const uLightDir = uniform(new Vector3(0, 5, 25).normalize());
-const uAmbientColor = uniform(new Color(0xaeb3b8));
-const uAmbientIntensity = uniform(parameters.ambientLightIntensity);
-const uOpacity = uniform(parameters.opacity);
-const uMaxSteps = uniform(parameters.raymarchSteps);
-const uLightSteps = uniform(parameters.lightSteps);
-const uDensityThreshold = uniform(parameters.densityThreshold);
-const uDensityMultiplier = uniform(parameters.densityMultiplier);
-const uMaskRaio = uniform(maskController.uniforms.u_mask_raio.value);
-const uMaskAchatamentoCima = uniform(
-  maskController.uniforms.u_mask_achatamentoCima.value
-);
-const uMaskAchatamentoBaixo = uniform(
-  maskController.uniforms.u_mask_achatamentoBaixo.value
-);
-const uMaskAchatamentoXpos = uniform(
-  maskController.uniforms.u_mask_achatamentoXpos.value
-);
-const uMaskAchatamentoXneg = uniform(
-  maskController.uniforms.u_mask_achatamentoXneg.value
-);
-const uMaskAchatamentoZpos = uniform(
-  maskController.uniforms.u_mask_achatamentoZpos.value
-);
-const uMaskAchatamentoZneg = uniform(
-  maskController.uniforms.u_mask_achatamentoZneg.value
-);
-const uMaskSoftness = uniform(maskController.uniforms.u_mask_softness.value);
-const uMaskForcaRuido = uniform(maskController.uniforms.u_mask_forcaRuido.value);
-const maskNoiseTex = texture3D(
-  maskController.uniforms.u_mask_noiseMap.value ?? fallbackVolumeTexture
-);
-const uMaskForcaRuidoDetalhe = uniform(
-  maskController.uniforms.u_mask_forcaRuidoDetalhe.value
-);
-const maskNoiseDetailTex = texture3D(
-  maskController.uniforms.u_mask_noiseDetailMap.value ?? fallbackVolumeTexture
-);
-const uMaskVisualize = uniform(maskController.uniforms.u_mask_visualize.value);
-
-const blueNoiseTex = texture(fallbackBlueNoise);
-
-const EXTINCTION_MULT = vec3(0.6, 0.65, 0.7);
-const DUAL_LOBE_WEIGHT = float(0.8);
-
-const hitBox = Fn(({ orig, dir }) => {
-  const boxMin = vec3(-0.5);
-  const boxMax = vec3(0.5);
-  const invDir = dir.reciprocal();
-  const tminTmp = boxMin.sub(orig).mul(invDir);
-  const tmaxTmp = boxMax.sub(orig).mul(invDir);
-  const tmin = min(tminTmp, tmaxTmp);
-  const tmax = max(tminTmp, tmaxTmp);
-  const t0 = max(tmin.x, max(tmin.y, tmin.z));
-  const t1 = min(tmax.x, min(tmax.y, tmax.z));
-  return vec2(t0, t1);
-});
-
-const getMaskSDF = Fn(({ p }) => {
-  const q = vec3(p).toVar();
-  q.y.divAssign(p.y.greaterThan(0.0).select(uMaskAchatamentoCima, uMaskAchatamentoBaixo));
-  q.x.divAssign(p.x.greaterThan(0.0).select(uMaskAchatamentoXpos, uMaskAchatamentoXneg));
-  q.z.divAssign(p.z.greaterThan(0.0).select(uMaskAchatamentoZpos, uMaskAchatamentoZneg));
-  const dist = q.length();
-  const dir = q.div(dist);
-  const texCoord = dir.mul(uMaskRaio).mul(0.5).add(0.5);
-  const n1 = maskNoiseTex.sample(texCoord).r.mul(2.0).sub(1.0);
-  const n2 = maskNoiseDetailTex.sample(texCoord).r.mul(2.0).sub(1.0);
-  const disp = n1.mul(uMaskForcaRuido).add(n2.mul(uMaskForcaRuidoDetalhe));
-  const sdf = uMaskRaio.add(disp).sub(dist);
-  return uMaskRaio.lessThanEqual(0.0).select(float(-1.0), sdf);
-});
-
-const getMaskFactor = Fn(({ p }) => {
-  const sdf = getMaskSDF({ p });
-  return smoothstep(0.0, uMaskSoftness, sdf);
-});
-
-const HenyeyGreenstein = Fn(({ g, mu }) => {
-  const gg = g.mul(g);
-  const denom = pow(float(1.0).add(gg).sub(float(2.0).mul(g).mul(mu)), 1.5);
-  return float(1.0).div(float(4.0).mul(PI)).mul(float(1.0).sub(gg)).div(denom);
-});
-
-const PhaseFunction = Fn(({ g, costh }) => {
-  const hgBack = HenyeyGreenstein({ g: g.negate(), mu: costh });
-  const hgForward = HenyeyGreenstein({ g, mu: costh });
-  return mix(hgBack, hgForward, DUAL_LOBE_WEIGHT);
-});
-
-const getDensity = Fn(({ p }) => {
-  const mask = getMaskFactor({ p });
-  const texCoord = p.add(0.5).mul(uTextureTiling).add(uTextureOffset);
-  const d = volumeTex.sample(texCoord).r;
-  const filtered = d.lessThan(uDensityThreshold).select(float(0.0), d);
-  const base = uMaskVisualize.select(float(1.0), filtered);
-  return base.mul(uDensityMultiplier).mul(mask);
-});
-
-const CalculateLightEnergy = Fn(({ samplePos, lightDir }) => {
-  const stepLength = float(1.0).div(float(uLightSteps));
-  const acc = float(0.0).toVar();
-
-  Loop(int(uLightSteps), ({ i }) => {
-    const stepT = float(i).add(0.5).mul(stepLength);
-    const p = samplePos.add(lightDir.mul(stepT));
-    const inside = p.x
-      .greaterThan(-0.5)
-      .and(p.x.lessThan(0.5))
-      .and(p.y.greaterThan(-0.5))
-      .and(p.y.lessThan(0.5))
-      .and(p.z.greaterThan(-0.5))
-      .and(p.z.lessThan(0.5));
-
-    If(inside, () => {
-      acc.addAssign(getDensity({ p }).mul(stepLength));
-    });
-  });
-
-  return exp(acc.negate());
-});
-
-const vOrigin = varying(vec3(modelWorldMatrixInverse.mul(vec4(cameraPosition, 1.0))));
-const vDirection = varying(positionGeometry.sub(vOrigin));
+// Deliberately unlike the reference, which disables depth testing because its scene is
+// nothing but clouds. Here the trees, grass and floor have to occlude the mist -- turning
+// this off is exactly what made the old smoke paint over the entire scene.
+material.depthTest = true;
+material.fog = false;
 
 material.colorNode = Fn(() => {
-  const rayDir = normalize(vDirection);
-  const bounds = vec2(hitBox({ orig: vOrigin, dir: rayDir })).toVar();
+  // Linear eye depth: the TSL equivalent of gl_FragCoord.z / gl_FragCoord.w.
+  const eyeDepth = positionView.z.negate();
 
-  If(bounds.x.greaterThanEqual(bounds.y), () => {
-    Discard();
-  });
+  const puff = texture(puffTexture, uv()).r;
+  const nearFade = smoothstep(NEAR_FADE_START, NEAR_FADE_END, eyeDepth);
+  const fogFactor = smoothstep(FAR_FADE_START, FAR_FADE_END, eyeDepth);
+  // A quad is a flat plane, so where it crosses the floor the opaque floor slices it in a
+  // dead straight line. Fading it out by world height means it is already transparent by
+  // the time it reaches the floor plane, and there is no intersection edge to see.
+  const groundFade = smoothstep(FLOOR_Y, FLOOR_Y + GROUND_FADE, positionWorld.y);
 
-  bounds.assign(vec2(max(bounds.x, 0.0), bounds.y));
-
-  const rayLength = bounds.y.sub(bounds.x).toVar();
-  If(rayLength.lessThan(0.001), () => {
-    Discard();
-  });
-
-  const stepSize = rayLength.div(float(uMaxSteps));
-  const jitterUv = mod(screenCoordinate, uBlueNoiseSize).div(uBlueNoiseSize);
-  const jitter = blueNoiseTex.sample(jitterUv).r;
-  const p = vec3(vOrigin.add(bounds.x.add(jitter.mul(stepSize)).mul(rayDir))).toVar();
-
-  const accumulatedColor = vec3(0.0).toVar();
-  const transmittance = vec3(1.0).toVar();
-  const mu = dot(rayDir, uLightDir);
-  const fadeZone = float(0.05);
-
-  Loop(int(uMaxSteps), ({ i }) => {
-    const distTraveled = float(i).mul(stepSize).add(jitter.mul(stepSize));
-    const distRemaining = rayLength.sub(distTraveled);
-
-    If(distRemaining.lessThan(0.0), () => {
-      Break();
-    });
-
-    const density = getDensity({ p });
-
-    If(density.greaterThan(0.01), () => {
-      const lightEnergy = CalculateLightEnergy({ samplePos: p, lightDir: uLightDir });
-      const sunL = uSunColor.mul(uSunIntensity).mul(lightEnergy);
-      const phase = PhaseFunction({ g: float(0.3), costh: mu });
-      const sunScatter = sunL.mul(phase);
-      const ambScatter = uAmbientColor.mul(uAmbientIntensity);
-      const total = sunScatter.add(ambScatter).mul(density).mul(stepSize);
-      const fadeA = smoothstep(0.0, fadeZone, distRemaining);
-      const faded = total.mul(fadeA);
-      const stepT = exp(
-        density.mul(stepSize).mul(EXTINCTION_MULT).mul(uOpacity).negate()
-      );
-
-      accumulatedColor.addAssign(transmittance.mul(faded));
-      transmittance.mulAssign(stepT);
-
-      If(transmittance.length().lessThan(0.01), () => {
-        Break();
-      });
-    });
-
-    p.addAssign(rayDir.mul(stepSize));
-  });
-
-  const tonemapped = accumulatedColor.div(accumulatedColor.add(vec3(1.0)));
-  return vec4(tonemapped, float(1.0).sub(transmittance.x));
+  return vec4(
+    mix(uTint, uFogColor, fogFactor),
+    puff.mul(uOpacity).mul(nearFade).mul(groundFade)
+  );
 })();
 
-// WEB WORKER
+// --- Mesh ----------------------------------------------------------------------------
+const { camera } = useTresContext();
+const groupRef = shallowRef();
+let mesh = null;
 
-const parametersClone =
-  typeof structuredClone === "function"
-    ? structuredClone(toRaw(parameters))
-    : JSON.parse(JSON.stringify(toRaw(parameters)));
-const myWorker = new Worker(new URL("SmokeWorker.js", import.meta.url));
-myWorker.postMessage(parametersClone);
-myWorker.onmessage = (e) => {
-  const size = parameters.textureSize;
-  const texture = new Data3DTexture(e.data, size, size, size);
-  texture.format = RedFormat;
-  texture.minFilter = LinearFilter;
-  texture.magFilter = LinearFilter;
-  texture.unpackAlignment = 1;
-  texture.wrapS = RepeatWrapping;
-  texture.wrapT = RepeatWrapping;
-  texture.wrapR = RepeatWrapping;
-  texture.needsUpdate = true;
-  store.finishLoading = true;
-  set3DTexture(texture);
-};
+const _mat = new Matrix4();
+const _pos = new Vector3();
+const _scl = new Vector3();
+const _quat = new Quaternion();
+const _roll = new Quaternion();
+const _camQuat = new Quaternion();
+const _zAxis = new Vector3(0, 0, 1);
 
-const set3DTexture = (texture) => {
-  volumeTex.value = texture;
-};
+// When motion is off the camera is frozen too (CameraMouse.vue also early-returns), so the
+// matrices only need syncing once rather than every frame.
+let frozenSynced = false;
+const resync = () => { frozenSynced = false; };
 
-// Animate offsets + update matrices and light dir
-const animatedOffset = new Vector3();
 const { onBeforeRender } = useLoop();
 onBeforeRender(({ delta }) => {
-  if (mainStore.reducedMotion) return;
-  const dt = delta ?? 0.016;
-  animatedOffset.x += parameters.animationSpeedX * dt;
-  animatedOffset.y += parameters.animationSpeedY * dt;
-  animatedOffset.z += parameters.animationSpeedZ * dt;
-  uTextureOffset.value.copy(animatedOffset);
+  if (!mesh || !camera.activeCamera.value) return;
 
-  // uTextureTiling.value = parameters.textureTiling;
-  // uAmbientIntensity.value = parameters.ambientLightIntensity;
-  // uOpacity.value = parameters.opacity;
-  // uMaxSteps.value = parameters.raymarchSteps;
-  // uLightSteps.value = parameters.lightSteps;
-  // uDensityThreshold.value = parameters.densityThreshold;
-  // uDensityMultiplier.value = parameters.densityMultiplier;
+  const moving = !mainStore.reducedMotion;
+  if (!moving && frozenSynced) return;
+  frozenSynced = !moving;
+
+  camera.activeCamera.value.getWorldQuaternion(_camQuat);
+  const step = (delta ?? 0.016) * options.speed;
+
+  for (let i = 0; i < mesh.count; i++) {
+    if (moving) {
+      positions[i * 3 + 2] += step;
+      if (positions[i * 3 + 2] > Z_NEAR) respawn(i, false);
+    }
+
+    _pos.set(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]);
+    _scl.setScalar(options.size * scales[i]);
+    // Face the camera, then roll about the view axis so the quads do not all look alike.
+    _roll.setFromAxisAngle(_zAxis, rolls[i]);
+    _quat.copy(_camQuat).multiply(_roll);
+    _mat.compose(_pos, _quat, _scl);
+    mesh.setMatrixAt(i, _mat);
+  }
+
+  mesh.instanceMatrix.needsUpdate = true;
+});
+
+onMounted(() => {
+  const geometry = new PlaneGeometry(1, 1);
+  mesh = new InstancedMesh(geometry, material, MAX_COUNT);
+  mesh.count = options.count;
+  mesh.instanceMatrix.setUsage(35048); // DYNAMIC_DRAW
+  mesh.frustumCulled = false;
+  mesh.renderOrder = 1;
+  groupRef.value.add(mesh);
+
+  if (!window.location.href.includes("#debug")) return;
+  const pane = usePaneStore().pane;
+  const folder = pane.addFolder({ title: "Volumetric Smoke", expanded: false });
+
+  folder
+    .addBinding(options, "opacity", { min: 0, max: 2, step: 0.01 })
+    .on("change", ({ value }) => { uOpacity.value = value; });
+  folder
+    .addBinding(options, "tint")
+    .on("change", ({ value }) => { uTint.value.set(value); });
+  folder
+    .addBinding(options, "size", { min: 2, max: 60, step: 0.5 })
+    .on("change", resync);
+  folder.addBinding(options, "speed", { min: 0, max: 60, step: 0.5 });
+  // The real performance lever: the instance buffer is already allocated at MAX_COUNT, so
+  // this is live and free.
+  folder
+    .addBinding(options, "count", { min: 0, max: MAX_COUNT, step: 1 })
+    .on("change", ({ value }) => {
+      mesh.count = value;
+      resync();
+    });
+});
+
+onUnmounted(() => {
+  mesh?.geometry.dispose();
+  material.dispose();
+  puffTexture.dispose();
 });
 </script>
 
 <template>
-  <!-- Volumetric Cloud Container (unit cube scaled up) -->
-  <TresMesh :position="[parameters.positionX, parameters.positionY, parameters.positionZ]" :scale="parameters.containerScale" :material>
-    <TresBoxGeometry :args="[1, 1, 1]" />
-  </TresMesh>
+  <TresGroup ref="groupRef" />
 </template>

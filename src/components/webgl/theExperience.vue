@@ -1,6 +1,6 @@
 <script setup>
 import { WebGPURenderer } from 'three/webgpu'
-import { ref, watch, toValue, onMounted } from "vue";
+import { ref, watch, toValue, onMounted, onUnmounted } from "vue";
 import { TresCanvas } from "@tresjs/core";
 import { Stats } from "@tresjs/cientos";
 import { useMainStore } from "@/stores";
@@ -47,8 +47,39 @@ watch(cameraRef, (camera) => {
   camera.updateProjectionMatrix();
 });
 
+// The loading screen used to hang off the smoke's noise worker, which meant it broke
+// the moment the smoke changed. It now waits on the three async scene children
+// instead, so it stays correct even if one of them is tier-gated off.
+let pendingScenes = 3;
+let loaderFallback = null;
+
+const onSceneChildResolve = () => {
+  if (--pendingScenes > 0) return;
+  // Let a frame actually paint before tearing the loader down, otherwise the reveal
+  // lands on an empty canvas.
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => {
+      store.finishLoading = true;
+    })
+  );
+};
+
+watch(
+  () => store.finishLoading,
+  (done) => {
+    if (done) clearTimeout(loaderFallback);
+  }
+);
+
+onUnmounted(() => clearTimeout(loaderFallback));
+
 const showDebug = ref(false);
 onMounted(() => {
+  // Never trap a visitor behind the loader if a child never resolves.
+  loaderFallback = setTimeout(() => {
+    store.finishLoading = true;
+  }, 10000);
+
   if (!window.location.href.includes("#debug")) return;
   showDebug.value = true;
 
@@ -87,14 +118,14 @@ onMounted(() => {
     <Stats v-if="showDebug" />
     <CameraMouse />
     <Trees />
-    <Suspense>
+    <Suspense @resolve="onSceneChildResolve">
       <Smoke />
     </Suspense>
     <Precipitation />
-    <Suspense>
+    <Suspense @resolve="onSceneChildResolve">
       <Grass />
     </Suspense>
-    <Suspense>
+    <Suspense @resolve="onSceneChildResolve">
       <Floor />
     </Suspense>
     <Moon />
