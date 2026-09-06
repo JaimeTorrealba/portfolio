@@ -37,7 +37,8 @@ const AREA_X = 80;
 const Y_MIN = 2;
 const Y_SPREAD = 8;
 
-// The camera lives at z = 25 (theExperience.vue) and never translates.
+// The camera lives at z = 25 (theExperience.vue). CameraMouse.vue drifts it a little
+// in X as you walk, but never in Z, which is all these depth fades depend on.
 const CAMERA_Z = 25;
 // The floor is a horizontal plane at y = -2 (Floor.vue).
 const FLOOR_Y = -2;
@@ -53,7 +54,7 @@ const FAR_FADE_END = CAMERA_Z - Z_FAR;
 const FAR_FADE_START = FAR_FADE_END - 35;
 
 const options = reactive({
-  opacity: 0.3,
+  opacity: 0.5,
   tint: "#5a6370",
   size: 18,
   speed: 12.5,

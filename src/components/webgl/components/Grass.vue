@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, watch, onMounted, onUnmounted } from "vue";
-import { BufferAttribute, InstancedBufferGeometry, Sphere, Vector3, Vector4 } from "three";
+import { BufferAttribute, InstancedBufferGeometry, Sphere, Vector2, Vector3, Vector4 } from "three";
 import { useLoop } from "@tresjs/core";
 import { MeshStandardNodeMaterial } from "three/webgpu";
 import { usePaneStore } from "@/stores/pane";
@@ -73,11 +73,35 @@ const getGrassSegments = () => {
 
 const options = reactive({
   // grass
-  grassSpeed: 0.3,
+  grassSpeed: 0.5,
   grassMovement: 6,
   visible: true,
   grassHeight: 12,
   grassWidth: 0.75,
+  // Canopy occlusion: how dark the blade goes at the root, and how far up the
+  // blade the recovery to full light takes. aoHeight looks far too high until you
+  // notice this mesh sits at y = -5 while Floor.vue's plane is at y = -2: the
+  // bottom quarter of every blade is under the floor and never drawn. A curve that
+  // finishes by 0.45 has already spent most of itself out of sight.
+  aoFloor: 0.05,
+  aoHeight: 0.8,
+  // Wind, ported from the simon-grass demo. windScale is the one that decides
+  // whether the field moves as one body: it is the spatial frequency of the noise,
+  // so it sets how far apart two blades have to be before they disagree about the
+  // wind. At 0.5 every blade sampled somewhere different and the field shimmered;
+  // at 0.05 a whole stand shares a value and leans together.
+  windScale: 0.05,
+  windLean: 0.5,
+  leanSpread: 1.25,
+  // A prevailing wind: bias is the steady push, gust is how much the noise varies
+  // it. Keeping bias > gust means the strength breathes but never reverses, so the
+  // field always lies the same way instead of flapping back and forth.
+  windBias: 0.45,
+  windGust: 1.1,
+  // Radians. 0 pushes along -Z (away from camera), PI/2 pushes along +X (right).
+  windDirection: Math.PI * 0.5,
+  // World units/sec that the gust fronts sweep along that direction.
+  windTravel: 2.5,
 });
 
 onMounted(() => {
@@ -90,6 +114,20 @@ onMounted(() => {
   folder.addBinding(options, "grassMovement", { min: 0, max: 20, step: 0.1 });
   folder.addBinding(options, "grassHeight", { min: 1, max: 25, step: 0.5 });
   folder.addBinding(options, "grassWidth", { min: 0.05, max: 1, step: 0.01 });
+
+  const aoFolder = folder.addFolder({ title: "Canopy AO" });
+  aoFolder.addBinding(options, "aoFloor", { min: 0, max: 1, step: 0.01 });
+  aoFolder.addBinding(options, "aoHeight", { min: 0.01, max: 1, step: 0.01 });
+
+  const windFolder = folder.addFolder({ title: "Wind" });
+  // Low = the field moves as one, high = every blade for itself.
+  windFolder.addBinding(options, "windScale", { min: 0.005, max: 0.6, step: 0.005 });
+  windFolder.addBinding(options, "windLean", { min: 0, max: 5, step: 0.05 });
+  windFolder.addBinding(options, "windBias", { min: -1, max: 2, step: 0.01 });
+  windFolder.addBinding(options, "windGust", { min: 0, max: 2, step: 0.01 });
+  windFolder.addBinding(options, "windDirection", { min: 0, max: Math.PI * 2, step: 0.01 });
+  windFolder.addBinding(options, "windTravel", { min: 0, max: 20, step: 0.1 });
+  windFolder.addBinding(options, "leanSpread", { min: 0, max: 2, step: 0.01 });
 });
 
 const NUM_GRASS = getGrassCountSize();
@@ -138,6 +176,20 @@ const uTimeMove = uniform(0);
 const uGrassParams = uniform(
   new Vector4(GRASS_SEGMENTS, GRASS_PATCH_SIZE, options.grassWidth, options.grassHeight)
 );
+
+// x = root brightness, y = height fraction over which light recovers.
+const uGrassAO = uniform(new Vector2(options.aoFloor, options.aoHeight));
+
+// x = noise spatial scale, y = lean strength, z = per-blade lean spread,
+// w = how fast gust fronts sweep along the wind direction.
+const uWind = uniform(
+  new Vector4(options.windScale, options.windLean, options.leanSpread, options.windTravel)
+);
+// x = steady push, y = gust variation, z = direction in radians.
+const uWindMix = uniform(
+  new Vector3(options.windBias, options.windGust, options.windDirection)
+);
+const uWindTime = uniform(0);
 
 const vGrassData = varying(vec4(), "vGrassData");
 const vNormal = varying(vec3(), "vNormal");
@@ -271,6 +323,16 @@ material.positionNode = Fn(() => {
   const grassBladeWorldPos = modelWorldMatrix.mul(vec4(grassOffset, 1.0)).xyz;
   const hashVal = hash(grassBladeWorldPos);
 
+  // Hoisted: the wind below needs to know where this blade actually stands, not
+  // just which instance it is. Both grass meshes sit at z = 0, so the wrap applied
+  // to the local offset lands on the same number in world space.
+  const range = grassPatchSize.mul(forwardScale).mul(2.0);
+  const halfRange = range.mul(0.5);
+  const scrollSpeed = vec2(2.0, 0.0).x;
+  const bladeWrappedZ = mod(
+    grassBladeWorldPos.z.add(uTimeMove.mul(scrollSpeed)).add(halfRange), range
+  ).sub(halfRange);
+
   const angle = remap(hashVal.x, -1.0, 1.0, PI.negate(), PI);
 
   const vertFB_ID = mod(vertexIndex.toFloat(), grassVertices.mul(2.0));
@@ -288,15 +350,34 @@ material.positionNode = Fn(() => {
   let z = vec2(0.0, 0.0).x;
 
   const stiffness = vec2(1.0, 0.0).x;
-  const windStrength = noise(vec3(grassBladeWorldPos.xz.mul(0.5), 0.0).add(uTime));
-  const windAngle = vec2(0.0, 0.0).x;
+
+  // Sampled at where the blade actually stands (bladeWrappedZ), not at its fixed
+  // instance offset. Sampling the offset glued each blade's wind value to the blade,
+  // so the pattern could only ever be dragged toward the camera at the scroll speed.
+  // Anchoring it to the corridor instead lets the grass travel through the wind, and
+  // lets the gusts move on their own terms.
+  const windAngle = uWindMix.z;
+  // rotateAxis about this axis by a positive angle tilts toward pushDir: axis X
+  // (angle 0) leans -Z, axis Z (angle PI/2) leans +X.
   const windAxis = vec3(cos(windAngle), 0.0, sin(windAngle));
-  const windLeanAngle = windStrength.mul(2.25).mul(heightPercent).mul(stiffness);
+  const pushDir = vec2(sin(windAngle), cos(windAngle).negate());
+
+  // Subtracting the travel offset marches the fronts along pushDir, so they sweep
+  // the way the wind is actually blowing. The third noise coord is time, so the
+  // gusts also change shape instead of sliding across as rigid blobs.
+  const windSample = vec2(grassBladeWorldPos.x, bladeWrappedZ)
+    .sub(pushDir.mul(uWind.w.mul(uWindTime)))
+    .mul(uWind.x);
+  const windStrength = noise(vec3(windSample, uTime)).mul(uWindMix.y).add(uWindMix.x);
+
+  const windLeanAngle = windStrength.mul(uWind.y).mul(heightPercent).mul(stiffness);
 
   const randomLeanAnimation = noise(vec3(grassBladeWorldPos.xz, uTime.mul(4.0))).mul(
     windStrength.add(0.125)
   );
-  const leanFactor = remap(hashVal.y, -1.0, 1.0, -0.7, 0.7).add(randomLeanAnimation.mul(1.35));
+  const leanFactor = remap(hashVal.y, -1.0, 1.0, uWind.z.negate(), uWind.z).add(
+    randomLeanAnimation
+  );
 
   const p1 = vec3(0.0);
   const p2 = vec3(0.0, 0.33, 0.0);
@@ -309,10 +390,6 @@ material.positionNode = Fn(() => {
 
   const grassMat = rotateAxis(windAxis, windLeanAngle).mul(rotateY(angle));
   const grassLocalPosition = grassMat.mul(vec3(x, y, z)).add(grassOffset);
-
-  const range = grassPatchSize.mul(forwardScale).mul(2.0);
-  const halfRange = range.mul(0.5);
-  const scrollSpeed = vec2(2.0, 0.0).x;
 
   const scrolledZ = grassLocalPosition.z.add(uTimeMove.mul(scrollSpeed));
   const wrappedZ = mod(scrolledZ.add(halfRange), range).sub(halfRange);
@@ -338,7 +415,13 @@ material.colorNode = Fn(() => {
     Discard();
   });
 
-  return vec4(baseColour, alpha);
+  // In a dense sward the blades occlude each other long before ground level, so
+  // hardly any skylight reaches the root. The gradient above only shifts value
+  // across the blade, which left every blade evenly lit root to tip and made the
+  // whole field read as one flat wall rather than something with depth in it.
+  const canopyAO = mix(uGrassAO.x, 1.0, smoothstep(0.0, uGrassAO.y, heightPercent));
+
+  return vec4(baseColour.mul(canopyAO), alpha);
 })();
 
 material.normalNode = normalize(vNormal);
@@ -348,6 +431,26 @@ uGrassParams.value.set(GRASS_SEGMENTS, GRASS_PATCH_SIZE, options.grassWidth, opt
 watch(() => [options.grassWidth, options.grassHeight], () => {
   uGrassParams.value.set(GRASS_SEGMENTS, GRASS_PATCH_SIZE, options.grassWidth, options.grassHeight);
 });
+
+watch(() => [options.aoFloor, options.aoHeight], () => {
+  uGrassAO.value.set(options.aoFloor, options.aoHeight);
+});
+
+watch(
+  () => [options.windScale, options.windLean, options.leanSpread, options.windTravel],
+  () => {
+    uWind.value.set(
+      options.windScale, options.windLean, options.leanSpread, options.windTravel
+    );
+  }
+);
+
+watch(
+  () => [options.windBias, options.windGust, options.windDirection],
+  () => {
+    uWindMix.value.set(options.windBias, options.windGust, options.windDirection);
+  }
+);
 
 onUnmounted(() => {
   geo.dispose();
@@ -361,6 +464,7 @@ onBeforeRender(({ elapsed }) => {
   if (mainStore.reducedMotion) return;
   uTime.value = elapsed * options.grassSpeed;
   uTimeMove.value = elapsed * options.grassMovement;
+  uWindTime.value = elapsed;
 });
 </script>
 <template>

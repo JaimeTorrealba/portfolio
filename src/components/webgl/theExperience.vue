@@ -16,6 +16,7 @@ import CameraMouse from "./components/CameraMouse.vue";
 import PostProcessing from "./components/PostProcessing.vue";
 import Moon from "./components/Moon.vue";
 import Clouds from "./components/Clouds.vue";
+import Atmosphere from "./components/Atmosphere.vue";
 
 // TODO: addons like SPACE for running
 // TODO: Add variation to the floor
@@ -114,9 +115,9 @@ onMounted(() => {
     :render-mode="store.reducedMotion ? 'on-demand' : 'always'"
   >
     <TresPerspectiveCamera ref="cameraRef" :position="[0, 5, 25]" />
-    <TresFog color="#111" :near="8" :far="95" />
     <Stats v-if="showDebug" />
     <CameraMouse />
+    <Atmosphere />
     <Trees />
     <Suspense @resolve="onSceneChildResolve">
       <Smoke />

@@ -26,7 +26,7 @@ const dofOptions = reactive({
   enabled: true,
   focusDistance: 33.0,
   focalLength: 27.0,
-  bokehScale: 1.5,
+  bokehScale: 2.0,
 })
 
 
