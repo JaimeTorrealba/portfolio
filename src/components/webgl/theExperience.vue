@@ -105,6 +105,28 @@ onMounted(() => {
       binding.refresh();
     }
   );
+
+  // Its own folder rather than a binding inside Motion, since forcing a GPU tier is not a
+  // motion setting -- but it sits directly under it in the pane.
+  const perfFolder = pane.addFolder({ title: "Performance", expanded: false });
+  const tierOptions = { tier: store.tierOverride ?? -1 }; // -1 = Auto
+  perfFolder
+    .addBinding(tierOptions, "tier", {
+      label: "GPU tier",
+      options: { Auto: -1, "Tier 0": 0, "Tier 1": 1, "Tier 2": 2, "Tier 3": 3, "Tier 4": 4 },
+    })
+    .on("change", ({ value }) => store.setTierOverride(value === -1 ? null : value));
+
+  // So "Auto" means something concrete when you are staring at it.
+  const detected = { tier: "..." };
+  const detectedBinding = perfFolder.addBinding(detected, "tier", {
+    label: "detected",
+    readonly: true,
+  });
+  store.resolveGPUTier().then(() => {
+    detected.tier = String(store.gpuTier?.tier ?? "?");
+    detectedBinding.refresh();
+  });
 })
 </script>
 <template>

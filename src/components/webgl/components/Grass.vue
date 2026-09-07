@@ -133,6 +133,9 @@ onMounted(() => {
 const NUM_GRASS = getGrassCountSize();
 const GRASS_SEGMENTS = getGrassSegments();
 const GRASS_PATCH_SIZE = 10;
+// The patch is stretched along Z so a shallow field of blades covers the whole corridor
+// the camera looks down. positionNode below reads the same constant.
+const GRASS_FORWARD_SCALE = 10;
 
 const VERTICES = (GRASS_SEGMENTS + 1) * 2;
 const indices = [];
@@ -164,7 +167,14 @@ geo.setAttribute(
   "position",
   new BufferAttribute(new Float32Array(VERTICES * 2 * 3), 3)
 );
-geo.boundingSphere = new Sphere(new Vector3(0, 0, 0), 1 + GRASS_PATCH_SIZE * 2);
+// Blades reach GRASS_PATCH_SIZE in x, GRASS_PATCH_SIZE * GRASS_FORWARD_SCALE in z, and
+// stand grassHeight tall. The old radius of 21 only ever covered the x spread, which left
+// the mesh cullable while most of its blades were still on screen. 25 is the pane maximum
+// for grassHeight, so this stays valid across the whole slider range without tracking it.
+geo.boundingSphere = new Sphere(
+  new Vector3(0, 0, 0),
+  Math.hypot(GRASS_PATCH_SIZE, 25, GRASS_PATCH_SIZE * GRASS_FORWARD_SCALE) + 1
+);
 
 const material = new MeshStandardNodeMaterial();
 material.transparent = true;
@@ -313,7 +323,7 @@ material.positionNode = Fn(() => {
   const grassHeight = uGrassParams.w;
 
   const hashedInstanceID = hash21(instanceIndex.toFloat()).mul(2.0).sub(1.0);
-  const forwardScale = vec2(10.0, 0.0).x;
+  const forwardScale = vec2(GRASS_FORWARD_SCALE, 0.0).x;
   const grassOffset = vec3(
     hashedInstanceID.x,
     0.0,

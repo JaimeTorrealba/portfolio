@@ -18,8 +18,19 @@ const options = reactive({
 const TREE_SIDE_MIN = 10;
 const TREE_SIDE_SPREAD = 7.5;
 
+// Floor.vue's plane is 130 deep centred at z = -35, so its far edge is z = -100. Trees
+// used to spawn anywhere from there up to z = -25, which is only 50 units from the camera
+// at z = 25 -- close enough that a tree fading in read as a pop rather than an approach.
+// Spawning at or behind the floor's far corner means every tree walks the full length of
+// the ground before it reaches the viewer.
+const TREE_SPAWN_Z_FAR = -125;
+const TREE_SPAWN_Z_NEAR = -100;
+
 const getRandomTreeX = (side = Math.random() < 0.5 ? -1 : 1) =>
   side * (TREE_SIDE_MIN + Math.random() * TREE_SIDE_SPREAD);
+
+const getRandomTreeZ = () =>
+  TREE_SPAWN_Z_FAR + Math.random() * (TREE_SPAWN_Z_NEAR - TREE_SPAWN_Z_FAR);
 
 onMounted(async () => {
   await nextTick();
@@ -51,11 +62,19 @@ const disposeTree = (tree) => {
   });
 };
 
-const fadeInTree = (tree) => {
+// Runs once over every material a tree owns, before it is added to the scene.
+const prepareTree = (tree) => {
   tree.traverse((child) => {
     if (!child.isMesh) return;
     const mats = Array.isArray(child.material) ? child.material : [child.material];
     mats.forEach((mat) => {
+      // The scene fog (Atmosphere.vue) is near-black and hits full strength around 95
+      // units, which is inside the corridor every tree walks down -- it flattened them
+      // into silhouettes. Same opt-out Clouds, Smoke and Moon use. The grass keeps the
+      // fog: it lives close to the camera, where the atmosphere is doing what it was
+      // added for.
+      mat.fog = false;
+
       // A GSAP tween on a raw material does not invalidate the TresJS scene, so
       // in on-demand mode the fade would never repaint. Land on the end state.
       if (mainStore.reducedMotion) {
@@ -78,11 +97,11 @@ const createTree = (_x) => {
   const tree = new Tree();
   const randomScale = 2 + (Math.random() - 0.5) * 2;
   tree.scale.set(randomScale, randomScale, randomScale);
-  tree.position.set(_x, 0, Math.random() * 100 - 125);
+  tree.position.set(_x, 0, getRandomTreeZ());
   tree.options.seed = Math.random() * 10000;
   tree.options.leaves.size = 0;
   tree.generate();
-  fadeInTree(tree);
+  prepareTree(tree);
   trees.push(tree);
   treesRef.value.add(tree);
   return tree;
@@ -113,8 +132,8 @@ const respawnTree = (_x) => {
     spareTree = null;
     const randomScale = 2 + (Math.random() - 0.5) * 2;
     tree.scale.set(randomScale, randomScale, randomScale);
-    tree.position.set(_x, 0, Math.random() * 100 - 125);
-    fadeInTree(tree);
+    tree.position.set(_x, 0, getRandomTreeZ());
+    prepareTree(tree);
     trees.push(tree);
     treesRef.value.add(tree);
     buildSpare();

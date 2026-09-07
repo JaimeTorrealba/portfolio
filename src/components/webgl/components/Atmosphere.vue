@@ -47,8 +47,8 @@ const options = reactive({
   // Colour the mist takes when you look toward the moon, and how tightly that is
   // focused around it.
   moonColour: "#3f4c66",
-  scatter: 0.85,
-  scatterFocus: 6,
+  scatter: 0.2,
+  scatterFocus: 2,
 });
 
 const uRange = uniform(new Vector2(options.near, options.far));
