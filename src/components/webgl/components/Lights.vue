@@ -22,7 +22,7 @@ const options = reactive({
   spotVisible: true,
   spotColor: "#FFFFFF",
   spotPosition: { x: 0, y: 5, z: 25 },
-  spotDecay: 1.5,
+  spotDecay: 1.4,
   spotAngle: 0.12,
   spotPenumbra: 0.7,
 });

@@ -22,7 +22,7 @@
 .close-btn {
   position: absolute;
   top: -14px;
-  left: calc(100% - 14px);
+  left: -14px;
   z-index: 10;
   width: 28px;
   height: 28px;

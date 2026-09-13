@@ -1,181 +1,90 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { gsap } from "gsap";
-import { Timeline } from "vue-timeline-chart";
-import "vue-timeline-chart/style.css";
-import { showText, appear } from "@/utils/gsaps.js";
+import { showText } from "@/utils/gsaps.js";
+import { prefersReducedMotion } from "@/utils/motion.js";
 import CloseButton from "@/components/common/CloseButton.vue";
 
 const emit = defineEmits(["close"]);
 
 const titleRef = ref(null);
-const contentRef = ref(null);
-const detailTimeline = ref(null);
+const listRef = ref(null);
 
-const toTimestamp = (month, year) => Date.UTC(year, month - 1, 1);
-const now = Date.now();
-
-const groups = [
-  { id: "frontend", label: "Front-end Developer" },
-  { id: "ripley", label: "Full Stack Developer" },
-  { id: "EDteam", label: "Educator" },
-  { id: "push-security", label: "Senior Software Developer" },
-  { id: "tres", label: "OSS maintainer" },
-];
-
-const items = [
-  {
-    id: "coaniquem",
-    group: "frontend",
-    type: "range",
-    start: toTimestamp(2, 2017),
-    end: toTimestamp(7, 2019),
-    title: "Coaniquem",
-    description: "Coaniquem is an NGO that helps children recovering from severe burns for free in Chile.",
-    logo: "/img/logos/coaniquem.png",
-  },
-  {
-    id: "ripley",
-    group: "ripley",
-    type: "range",
-    start: toTimestamp(7, 2019),
-    end: toTimestamp(3, 2022),
-    title: "Ripley",
-    cssVariables: { "--item-background": "hsl(38 85% 55%)" },
-    description: "One of the biggest retail companies in Chile.",
-    logo: "/img/logos/ripley.png",
-  },
-  {
-    id: "lemu",
-    group: "frontend",
-    type: "range",
-    start: toTimestamp(3, 2022),
-    end: toTimestamp(9, 2022),
-    title: "Lemu",
-    description: "Lemu is a startup focused on conservation parks and wildlife.",
-    logo: "/img/logos/lemu.png",
-    logoClass: "logo-wide",
-  },
-  {
-    id: "sky",
-    group: "frontend",
-    type: "range",
-    start: toTimestamp(9, 2022),
-    end: toTimestamp(4, 2024),
-    title: "SKY",
-    description: "SKY is one of the largest budget airlines in Latin America.",
-    logo: "/img/logos/sky.svg",
-  },
-  {
-    id: "three-js-course",
-    group: "EDteam",
-    type: "range",
-    start: toTimestamp(5, 2023),
-    end: toTimestamp(9, 2023),
-    title: "EDteam",
-    cssVariables: { "--item-background": "hsl(280 70% 60%)" },
-    description: "EDteam famous platform (for online courses in Latin America).",
-    logo: "/img/logos/edteam.svg",
-  },
+const experiences = [
   {
     id: "push-security",
-    group: "push-security",
-    type: "range",
-    start: toTimestamp(11, 2024),
-    end: now,
     title: "Push Security",
-    cssVariables: { "--item-background": "hsl(160 70% 45%)" },
+    role: "Senior Software Developer",
+    period: "Nov 2024 – Present",
     description: "Top leader in the browser security space.",
     logo: "/img/logos/push-security.svg",
   },
   {
-    id: "tres-1",
-    group: "tres",
-    type: "range",
-    start: toTimestamp(11, 2022),
-    end: toTimestamp(10, 2024),
+    id: "tres",
     title: "Tres.js",
-    cssVariables: { "--item-background": "hsl(345 75% 55%)" },
-    description: "Tres.js is an open-source library for building 3D experiences using Vue.js and Three.js.",
+    role: "OSS maintainer",
+    period: "Nov 2022 – Oct 2024 · Oct 2025 – Present",
+    description:
+      "Tres.js is an open-source library for building 3D experiences using Vue.js and Three.js.",
     logo: "/img/logos/tres-js.svg",
   },
   {
-    id: "tres-2",
-    group: "tres",
-    type: "range",
-    start: toTimestamp(10, 2025),
-    end: now,
-    title: "Tres.js",
-    cssVariables: { "--item-background": "hsl(345 75% 55%)" },
-    description: "Tres.js is an open-source library for building 3D experiences using Vue.js and Three.js.",
-    logo: "/img/logos/tres-js.svg",
+    id: "sky",
+    title: "SKY",
+    role: "Front-end Developer",
+    period: "Sep 2022 – Apr 2024",
+    description: "SKY is one of the largest budget airlines in Latin America.",
+    logo: "/img/logos/sky.svg",
+  },
+  {
+    id: "edteam",
+    title: "EDteam",
+    role: "Educator",
+    period: "May 2023 – Sep 2023",
+    description: "EDteam famous platform (for online courses in Latin America).",
+    logo: "/img/logos/edteam.svg",
+  },
+  {
+    id: "lemu",
+    title: "Lemu",
+    role: "Front-end Developer",
+    period: "Mar 2022 – Sep 2022",
+    description: "Lemu is a startup focused on conservation parks and wildlife.",
+    logo: "/img/logos/lemu.png",
+  },
+  {
+    id: "ripley",
+    title: "Ripley",
+    role: "Full Stack Developer",
+    period: "Jul 2019 – Mar 2022",
+    description: "One of the biggest retail companies in Chile.",
+    logo: "/img/logos/ripley.png",
+    logoBg: "#111",
+  },
+  {
+    id: "coaniquem",
+    title: "Coaniquem",
+    role: "Front-end Developer",
+    period: "Feb 2017 – Jul 2019",
+    description:
+      "Coaniquem is an NGO that helps children recovering from severe burns for free in Chile.",
+    logo: "/img/logos/coaniquem.png",
   },
 ];
 
-const totalRange = { start: toTimestamp(1, 2017), end: now };
-const viewport = ref({ start: toTimestamp(4, 2023), end: now });
-
-const activeItem = ref(null);
-
-const handleItemHover = ({ event, item }) => {
-  if (event.pointerType !== "mouse") return;
-  activeItem.value = item?.type === "range" ? item : null;
-};
-
-const handleItemTap = ({ event, item }) => {
-  if (event.pointerType === "mouse") return;
-  activeItem.value = item?.type === "range" && activeItem.value?.id !== item.id ? item : null;
-};
-
-const clearActiveItem = () => {
-  activeItem.value = null;
-};
-
-const handleDetailViewportChange = (newViewport) => {
-  viewport.value = newViewport;
-  clearActiveItem();
-};
-
-const isDraggingMapViewport = ref(false);
-let previousDragTimePos = 0;
-
-const handleViewportDrag = ({ time, event, item }) => {
-  if (event.type === "pointerdown") {
-    if (item?.id !== "selection") return;
-    isDraggingMapViewport.value = true;
-    previousDragTimePos = time;
-  } else if (event.type === "pointermove") {
-    if (!isDraggingMapViewport.value) return;
-    const delta = time - previousDragTimePos;
-    const length = viewport.value.end - viewport.value.start;
-    if (delta < 0) {
-      viewport.value.start = Math.max(viewport.value.start + delta, totalRange.start);
-      viewport.value.end = viewport.value.start + length;
-    } else {
-      viewport.value.end = Math.min(viewport.value.end + delta, totalRange.end);
-      viewport.value.start = viewport.value.end - length;
-    }
-    previousDragTimePos = time;
-  }
-};
-
-const stopDrag = () => {
-  isDraggingMapViewport.value = false;
-};
-
-const onMapWheel = (event) => {
-  detailTimeline.value?.onWheel(event);
-};
-
 onMounted(() => {
-  window.addEventListener("pointerup", stopDrag, { capture: true });
   const master = gsap.timeline();
   master.add(showText(titleRef.value));
-  master.add(appear(contentRef.value.querySelectorAll(".timeline-map, .timeline-detail")), 0.25);
-});
-
-onUnmounted(() => {
-  window.removeEventListener("pointerup", stopDrag, { capture: true });
+  if (prefersReducedMotion()) {
+    gsap.set(listRef.value.children, { opacity: 1, y: 0 });
+    return;
+  }
+  master.fromTo(
+    listRef.value.children,
+    { opacity: 0, y: 40 },
+    { opacity: 1, y: 0, duration: 0.55, stagger: 0.1, ease: "power2.out" },
+    "-=0.3"
+  );
 });
 </script>
 
@@ -183,68 +92,28 @@ onUnmounted(() => {
   <section class="container">
     <div class="glass3d">
       <CloseButton @click="emit('close')" />
-      <div ref="contentRef" class="glass-content">
+      <div class="glass-content">
         <div class="overflow-hidden">
           <h1 ref="titleRef" class="is-size-1 has-text-light">Experience</h1>
         </div>
-        <Timeline
-          class="timeline-map"
-          :class="{ 'is-dragging': isDraggingMapViewport }"
-          :groups="groups"
-          :items="[
-            ...items,
-            { id: 'selection', type: 'background', start: viewport.start, end: viewport.end },
-          ]"
-          :viewportMin="totalRange.start"
-          :viewportMax="totalRange.end"
-          :minViewportDuration="totalRange.end - totalRange.start"
-          @pointermove="handleViewportDrag"
-          @pointerdown="handleViewportDrag"
-          @wheel="onMapWheel"
-        />
-
-        <Timeline
-          ref="detailTimeline"
-          class="timeline-detail"
-          :groups="groups"
-          :items="items"
-          :viewportMin="totalRange.start"
-          :viewportMax="totalRange.end"
-          :initialViewportStart="viewport.start"
-          :initialViewportEnd="viewport.end"
-          :minTimestampWidth="60"
-          @changeViewport="handleDetailViewportChange"
-          @pointermove="handleItemHover"
-          @pointerdown="handleItemTap"
-          @mouseleaveTimeline="clearActiveItem"
-        >
-          <template #item="{ item }">
-            <div class="timeline-item-content" :style="{ 'anchor-name': `--tl-${item.id}` }">
-              {{ item.title }}
-            </div>
-          </template>
-        </Timeline>
-
-        <transition>
-          <div
-            v-if="activeItem"
-            class="timeline-tooltip"
-            :style="{ 'position-anchor': `--tl-${activeItem.id}` }"
-          >
-            <div class="timeline-tooltip-text">
-              <p class="timeline-tooltip-title">{{ activeItem.title }}</p>
-              <p>{{ activeItem.description }}</p>
-            </div>
+        <ul ref="listRef" class="experience-list">
+          <li v-for="item in experiences" :key="item.id" class="experience-item">
             <img
-              :src="activeItem.logo"
-              class="rounded"
-              :class="activeItem.logoClass"
-              :alt="`${activeItem.title} logo`"
-              width="24"
-              height="24"
+              :src="item.logo"
+              class="experience-logo"
+              :style="item.logoBg && { background: item.logoBg }"
+              :alt="`${item.title} logo`"
+              width="36"
+              height="36"
             />
-          </div>
-        </transition>
+            <div class="experience-body">
+              <p class="experience-title has-text-light">{{ item.title }}</p>
+              <p class="experience-period">{{ item.period }}</p>
+              <p class="experience-description">{{ item.description }}</p>
+            </div>
+            <span class="experience-role" :data-role="item.role">{{ item.role }}</span>
+          </li>
+        </ul>
       </div>
     </div>
   </section>
@@ -258,7 +127,7 @@ onUnmounted(() => {
   transform: translate(-50%, -25%);
   z-index: 10;
   overflow: visible;
-  width: 70%;
+  width: 50%;
   @media screen and (max-width: 1024px) {
     position: fixed;
     top: 5%;
@@ -283,120 +152,124 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
-.timeline-item-content {
-  inset: 0;
-  position: absolute;
+.experience-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
-  align-items: center;
-  padding: 0 0.5rem;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.experience-list::-webkit-scrollbar {
+  width: 4px;
+}
+.experience-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.experience-list::-webkit-scrollbar-thumb {
+  background: hsla(0, 0%, 60%, 0.3);
+  border-radius: 2px;
+}
+
+.experience-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  padding: 0.875rem 1rem;
+  border-radius: 0.625rem;
+  background: hsla(0, 0%, 100%, 0.04);
+  border: 1px solid hsla(0, 0%, 100%, 0.08);
+  transition: background 0.2s ease;
+}
+
+.experience-item:hover {
+  background: hsla(0, 0%, 100%, 0.08);
+}
+
+.experience-logo {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  padding: 4px;
+  border-radius: 6px;
+  background: #f7f7f7;
+  object-fit: contain;
+}
+
+.experience-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.experience-title {
+  font-family: "sentient";
+  font-size: 1rem;
+}
+
+.experience-period {
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: hsla(0, 0%, 75%, 0.6);
+}
+
+.experience-description {
   font-size: 0.8rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: var(--white);
+  color: hsla(0, 0%, 75%, 0.8);
+  line-height: 1.45;
 }
 
-.timeline-map,
-.timeline-detail {
-  opacity: 0;
-}
-
-.timeline-map {
-  --group-items-height: 0.5em;
-  --group-border-top: 0;
-  --label-padding: 0.1em 0.4em;
-  --group-padding-top: 0.1em;
-  --group-padding-bottom: 0.1em;
-  color: var(--white);
-
-  &:deep(.group-label) {
-    font-size: 0.65rem;
-  }
-
-  &:deep(.group:first-of-type) {
-    padding-top: 0.75rem;
-  }
-
-  &:deep(.group:last-of-type) {
-    padding-bottom: 0.75rem;
-  }
-
-  &:deep(.background) {
-    --item-background: hsl(0 0% 100% / 0.15);
-    cursor: grab;
-    z-index: 1;
-  }
-
-  &.is-dragging,
-  &.is-dragging:deep(.background) {
-    cursor: grabbing;
-  }
-
-  &:deep(.item) {
-    pointer-events: none;
-  }
-}
-
-.timeline-detail {
-  --group-items-height: 2.75rem;
-  color: var(--white);
-
-  &:deep(.group-label) {
-    display: none;
-  }
-}
-
-.timeline-tooltip {
-  position: fixed;
-  position-area: top;
-  position-try-fallbacks: flip-block;
-  position-visibility: anchors-visible;
-  margin-bottom: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  z-index: 20;
-  max-width: 280px;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid hsla(0, 0%, 35%, 0.5);
-  background: hsl(189 80% 10% / 0.85);
-  color: var(--white);
-  font-size: 0.75rem;
-  pointer-events: none;
-
-  & img {
-    flex-shrink: 0;
-  }
-
-  & img.logo-wide {
-    background: #f7f7f7;
-    aspect-ratio: 16 / 9;
-    height: 24px;
-    width: auto;
-    padding: 0.25rem;
-    object-fit: contain;
-  }
-}
-
-.timeline-tooltip-title {
-  font-size: 0.85rem;
+.experience-role {
+  flex-shrink: 0;
+  font-size: 0.65rem;
   font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  margin-top: 0.2rem;
+  color: hsl(189 80% 80%);
+  background: hsl(189 80% 10% / 0.4);
+  border: 1px solid hsl(189 80% 40% / 0.3);
 }
 
-.timeline-tooltip.v-enter-active,
-.timeline-tooltip.v-leave-active {
-  transition: opacity 0.25s ease;
+.experience-role[data-role="Full Stack Developer"] {
+  color: hsl(38 90% 80%);
+  background: hsl(38 90% 10% / 0.4);
+  border-color: hsl(38 90% 40% / 0.3);
 }
 
-.timeline-tooltip.v-enter-from,
-.timeline-tooltip.v-leave-to {
-  opacity: 0;
+.experience-role[data-role="Educator"] {
+  color: hsl(280 70% 80%);
+  background: hsl(280 70% 10% / 0.4);
+  border-color: hsl(280 70% 40% / 0.3);
 }
 
-@supports not (anchor-name: --a) {
-  .timeline-tooltip {
-    display: none;
+.experience-role[data-role="Senior Software Developer"] {
+  color: hsl(160 70% 75%);
+  background: hsl(160 70% 8% / 0.4);
+  border-color: hsl(160 70% 35% / 0.3);
+}
+
+.experience-role[data-role="OSS maintainer"] {
+  color: hsl(345 75% 80%);
+  background: hsl(345 75% 10% / 0.4);
+  border-color: hsl(345 75% 40% / 0.3);
+}
+
+@media screen and (max-width: 640px) {
+  .experience-item {
+    flex-wrap: wrap;
+  }
+  .experience-role {
+    margin-top: 0;
+    margin-left: calc(36px + 0.875rem);
   }
 }
 
@@ -408,7 +281,7 @@ onUnmounted(() => {
   --filter-glass3d: blur(8px) brightness(0.4) saturate(1.5);
   --color-glass3d: hsl(189 80% 10% / 0.2);
   border-radius: 1rem;
-  min-width: 600px;
+  min-width: 400px;
   border: 1px solid hsla(0, 0%, 35%, 0.5);
   @media screen and (max-width: 1024px) {
     min-width: 0;
@@ -457,9 +330,5 @@ onUnmounted(() => {
 .glass3d > * {
   position: relative;
   z-index: 6;
-}
-
-.rounded{
-  border-radius: 4px;
 }
 </style>
