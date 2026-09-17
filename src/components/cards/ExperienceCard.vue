@@ -267,6 +267,11 @@ onMounted(() => {
   .experience-item {
     flex-wrap: wrap;
   }
+  .experience-body {
+    /* fill the rest of line 1 so the role badge always wraps below,
+       instead of only when its label happens to be wide enough */
+    flex-basis: calc(100% - 36px - 0.875rem);
+  }
   .experience-role {
     margin-top: 0;
     margin-left: calc(36px + 0.875rem);
