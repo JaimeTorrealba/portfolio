@@ -1,6 +1,5 @@
 import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
-import { getGPUTier } from 'detect-gpu'
+import { defineStore, skipHydrate } from 'pinia'
 import { usePreferredReducedMotion } from '@vueuse/core'
 
 export const useMainStore = defineStore('main', () => {
@@ -20,16 +19,21 @@ export const useMainStore = defineStore('main', () => {
   // null = use whatever detect-gpu reports. The #debug pane writes a tier here to see
   // how the scene builds itself for another class of GPU. Session-scoped, so closing
   // the tab drops back to the real device.
+  // The page is prerendered, so this also runs on the server, where there is no
+  // sessionStorage. skipHydrate stops the server's null from overwriting the value the
+  // client just read back.
   const TIER_OVERRIDE_KEY = 'debug:gpuTierOverride'
-  const storedOverride = sessionStorage.getItem(TIER_OVERRIDE_KEY)
-  const tierOverride = ref(storedOverride === null ? null : Number(storedOverride))
+  const storedOverride = import.meta.client ? sessionStorage.getItem(TIER_OVERRIDE_KEY) : null
+  const tierOverride = skipHydrate(ref(storedOverride === null ? null : Number(storedOverride)))
 
   let _gpuTierPromise = null
   // `gpuTier` stays the raw detected result; only the value handed to callers carries
   // the override, so the pane can still show what Auto actually resolved to.
+  // detect-gpu is only needed by the client-only scene, so it is loaded on first use
+  // rather than shipped with the loading screen.
   const resolveGPUTier = () => {
     if (!_gpuTierPromise) {
-      _gpuTierPromise = getGPUTier().then(result => {
+      _gpuTierPromise = import('detect-gpu').then(({ getGPUTier }) => getGPUTier()).then(result => {
         gpuTier.value = result
         return result
       })

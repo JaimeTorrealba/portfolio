@@ -1,0 +1,8 @@
+# Search engines and AI assistants are welcome.
+# Plain-text summaries for LLMs: https://jaimetorrealba.com/llms.txt
+# and https://jaimetorrealba.com/llms-full.txt
+
+User-agent: *
+Allow: /
+
+Sitemap: https://jaimetorrealba.com/sitemap.xml

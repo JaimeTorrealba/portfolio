@@ -12,9 +12,10 @@ onMounted(async () => {
   // Elements already sit at their resting opacity/rotation; the ring spins are
   // infinite, so there is no end state to jump to -- skip the whole sequence.
   if (prefersReducedMotion()) return;
-  gsap.from(["#innerText", "#secondText", "#outerText"], {
+  // The rings start at opacity 0 in CSS (see the style block), so fade them in.
+  gsap.to(["#innerText", "#secondText", "#outerText"], {
     duration: 3,
-    opacity: 0,
+    opacity: 1,
   });
   gsap.to("#innerText", {
     duration: 40,
@@ -57,7 +58,7 @@ onMounted(async () => {
             <path
               d="M 437.66 250 C 437.66 301.785 416.628 348.763 382.696 382.696 C 348.763 416.628 301.785 437.66 250 437.66 C 198.215 437.66 151.237 416.628 117.304 382.696 C 83.372 348.763 62.34 301.785 62.34 250 C 62.34 198.215 83.372 151.237 117.304 117.304 C 151.237 83.372 198.215 62.34 250 62.34 C 301.785 62.34 348.763 83.372 382.696 117.304 C 416.628 151.237 437.66 198.215 437.66 250 Z M 381.989 118.011 C 348.182 84.205 301.581 63.34 250 63.34 C 198.419 63.34 151.818 84.205 118.011 118.011 C 84.205 151.818 63.34 198.419 63.34 250 C 63.34 301.581 84.205 348.182 118.011 381.989 C 151.818 415.795 198.419 436.66 250 436.66 C 301.581 436.66 348.182 415.795 381.989 381.989 C 415.795 348.182 436.66 301.581 436.66 250 C 436.66 198.419 415.795 151.818 381.989 118.011 Z"
               style=""
-              id="path-0"
+              id="ring-path-inner"
             ></path>
           </defs>
           <text
@@ -72,7 +73,7 @@ onMounted(async () => {
             y="195.63"
             x="134.492"
           >
-            <textPath startOffset="0" xlink:href="#path-0">
+            <textPath startOffset="0" xlink:href="#ring-path-inner">
               Loading - Cargando - Caricando
             </textPath>
           </text>
@@ -89,7 +90,7 @@ onMounted(async () => {
             <path
               d="M 437.66 250 C 437.66 301.785 416.628 348.763 382.696 382.696 C 348.763 416.628 301.785 437.66 250 437.66 C 198.215 437.66 151.237 416.628 117.304 382.696 C 83.372 348.763 62.34 301.785 62.34 250 C 62.34 198.215 83.372 151.237 117.304 117.304 C 151.237 83.372 198.215 62.34 250 62.34 C 301.785 62.34 348.763 83.372 382.696 117.304 C 416.628 151.237 437.66 198.215 437.66 250 Z M 381.989 118.011 C 348.182 84.205 301.581 63.34 250 63.34 C 198.419 63.34 151.818 84.205 118.011 118.011 C 84.205 151.818 63.34 198.419 63.34 250 C 63.34 301.581 84.205 348.182 118.011 381.989 C 151.818 415.795 198.419 436.66 250 436.66 C 301.581 436.66 348.182 415.795 381.989 381.989 C 415.795 348.182 436.66 301.581 436.66 250 C 436.66 198.419 415.795 151.818 381.989 118.011 Z"
               style=""
-              id="path-0"
+              id="ring-path-second"
             ></path>
           </defs>
           <text
@@ -104,7 +105,7 @@ onMounted(async () => {
             y="195.63"
             x="134.492"
           >
-            <textPath startOffset="127" xlink:href="#path-0">Creative developer</textPath>
+            <textPath startOffset="127" xlink:href="#ring-path-second">Creative developer</textPath>
           </text>
         </svg>
         <svg
@@ -119,7 +120,7 @@ onMounted(async () => {
             <path
               d="M 437.66 250 C 437.66 301.785 416.628 348.763 382.696 382.696 C 348.763 416.628 301.785 437.66 250 437.66 C 198.215 437.66 151.237 416.628 117.304 382.696 C 83.372 348.763 62.34 301.785 62.34 250 C 62.34 198.215 83.372 151.237 117.304 117.304 C 151.237 83.372 198.215 62.34 250 62.34 C 301.785 62.34 348.763 83.372 382.696 117.304 C 416.628 151.237 437.66 198.215 437.66 250 Z M 381.989 118.011 C 348.182 84.205 301.581 63.34 250 63.34 C 198.419 63.34 151.818 84.205 118.011 118.011 C 84.205 151.818 63.34 198.419 63.34 250 C 63.34 301.581 84.205 348.182 118.011 381.989 C 151.818 415.795 198.419 436.66 250 436.66 C 301.581 436.66 348.182 415.795 381.989 381.989 C 415.795 348.182 436.66 301.581 436.66 250 C 436.66 198.419 415.795 151.818 381.989 118.011 Z"
               style=""
-              id="path-0"
+              id="ring-path-outer"
             ></path>
           </defs>
           <text
@@ -134,7 +135,7 @@ onMounted(async () => {
             y="195.63"
             x="134.492"
           >
-            <textPath startOffset="400" xlink:href="#path-0">Jaime Torrealba</textPath>
+            <textPath startOffset="400" xlink:href="#ring-path-outer">Jaime Torrealba</textPath>
           </text>
         </svg>
       </div>
@@ -166,6 +167,17 @@ onMounted(async () => {
   left: 50%;
   transform: translate(-50%, -50%);
   height: auto;
+}
+
+/* The loader is in the prerendered HTML, so without this the rings would show at full
+   opacity until the JS loads, then vanish and fade back in. Under reduced motion there is
+   no fade, so they keep their normal opacity. */
+@media (prefers-reduced-motion: no-preference) {
+  .center-svg-inner,
+  .center-svg-second,
+  .center-svg-outer {
+    opacity: 0;
+  }
 }
 
 .center-svg-inner {

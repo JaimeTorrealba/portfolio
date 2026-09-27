@@ -10,6 +10,7 @@ import Linkedin from "@/assets/icons/RRSS/Linkedin.vue";
 import Codepen from "@/assets/icons/RRSS/Codepen.vue";
 import BlueSky from "@/assets/icons/RRSS/Bluesky.vue";
 import Lab from "@/assets/icons/RRSS/Lab.vue";
+import { person, socials } from "#shared/profile";
 
 const store = useMainStore();
 
@@ -44,9 +45,10 @@ const showTooltipLab = ref(false);
     <div class="rrss-container">
       <Tooltip text="Bluesky" :show="showTooltipBlueSky" anchor="top center">
         <a
-          href="https://bsky.app/profile/jaimebboyjt.bsky.social"
+          :href="socials.bluesky.url"
           target="_blank"
-          rel="noopener noreferrer"
+          rel="me noopener noreferrer"
+          :aria-label="`${person.name} on ${socials.bluesky.label}`"
           @mouseenter="showTooltipBlueSky = true"
           @mouseleave="showTooltipBlueSky = false"
         >
@@ -57,9 +59,10 @@ const showTooltipLab = ref(false);
       </Tooltip>
       <Tooltip text="Twitter" :show="showTooltipTwitter" anchor="top center">
         <a
-          href="https://twitter.com/jaimebboyjt"
+          :href="socials.twitter.url"
           target="_blank"
-          rel="noopener noreferrer"
+          rel="me noopener noreferrer"
+          :aria-label="`${person.name} on ${socials.twitter.label}`"
           @mouseenter="showTooltipTwitter = true"
           @mouseleave="showTooltipTwitter = false"
         >
@@ -71,9 +74,10 @@ const showTooltipLab = ref(false);
 
       <Tooltip text="Github" :show="showTooltipGithub" anchor="top center">
         <a
-          href="https://github.com/JaimeTorrealba"
+          :href="socials.github.url"
           target="_blank"
-          rel="noopener noreferrer"
+          rel="me noopener noreferrer"
+          :aria-label="`${person.name} on ${socials.github.label}`"
           @mouseenter="showTooltipGithub = true"
           @mouseleave="showTooltipGithub = false"
         >
@@ -84,9 +88,10 @@ const showTooltipLab = ref(false);
       </Tooltip>
       <Tooltip text="LinkedIn" :show="showTooltipLinkedin" anchor="top center">
         <a
-          href="https://www.linkedin.com/in/jaime-torrealba-cordova/"
+          :href="socials.linkedin.url"
           target="_blank"
-          rel="noopener noreferrer"
+          rel="me noopener noreferrer"
+          :aria-label="`${person.name} on ${socials.linkedin.label}`"
           @mouseenter="showTooltipLinkedin = true"
           @mouseleave="showTooltipLinkedin = false"
         >
@@ -97,9 +102,10 @@ const showTooltipLab = ref(false);
       </Tooltip>
       <Tooltip text="CodePen" :show="showTooltipCodepen" anchor="top center">
         <a
-          href="https://codepen.io/jaime_torrealba"
+          :href="socials.codepen.url"
           target="_blank"
-          rel="noopener noreferrer"
+          rel="me noopener noreferrer"
+          :aria-label="`${person.name} on ${socials.codepen.label}`"
           @mouseenter="showTooltipCodepen = true"
           @mouseleave="showTooltipCodepen = false"
         >
@@ -110,9 +116,10 @@ const showTooltipLab = ref(false);
       </Tooltip>
       <Tooltip text="Lab" :show="showTooltipLab" anchor="top center">
         <a
-          href="https://lab.jaimetorrealba.com/"
+          :href="socials.lab.url"
           target="_blank"
-          rel="noopener noreferrer"
+          rel="me noopener noreferrer"
+          :aria-label="`${person.name} on ${socials.lab.label}`"
           @mouseenter="showTooltipLab = true"
           @mouseleave="showTooltipLab = false"
         >

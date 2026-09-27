@@ -4,8 +4,8 @@ import { gsap } from "gsap";
 import { SplitText } from "gsap/SplitText";
 import { showText } from "@/utils/gsaps.js";
 import { prefersReducedMotion } from "@/utils/motion.js";
-import { items } from "@/utils/items.js";
 import CloseButton from "@/components/common/CloseButton.vue";
+import { content } from "#shared/profile";
 gsap.registerPlugin(SplitText);
 
 const emit = defineEmits(["close"]);
@@ -38,18 +38,18 @@ onMounted(() => {
           <h1 ref="titleRef" class="is-size-1 has-text-light">Content</h1>
         </div>
         <ul ref="listRef" class="talks-list">
-          <li v-for="item in items" :key="item.id" class="talk-item">
-            <a
-              :href="item.url"
-              target="_blank"
-              rel="noopener noreferrer"
+          <li v-for="item in content" :key="item.id" class="talk-item">
+            <!-- Items without a public link render as plain text, not an empty href. -->
+            <component
+              :is="item.url ? 'a' : 'div'"
+              v-bind="item.url ? { href: item.url, target: '_blank', rel: 'noopener noreferrer' } : {}"
               class="talk-title has-text-light"
             >
               <div class="talk-body">
                 {{ item.title }}
                 <p class="talk-description">{{ item.description }}</p>
               </div>
-            </a>
+            </component>
             <span class="talk-type" :data-type="item.type">{{ item.type }}</span>
           </li>
         </ul>
@@ -181,7 +181,7 @@ onMounted(() => {
   transition: opacity 0.15s ease;
 }
 
-.talk-title:hover {
+a.talk-title:hover {
   opacity: 0.75;
   text-decoration: underline;
   text-underline-offset: 3px;

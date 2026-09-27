@@ -4,73 +4,12 @@ import { gsap } from "gsap";
 import { showText } from "@/utils/gsaps.js";
 import { prefersReducedMotion } from "@/utils/motion.js";
 import CloseButton from "@/components/common/CloseButton.vue";
+import { experiences } from "#shared/profile";
 
 const emit = defineEmits(["close"]);
 
 const titleRef = ref(null);
 const listRef = ref(null);
-
-const experiences = [
-  {
-    id: "push-security",
-    title: "Push Security",
-    role: "Senior Software Developer",
-    period: "Nov 2024 – Present",
-    description: "Top leader in the browser security space.",
-    logo: "/img/logos/push-security.svg",
-  },
-  {
-    id: "tres",
-    title: "Tres.js",
-    role: "OSS maintainer",
-    period: "Nov 2022 – Oct 2024 · Oct 2025 – Present",
-    description:
-      "Tres.js is an open-source library for building 3D experiences using Vue.js and Three.js.",
-    logo: "/img/logos/tres-js.svg",
-  },
-  {
-    id: "sky",
-    title: "SKY",
-    role: "Front-end Developer",
-    period: "Sep 2022 – Apr 2024",
-    description: "SKY is one of the largest budget airlines in Latin America.",
-    logo: "/img/logos/sky.svg",
-  },
-  {
-    id: "edteam",
-    title: "EDteam",
-    role: "Educator",
-    period: "May 2023 – Sep 2023",
-    description: "EDteam famous platform (for online courses in Latin America).",
-    logo: "/img/logos/edteam.svg",
-  },
-  {
-    id: "lemu",
-    title: "Lemu",
-    role: "Front-end Developer",
-    period: "Mar 2022 – Sep 2022",
-    description: "Lemu is a startup focused on conservation parks and wildlife.",
-    logo: "/img/logos/lemu.png",
-  },
-  {
-    id: "ripley",
-    title: "Ripley",
-    role: "Full Stack Developer",
-    period: "Jul 2019 – Mar 2022",
-    description: "One of the biggest retail companies in Chile.",
-    logo: "/img/logos/ripley.png",
-    logoBg: "#111",
-  },
-  {
-    id: "coaniquem",
-    title: "Coaniquem",
-    role: "Front-end Developer",
-    period: "Feb 2017 – Jul 2019",
-    description:
-      "Coaniquem is an NGO that helps children recovering from severe burns for free in Chile.",
-    logo: "/img/logos/coaniquem.png",
-  },
-];
 
 onMounted(() => {
   const master = gsap.timeline();

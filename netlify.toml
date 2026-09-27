@@ -1,4 +1,39 @@
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# Static prerender (nuxt generate). There is deliberately no SPA catch-all rewrite: it
+# answered every unknown URL, including /robots.txt, with the homepage and a 200, so
+# crawlers saw soft 404s. Nuxt emits a 404.html, which Netlify serves with a real 404.
+[build]
+  command = "pnpm generate"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "24"
+
+[[headers]]
+  for = "/_nuxt/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Markdown twins of the homepage: serve as Markdown, and point search engines at the
+# HTML page as the canonical version. `/` itself also returns this Markdown to clients
+# that send `Accept: text/markdown` (netlify/edge-functions/markdown-negotiation.js).
+[[headers]]
+  for = "/index.md"
+  [headers.values]
+    Content-Type = "text/markdown; charset=utf-8"
+    Link = '<https://jaimetorrealba.com/>; rel="canonical"'
+
+[[headers]]
+  for = "/index.html.md"
+  [headers.values]
+    Content-Type = "text/markdown; charset=utf-8"
+    Link = '<https://jaimetorrealba.com/>; rel="canonical"'
+
+[[headers]]
+  for = "/llms.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+
+[[headers]]
+  for = "/llms-full.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"

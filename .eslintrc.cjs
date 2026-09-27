@@ -13,5 +13,16 @@ module.exports = {
   },
   rules: {
     'vue/multi-word-component-names': 'off'
-  }
+  },
+  overrides: [
+    {
+      // Nitro auto-imports these in server/; the app side imports explicitly from #imports.
+      files: ['server/**/*.js'],
+      env: { node: true },
+      globals: {
+        defineEventHandler: 'readonly',
+        setHeader: 'readonly'
+      }
+    }
+  ]
 }

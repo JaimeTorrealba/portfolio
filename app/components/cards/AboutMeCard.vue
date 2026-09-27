@@ -7,6 +7,7 @@ import { prefersReducedMotion } from "@/utils/motion.js";
 import RRSS from "@/components/common/RRSS.vue";
 import SignatureJT from "@/assets/icons/SignatureJT.vue";
 import CloseButton from "@/components/common/CloseButton.vue";
+import { site, person } from "#shared/profile";
 gsap.registerPlugin(SplitText);
 
 const emit = defineEmits(["close"]);
@@ -99,7 +100,7 @@ onMounted(() => {
           <img
             ref="perfilRef"
             src="/img/Foto_Perfil.png"
-            alt="Image of my face"
+            :alt="site.image.alt"
             width="547"
             height="456"
             decoding="async"
@@ -109,16 +110,11 @@ onMounted(() => {
         </div>
         <div class="content-glass">
           <div class="overflow-hidden">
-            <h1 ref="titleRef" class="is-size-1 has-text-light">Jaime Torrealba</h1>
-            <h2 ref="subTitleRef" class="is-size-2 has-text-light">Creative developer</h2>
+            <h1 ref="titleRef" class="is-size-1 has-text-light">{{ person.name }}</h1>
+            <h2 ref="subTitleRef" class="is-size-2 has-text-light">{{ person.jobTitle }}</h2>
           </div>
-          <p ref="firstTextRef" class="text-container">
-            Creative developer focused on immersive web experiences, real-time 3D,
-            micro-interactions and expressive animations.
-          </p>
-          <p ref="secondTextRef">
-            I enjoy blending design and code using Vue.js, Three.js, Tres.js, and GSAP.
-          </p>
+          <p ref="firstTextRef" class="text-container">{{ person.bio[0] }}</p>
+          <p ref="secondTextRef">{{ person.bio[1] }}</p>
         </div>
         <span class="signature">
           <SignatureJT />
