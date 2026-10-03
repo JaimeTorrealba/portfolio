@@ -54,6 +54,14 @@ useHead({
     { rel: "alternate", type: "text/markdown", href: "/index.md", title: "Markdown version" },
     ...sameAs.map((href) => ({ rel: "me", href })),
   ],
+  noscript: [
+    {
+      // Without JavaScript the loader never lifts and the scene never starts, so hide the
+      // loader and show the text version (AccessibleContent.vue) as the page instead.
+      innerHTML:
+        "<style>.perfect-center{display:none}main.visually-hidden{position:static;width:auto;height:auto;margin:0 auto;padding:1.5rem;overflow:visible;clip-path:none;white-space:normal;max-width:75ch}</style>",
+    },
+  ],
   script: [
     {
       type: "application/ld+json",

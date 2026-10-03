@@ -1,5 +1,5 @@
 <template>
-  <div class="relative inline-block">
+  <div>
     <!-- Trigger slot -->
     <div class="trigger">
       <slot />
@@ -9,7 +9,7 @@
     <transition>
       <div
         v-if="show"
-        class="tooltip-styles notification"
+        class="tooltip-styles"
         aria-hidden="true"
       >
         {{ text }}
@@ -19,15 +19,21 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from "vue";
+
+const props = defineProps({
   text: { type: String, required: true },
   show: { type: Boolean, default: false },
   anchor: { type: String, default: "top" },
 });
+
+// anchor-name only accepts a dashed ident (`--name`); the bare text ("Bluesky") was
+// invalid, so the browser dropped it and position-area never applied.
+const anchorName = computed(() => `--tooltip-${props.text.replace(/[^a-zA-Z0-9-]/g, "-")}`);
 </script>
 <style scoped>
 .trigger {
-  anchor-name: v-bind(text);
+  anchor-name: v-bind(anchorName);
   transition: scale 0.15s ease;
 }
 .trigger:hover {
@@ -39,8 +45,8 @@ defineProps({
   padding: 8px 12px;
   margin: 0.5rem 0;
   z-index: 9999;
-  text-wrap: v-bind("clickOutside ? 'wrap' : 'nowrap'");
-  position-anchor: v-bind(text);
+  text-wrap: nowrap;
+  position-anchor: v-bind(anchorName);
   position-area: v-bind(anchor);
 }
 

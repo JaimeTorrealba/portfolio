@@ -59,6 +59,8 @@ const updateEdgeFades = () => {
   fadeBottom.value = distanceToBottom <= 0 ? 0 : Math.min(distanceToBottom / FADE_DISTANCE, 1);
 };
 
+const getScrollBehavior = () => (prefersReducedMotion() ? "auto" : "smooth");
+
 const scrollSelectedIntoView = () => {
   const listElement = listRef.value;
   const selectedElement = getItemElements()[selectedIndex.value];
@@ -67,34 +69,40 @@ const scrollSelectedIntoView = () => {
   const itemTop = selectedElement.offsetTop;
   const itemBottom = itemTop + selectedElement.offsetHeight;
   if (itemTop < scrollTop + SCROLL_MARGIN) {
-    listElement.scrollTo({ top: itemTop - SCROLL_MARGIN, behavior: "smooth" });
+    listElement.scrollTo({ top: itemTop - SCROLL_MARGIN, behavior: getScrollBehavior() });
   } else if (itemBottom > scrollTop + clientHeight - SCROLL_MARGIN) {
-    listElement.scrollTo({ top: itemBottom - clientHeight + SCROLL_MARGIN, behavior: "smooth" });
+    listElement.scrollTo({
+      top: itemBottom - clientHeight + SCROLL_MARGIN,
+      behavior: getScrollBehavior(),
+    });
   }
 };
 
-const selectItemByKeyboard = (nextIndex) => {
-  selectedIndex.value = nextIndex;
+// Arrow keys move real focus, not only the highlight, so screen readers announce the
+// item: its link when it has one, otherwise the item itself (tabindex="-1").
+const focusItem = (index) => {
+  const itemElement = getItemElements()[index];
+  if (!itemElement) return;
+  selectedIndex.value = index;
+  (itemElement.querySelector("a[href], button") ?? itemElement).focus({ preventScroll: true });
   nextTick(scrollSelectedIntoView);
 };
 
-// Scoped to the focused list (Vue Bits listens on window), so Tab keeps working
-// in the rest of the page and leaves the list once the last/first item is reached.
+// Only the arrow keys are taken over. Vue Bits also steps through items on Tab, which
+// traps keyboard users inside the list; here Tab moves through the page as usual.
 const handleListKeydown = (event) => {
   if (!props.enableArrowNavigation) return;
   const lastIndex = props.items.length - 1;
-  const isNext = event.key === "ArrowDown" || (event.key === "Tab" && !event.shiftKey);
-  const isPrevious = event.key === "ArrowUp" || (event.key === "Tab" && event.shiftKey);
+  const selectedElement = getItemElements()[selectedIndex.value];
 
-  if (isNext) {
-    if (event.key === "Tab" && selectedIndex.value >= lastIndex) return;
+  if (event.key === "ArrowDown") {
     event.preventDefault();
-    selectItemByKeyboard(Math.min(selectedIndex.value + 1, lastIndex));
-  } else if (isPrevious) {
-    if (event.key === "Tab" && selectedIndex.value <= 0) return;
+    focusItem(Math.min(selectedIndex.value + 1, lastIndex));
+  } else if (event.key === "ArrowUp") {
     event.preventDefault();
-    selectItemByKeyboard(Math.max(selectedIndex.value - 1, 0));
-  } else if (event.key === "Enter" && selectedIndex.value >= 0) {
+    focusItem(Math.max(selectedIndex.value - 1, 0));
+  } else if (event.key === "Enter" && selectedElement && event.target === selectedElement) {
+    // A focused link opens by itself; this covers items that have no link.
     event.preventDefault();
     emit("itemSelected", props.items[selectedIndex.value], selectedIndex.value);
   }
@@ -135,6 +143,8 @@ onBeforeUnmount(() => {
       v-for="(item, index) in items"
       :key="item[itemKey]"
       :class="[itemClass, { 'is-selected': index === selectedIndex }]"
+      tabindex="-1"
+      @focusin="selectedIndex = index"
       @mouseenter="selectedIndex = index"
       @click="selectedIndex = index"
     >
@@ -153,9 +163,10 @@ onBeforeUnmount(() => {
   outline: none;
 }
 
+/* Drawn inside the box: the edge-fade mask clips anything painted outside it. */
 .animated-list:focus-visible {
-  outline: 1px solid hsla(0, 0%, 100%, 0.3);
-  outline-offset: -1px;
+  outline: 2px solid currentColor;
+  outline-offset: -2px;
   border-radius: 0.625rem;
 }
 

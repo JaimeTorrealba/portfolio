@@ -13,3 +13,5 @@
 9. What happen with my img on the about card??? (answer: it doesn't show at all)
 10. ESC should close the card/modal
 11. On the content card and on the experiences card I got lists, can we mantain the same layout and elements but use this: https://vue-bits.dev/components/animated-list — DO not install any additional library
+12. I asked you to fix all the items on the table (except #4 and #7 that were questions) you did it?
+13. When you finish that I ran again the audit and come with several duplicates, but not all of them are duplicates can you double check them and fix the non duplicates (pasted a new 15-item "Top issues" table)

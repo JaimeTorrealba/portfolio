@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, onMounted, ref } from "vue";
+import { nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 import { gsap } from "gsap";
 import { SplitText } from "gsap/SplitText";
 import { showText } from "@/utils/gsaps.js";
@@ -22,24 +22,30 @@ const imgReady = ref(false);
 let firstTextSplit = null;
 let secondTextSplit = null;
 
+// Every tween and SplitText the card starts goes in here, so closing the card mid-intro
+// stops them instead of leaving them running on detached nodes.
+const animationContext = gsap.context(() => {});
+
 const revealImage = () => {
   if (!imgContainerRef.value) return;
-  if (prefersReducedMotion()) {
-    gsap.set(imgContainerRef.value, { opacity: 1, scale: 1, y: 0 });
-    return;
-  }
-  gsap.fromTo(
-    imgContainerRef.value,
-    { opacity: 0, scale: 0.5, y: 50 },
-    {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      duration: 0.5,
-      transformOrigin: "50% 50%",
-      ease: "power2.out",
+  animationContext.add(() => {
+    if (prefersReducedMotion()) {
+      gsap.set(imgContainerRef.value, { opacity: 1, scale: 1, y: 0 });
+      return;
     }
-  );
+    gsap.fromTo(
+      imgContainerRef.value,
+      { opacity: 0, scale: 0.5, y: 50 },
+      {
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        duration: 0.5,
+        transformOrigin: "50% 50%",
+        ease: "power2.out",
+      }
+    );
+  });
 };
 
 const onImgLoad = () => {
@@ -52,37 +58,39 @@ const playAnimation = async () => {
   await nextTick();
   firstTextSplit?.revert();
   secondTextSplit?.revert();
-  const master = gsap.timeline();
-  master.add(showText(titleRef.value));
-  master.add(showText(subTitleRef.value), "-=0.5");
-  firstTextSplit = SplitText.create(firstTextRef.value, {
-    type: "lines",
-  });
-  secondTextSplit = SplitText.create(secondTextRef.value, {
-    type: "lines",
-  });
-  const lines = [firstTextSplit.lines, secondTextSplit.lines].flat();
-  if (prefersReducedMotion()) {
-    // Reverting restores the original markup, so the copy reads normally.
-    firstTextSplit.revert();
-    secondTextSplit.revert();
-    firstTextSplit = null;
-    secondTextSplit = null;
-    return;
-  }
-  gsap.from(lines, {
-    y: 100,
-    opacity: 0,
-    stagger: 0.1,
-    duration: 0.75,
-    delay: 0.25,
-    ease: "power2.out",
-    onComplete: () => {
-      firstTextSplit?.revert();
-      secondTextSplit?.revert();
+  animationContext.add(() => {
+    const master = gsap.timeline();
+    master.add(showText(titleRef.value));
+    master.add(showText(subTitleRef.value), "-=0.5");
+    firstTextSplit = SplitText.create(firstTextRef.value, {
+      type: "lines",
+    });
+    secondTextSplit = SplitText.create(secondTextRef.value, {
+      type: "lines",
+    });
+    const lines = [firstTextSplit.lines, secondTextSplit.lines].flat();
+    if (prefersReducedMotion()) {
+      // Reverting restores the original markup, so the copy reads normally.
+      firstTextSplit.revert();
+      secondTextSplit.revert();
       firstTextSplit = null;
       secondTextSplit = null;
-    },
+      return;
+    }
+    gsap.from(lines, {
+      y: 100,
+      opacity: 0,
+      stagger: 0.1,
+      duration: 0.75,
+      delay: 0.25,
+      ease: "power2.out",
+      onComplete: () => {
+        firstTextSplit?.revert();
+        secondTextSplit?.revert();
+        firstTextSplit = null;
+        secondTextSplit = null;
+      },
+    });
   });
 };
 
@@ -90,16 +98,18 @@ onMounted(() => {
   playAnimation();
   if (perfilRef.value?.complete && perfilRef.value.naturalWidth > 0) onImgLoad();
 });
+// Kill, not revert: the card is still fading out when this runs.
+onBeforeUnmount(() => animationContext.kill());
 </script>
 <template>
-  <section class="container">
+  <section class="container" role="dialog" aria-modal="true" aria-labelledby="about-card-title">
     <div class="glass3d">
       <CloseButton @click="emit('close')" />
       <div class="glass-content">
         <div ref="imgContainerRef" class="img-container" :class="{ 'is-ready': imgReady }">
           <img
             ref="perfilRef"
-            src="/img/Foto_Perfil.png"
+            src="/img/Foto_Perfil.webp"
             :alt="site.image.alt"
             width="547"
             height="456"
@@ -110,8 +120,8 @@ onMounted(() => {
         </div>
         <div class="content-glass">
           <div class="overflow-hidden">
-            <h2 ref="titleRef" class="is-size-1 has-text-light">{{ person.name }}</h2>
-            <p ref="subTitleRef" class="is-size-2 has-text-light">{{ person.jobTitle }}</p>
+            <h2 id="about-card-title" ref="titleRef" class="is-size-1">{{ person.name }}</h2>
+            <p ref="subTitleRef" class="is-size-2">{{ person.jobTitle }}</p>
           </div>
           <p ref="firstTextRef" class="text-container">{{ person.bio[0] }}</p>
           <p ref="secondTextRef">{{ person.bio[1] }}</p>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watchEffect, nextTick } from "vue";
+import { ref, watchEffect, nextTick, onBeforeUnmount } from "vue";
 import gsap from "gsap";
 import { useMainStore } from "@/stores";
 import { prefersReducedMotion } from "@/utils/motion.js";
@@ -13,19 +13,27 @@ import Lab from "@/assets/icons/RRSS/Lab.vue";
 import { person, socials } from "#shared/profile";
 
 const store = useMainStore();
+const rrssRef = ref(null);
 
+// Scoped to this component (the selector used to match the whole document) and killed
+// when the card closes, so a half-played intro does not outlive it.
+let iconsContext = null;
 const playAnimation = async () => {
   await nextTick();
-  if (prefersReducedMotion()) return;
-  gsap.from(".icon-container", {
-    duration: 1,
-    delay: 0.75,
-    y: 15,
-    opacity: 0,
-    stagger: 0.15,
-    ease: "elastic.out",
-  });
+  if (prefersReducedMotion() || !rrssRef.value) return;
+  iconsContext?.kill();
+  iconsContext = gsap.context(() => {
+    gsap.from(".icon-container", {
+      duration: 1,
+      delay: 0.75,
+      y: 15,
+      opacity: 0,
+      stagger: 0.15,
+      ease: "elastic.out",
+    });
+  }, rrssRef.value);
 };
+onBeforeUnmount(() => iconsContext?.kill());
 
 watchEffect(() => {
   if (store.menuReady) {
@@ -41,7 +49,7 @@ const showTooltipCodepen = ref(false);
 const showTooltipLab = ref(false);
 </script>
 <template>
-  <section class="icon-containers radial-gradient pt-6">
+  <section ref="rrssRef" class="icon-containers">
     <div class="rrss-container">
       <Tooltip text="Bluesky" :show="showTooltipBlueSky" anchor="top center">
         <a

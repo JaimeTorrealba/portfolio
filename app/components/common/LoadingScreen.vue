@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, nextTick } from "vue";
+import { onMounted, onUnmounted, nextTick } from "vue";
 import { gsap } from "gsap";
 import { useMainStore } from "@/stores";
 import { prefersReducedMotion } from "@/utils/motion.js";
@@ -7,43 +7,56 @@ import Azathoth from "@/assets/icons/Lovecraft/Azathoth.vue";
 
 const store = useMainStore();
 
+// The ring spins repeat forever, so they are collected in a context and killed once the
+// loader has faded out; otherwise GSAP keeps rotating detached nodes for the whole visit.
+let ringsContext = null;
+const stopRingSpins = () => {
+  ringsContext?.kill();
+  ringsContext = null;
+};
+onUnmounted(stopRingSpins);
+
 onMounted(async () => {
   await nextTick();
   // Elements already sit at their resting opacity/rotation; the ring spins are
   // infinite, so there is no end state to jump to -- skip the whole sequence.
   if (prefersReducedMotion()) return;
-  // The rings start at opacity 0 in CSS (see the style block), so fade them in.
-  gsap.to(["#innerText", "#secondText", "#outerText"], {
-    duration: 3,
-    opacity: 1,
-  });
-  gsap.to("#innerText", {
-    duration: 40,
-    rotate: 360,
-    ease: "none",
-    repeat: -1,
-  });
-  gsap.to("#secondText", {
-    duration: 50,
-    delay: 0.5,
-    rotate: -360,
-    ease: "none",
-    repeat: -1,
-  });
-  gsap.to("#outerText", {
-    duration: 50,
-    delay: 0.5,
-    rotate: 360,
-    ease: "none",
-    repeat: -1,
+  ringsContext = gsap.context(() => {
+    // The rings start at opacity 0 in CSS (see the style block), so fade them in.
+    gsap.to(["#innerText", "#secondText", "#outerText"], {
+      duration: 3,
+      opacity: 1,
+    });
+    gsap.to("#innerText", {
+      duration: 40,
+      rotate: 360,
+      ease: "none",
+      repeat: -1,
+    });
+    gsap.to("#secondText", {
+      duration: 50,
+      delay: 0.5,
+      rotate: -360,
+      ease: "none",
+      repeat: -1,
+    });
+    gsap.to("#outerText", {
+      duration: 50,
+      delay: 0.5,
+      rotate: 360,
+      ease: "none",
+      repeat: -1,
+    });
   });
 });
 </script>
 <template>
-  <Transition mode="out-in">
-    <div v-if="!store.finishLoading" class="perfect-center">
-      <div class="relative">
-        <div class="flex flex-center-column flex-column">
+  <Transition mode="out-in" @after-leave="stopRingSpins">
+    <div v-if="!store.finishLoading" class="perfect-center" role="status">
+      <span class="visually-hidden">Loading</span>
+      <!-- Decorative: the ring text would otherwise be read out in three languages. -->
+      <div aria-hidden="true">
+        <div>
           <Azathoth id="Azathoth" width="92" height="92" />
         </div>
         <svg
@@ -156,11 +169,6 @@ onMounted(async () => {
   z-index: 5;
 }
 
-.comic-sans {
-  font-family: "Comic Sans MS";
-  filter: blur(1px);
-}
-
 .center-svg-inner,
 .center-svg-second,
 .center-svg-outer {
@@ -169,6 +177,9 @@ onMounted(async () => {
   left: 50%;
   transform: translate(-50%, -50%);
   height: auto;
+  /* Own layer: the blurred text is rasterised once and the spin is composited, instead
+     of being repainted every frame while the scene is compiling. */
+  will-change: transform;
 }
 
 /* The loader is in the prerendered HTML, so without this the rings would show at full

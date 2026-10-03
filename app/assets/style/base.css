@@ -68,10 +68,6 @@ button {
   outline-offset: 3px;
 }
 
-.debug {
-  outline: 1px solid red;
-}
-
 p {
   max-width: 75ch;
 }

@@ -1,7 +1,7 @@
 <template>
 
 
-    <svg width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
             d="M15.5775 19.777C14.62 19.1295 13.6562 18.4914 12.6987 17.8439C12.5737 17.7577 12.4844 17.7514 12.355 17.8439L9.92499 19.4764C11.875 20.7745 15.75 23.3633 15.75 23.3633V20.0014C15.75 19.9252 15.6531 19.8277 15.5775 19.777Z"
             fill="#f7f7f7" />

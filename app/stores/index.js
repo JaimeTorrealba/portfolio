@@ -37,7 +37,10 @@ export const useMainStore = defineStore('main', () => {
   // rather than shipped with the loading screen.
   const resolveGPUTier = () => {
     if (!_gpuTierPromise) {
-      _gpuTierPromise = import('detect-gpu').then(({ getGPUTier }) => getGPUTier()).then(result => {
+      _gpuTierPromise = import('detect-gpu').then(({ getGPUTier }) =>
+        // Self-hosted (nuxt.config.js nitro.publicAssets) rather than detect-gpu's unpkg default.
+        getGPUTier({ benchmarksURL: '/detect-gpu-benchmarks' })
+      ).then(result => {
         gpuTier.value = result
         return result
       })

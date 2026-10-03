@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, ref, watchEffect } from "vue";
+import { nextTick, onBeforeUnmount, ref, watchEffect } from "vue";
 import { gsap } from "gsap";
 import { useMainStore } from "@/stores";
 import { prefersReducedMotion } from "@/utils/motion.js";
@@ -22,6 +22,8 @@ const playAnimation = async () => {
     ease: "power2.in",
   });
 };
+// The card can close before the 1.75s draw finishes.
+onBeforeUnmount(() => gsap.killTweensOf(pathRef.value));
 
 watchEffect(() => {
   if (store.menuReady) {
@@ -30,7 +32,7 @@ watchEffect(() => {
 });
 </script>
 <template>
-  <svg
+  <svg aria-hidden="true" focusable="false"
     ref="svgRef"
     version="1.1"
     width="100"

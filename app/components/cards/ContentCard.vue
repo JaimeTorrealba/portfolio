@@ -1,47 +1,42 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import { gsap } from "gsap";
-import { SplitText } from "gsap/SplitText";
 import { showText } from "@/utils/gsaps.js";
 import CloseButton from "@/components/common/CloseButton.vue";
 import AnimatedList from "@/components/common/AnimatedList.vue";
 import { content } from "#shared/profile";
-gsap.registerPlugin(SplitText);
 
 const emit = defineEmits(["close"]);
 
 const titleRef = ref(null);
 
-// Keyboard (Enter) selection only — mouse clicks go through the item's own link.
-const openContentLink = (item) => {
-  if (item.url) window.open(item.url, "_blank", "noopener,noreferrer");
-};
-
+let titleContext = null;
 onMounted(() => {
-  showText(titleRef.value);
+  titleContext = gsap.context(() => showText(titleRef.value));
 });
+// Kill, not revert: the card is still fading out when this runs.
+onBeforeUnmount(() => titleContext?.kill());
 </script>
 
 <template>
-  <section class="container">
+  <section class="container" role="dialog" aria-modal="true" aria-labelledby="content-card-title">
     <div class="glass3d">
       <CloseButton @click="emit('close')" />
       <div class="glass-content">
         <div class="overflow-hidden">
-          <h2 ref="titleRef" class="is-size-1 has-text-light">Content</h2>
+          <h2 id="content-card-title" ref="titleRef" class="is-size-1">Content</h2>
         </div>
         <AnimatedList
           :items="content"
           list-class="talks-list"
           item-class="talk-item"
-          @item-selected="openContentLink"
         >
           <template #default="{ item }">
             <!-- Items without a public link render as plain text, not an empty href. -->
             <component
               :is="item.url ? 'a' : 'div'"
               v-bind="item.url ? { href: item.url, target: '_blank', rel: 'noopener noreferrer' } : {}"
-              class="talk-title has-text-light"
+              class="talk-title"
             >
               <div class="talk-body">
                 <span :lang="item.lang">{{ item.title }}</span>
@@ -61,7 +56,9 @@ onMounted(() => {
   position: fixed;
   top: 25%;
   left: 50%;
-  transform: translate(-50%, -25%);
+  /* Where the card has always rendered: GSAP's open animation used to override the
+     old -25% with 0, and now hands positioning back to this rule when it finishes. */
+  transform: translate(-50%, 0);
   z-index: 10;
   overflow: visible;
   width: 50%;

@@ -1,5 +1,5 @@
 <template>
-    <svg width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="16.5" cy="16.5" r="15" fill="#f7f7f7" />
         <g transform="translate(6.26 6.8) scale(0.32)">
             <path fill="#333"

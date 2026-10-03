@@ -1,9 +1,14 @@
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted } from "vue";
-import { gsap } from "gsap";
-import { useWindowSize, useEventListener } from "@vueuse/core";
+import { ref, computed, watch, nextTick, onMounted, onUnmounted } from "vue";
+import { useEventListener } from "@vueuse/core";
 import { useMainStore } from "@/stores";
-import { prefersReducedMotion } from "@/utils/motion.js";
+import {
+  animateCardIn,
+  animateCardOut,
+  animateMenuButtonIn,
+  animateMenuButtonOut,
+} from "@/utils/menuTransitions.js";
+import { keepFocusInside } from "@/utils/focusTrap.js";
 import AboutMeCard from "@/components/cards/AboutMeCard.vue";
 import ContentCard from "@/components/cards/ContentCard.vue";
 import ExperienceCard from "@/components/cards/ExperienceCard.vue";
@@ -35,99 +40,57 @@ onMounted(() => {
 });
 onUnmounted(() => clearTimeout(menuWaitTimer));
 
-const closeAllCards = () => {
-  showAboutMeCard.value = false;
-  showContentCard.value = false;
-  showExperienceCard.value = false;
+const cardVisibility = {
+  about: showAboutMeCard,
+  content: showContentCard,
+  experience: showExperienceCard,
+};
+const aboutBtnRef = ref(null);
+const contentBtnRef = ref(null);
+const experienceBtnRef = ref(null);
+const menuButtonRefs = {
+  about: aboutBtnRef,
+  content: contentBtnRef,
+  experience: experienceBtnRef,
 };
 
-const { width } = useWindowSize();
-watch(width, closeAllCards);
+// The open card's root element, and which menu entry opened it: focus moves into the
+// card on open, stays inside it, and goes back to that button once the menu returns.
+let openCardEl = null;
+let lastOpenedCard = null;
+
+const openCard = (cardKey) => {
+  lastOpenedCard = cardKey;
+  cardVisibility[cardKey].value = true;
+};
+
+const closeAllCards = () => {
+  Object.values(cardVisibility).forEach((isVisible) => {
+    isVisible.value = false;
+  });
+};
+
+watch(showMenuButtons, async (visible) => {
+  if (!visible || !lastOpenedCard) return;
+  await nextTick();
+  menuButtonRefs[lastOpenedCard].value?.focus();
+  lastOpenedCard = null;
+});
 
 useEventListener(document, "keydown", (event) => {
   if (event.key === "Escape") closeAllCards();
+  else if (event.key === "Tab" && openCardEl) keepFocusInside(openCardEl, event);
 });
 
 const onEnter = (el, done) => {
-  if (prefersReducedMotion()) {
-    gsap.set(el, { scale: 1, y: 0 });
-    done();
-    return;
-  }
-  // The card's blurred glass sits over a canvas that redraws every frame. Promoting it
-  // to its own layer for the scale-in lets the compositor move it instead of repainting
-  // it each frame; dropped afterwards so an open card does not hold the layer.
-  el.style.willChange = "transform";
-  gsap.fromTo(
-    el,
-    { scale: 0.88, y: 48 },
-    {
-      scale: 1,
-      y: 0,
-      duration: 0.65,
-      ease: "power3.out",
-      onComplete: () => {
-        el.style.willChange = "";
-        done();
-      },
-    }
-  );
+  openCardEl = el;
+  el.querySelector(".close-btn")?.focus({ preventScroll: true });
+  animateCardIn(el, done);
 };
 
 const onLeave = (el, done) => {
-  if (prefersReducedMotion()) {
-    done();
-    return;
-  }
-  // Same layer promotion as onEnter; the element is removed when this finishes.
-  el.style.willChange = "transform";
-  gsap.to(el, {
-    opacity: 0,
-    scale: 0.92,
-    y: 32,
-    duration: 0.15,
-    ease: "power2.in",
-    onComplete: done,
-  });
-};
-
-const onBtnEnter = (el, done) => {
-  if (prefersReducedMotion()) {
-    gsap.set(el, { opacity: 1, scale: 1, y: 0 });
-    done();
-    return;
-  }
-  const index = parseInt(el.dataset.index || "0");
-  gsap.fromTo(
-    el,
-    { opacity: 0, scale: 0.7, y: 24 },
-    {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      duration: 0.45,
-      delay: index * 0.12,
-      ease: "power3.out",
-      onComplete: done,
-    }
-  );
-};
-
-const onBtnLeave = (el, done) => {
-  if (prefersReducedMotion()) {
-    done();
-    return;
-  }
-  const index = parseInt(el.dataset.index || "0");
-  gsap.to(el, {
-    opacity: 0,
-    scale: 0.85,
-    y: 16,
-    duration: 0.2,
-    delay: index * 0.06,
-    ease: "power2.in",
-    onComplete: done,
-  });
+  if (openCardEl === el) openCardEl = null;
+  animateCardOut(el, done);
 };
 </script>
 
@@ -146,8 +109,8 @@ const onBtnLeave = (el, done) => {
 
   <TransitionGroup
     :css="false"
-    @enter="onBtnEnter"
-    @leave="onBtnLeave"
+    @enter="animateMenuButtonIn"
+    @leave="animateMenuButtonOut"
     tag="div"
     class="btn-group"
   >
@@ -155,9 +118,9 @@ const onBtnLeave = (el, done) => {
       v-if="showMenuButtons"
       key="about"
       data-index="0"
+      ref="aboutBtnRef"
       class="menu-btn"
-      @click="showAboutMeCard = true"
-      aria-label="Open profile card"
+      @click="openCard('about')"
     >
       About me
     </button>
@@ -165,9 +128,9 @@ const onBtnLeave = (el, done) => {
       v-if="showMenuButtons"
       key="content"
       data-index="1"
+      ref="contentBtnRef"
       class="menu-btn"
-      @click="showContentCard = true"
-      aria-label="Open content card"
+      @click="openCard('content')"
     >
       Content
     </button>
@@ -175,9 +138,9 @@ const onBtnLeave = (el, done) => {
       v-if="showMenuButtons"
       key="experience"
       data-index="2"
+      ref="experienceBtnRef"
       class="menu-btn"
-      @click="showExperienceCard = true"
-      aria-label="Open experience card"
+      @click="openCard('experience')"
     >
       Experience
     </button>
@@ -211,6 +174,9 @@ const onBtnLeave = (el, done) => {
   font-size: calc(1.125rem * 1.5);
   border-radius: 0.75rem;
   background-color: transparent;
+  /* The labels sit straight on the scene, which brightens under the moon and the
+     spotlight; a soft dark halo keeps them readable wherever they land. */
+  text-shadow: 0 0 0.75rem rgb(0 0 0 / 0.85), 0 1px 2px rgb(0 0 0 / 0.9);
 }
 
 .loading-note {

@@ -1,5 +1,6 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
+import { gsap } from "gsap";
 import { showText } from "@/utils/gsaps.js";
 import CloseButton from "@/components/common/CloseButton.vue";
 import AnimatedList from "@/components/common/AnimatedList.vue";
@@ -9,18 +10,21 @@ const emit = defineEmits(["close"]);
 
 const titleRef = ref(null);
 
+let titleContext = null;
 onMounted(() => {
-  showText(titleRef.value);
+  titleContext = gsap.context(() => showText(titleRef.value));
 });
+// Kill, not revert: the card is still fading out when this runs.
+onBeforeUnmount(() => titleContext?.kill());
 </script>
 
 <template>
-  <section class="container">
+  <section class="container" role="dialog" aria-modal="true" aria-labelledby="experience-card-title">
     <div class="glass3d">
       <CloseButton @click="emit('close')" />
       <div class="glass-content">
         <div class="overflow-hidden">
-          <h2 ref="titleRef" class="is-size-1 has-text-light">Experience</h2>
+          <h2 id="experience-card-title" ref="titleRef" class="is-size-1">Experience</h2>
         </div>
         <AnimatedList :items="experiences" list-class="experience-list" item-class="experience-item">
           <template #default="{ item }">
@@ -33,7 +37,7 @@ onMounted(() => {
               height="36"
             />
             <div class="experience-body">
-              <p class="experience-title has-text-light">{{ item.title }}</p>
+              <p class="experience-title">{{ item.title }}</p>
               <p class="experience-period">{{ item.period }}</p>
               <p class="experience-description">{{ item.description }}</p>
             </div>
@@ -50,7 +54,9 @@ onMounted(() => {
   position: fixed;
   top: 25%;
   left: 50%;
-  transform: translate(-50%, -25%);
+  /* Where the card has always rendered: GSAP's open animation used to override the
+     old -25% with 0, and now hands positioning back to this rule when it finishes. */
+  transform: translate(-50%, 0);
   z-index: 10;
   overflow: visible;
   width: 50%;
@@ -140,7 +146,8 @@ onMounted(() => {
 .experience-period {
   font-size: 0.7rem;
   letter-spacing: 0.04em;
-  color: hsla(0, 0%, 75%, 0.6);
+  /* 0.8 like the description: 0.6 measured about 4.4:1 over the glass, under 4.5:1. */
+  color: hsla(0, 0%, 75%, 0.8);
 }
 
 .experience-description {
