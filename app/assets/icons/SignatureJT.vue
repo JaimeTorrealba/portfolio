@@ -24,7 +24,7 @@ const playAnimation = async () => {
 };
 
 watchEffect(() => {
-  if (store.finishLoading) {
+  if (store.menuReady) {
     playAnimation();
   }
 });

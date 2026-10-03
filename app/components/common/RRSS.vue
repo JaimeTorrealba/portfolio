@@ -28,7 +28,7 @@ const playAnimation = async () => {
 };
 
 watchEffect(() => {
-  if (store.finishLoading) {
+  if (store.menuReady) {
     playAnimation();
   }
 });
@@ -51,6 +51,8 @@ const showTooltipLab = ref(false);
           :aria-label="`${person.name} on ${socials.bluesky.label}`"
           @mouseenter="showTooltipBlueSky = true"
           @mouseleave="showTooltipBlueSky = false"
+          @focus="showTooltipBlueSky = true"
+          @blur="showTooltipBlueSky = false"
         >
           <div class="icon-container">
             <BlueSky />
@@ -65,6 +67,8 @@ const showTooltipLab = ref(false);
           :aria-label="`${person.name} on ${socials.twitter.label}`"
           @mouseenter="showTooltipTwitter = true"
           @mouseleave="showTooltipTwitter = false"
+          @focus="showTooltipTwitter = true"
+          @blur="showTooltipTwitter = false"
         >
           <div class="icon-container">
             <Twitter />
@@ -80,6 +84,8 @@ const showTooltipLab = ref(false);
           :aria-label="`${person.name} on ${socials.github.label}`"
           @mouseenter="showTooltipGithub = true"
           @mouseleave="showTooltipGithub = false"
+          @focus="showTooltipGithub = true"
+          @blur="showTooltipGithub = false"
         >
           <div class="icon-container">
             <Github />
@@ -94,6 +100,8 @@ const showTooltipLab = ref(false);
           :aria-label="`${person.name} on ${socials.linkedin.label}`"
           @mouseenter="showTooltipLinkedin = true"
           @mouseleave="showTooltipLinkedin = false"
+          @focus="showTooltipLinkedin = true"
+          @blur="showTooltipLinkedin = false"
         >
           <div class="icon-container">
             <Linkedin />
@@ -108,6 +116,8 @@ const showTooltipLab = ref(false);
           :aria-label="`${person.name} on ${socials.codepen.label}`"
           @mouseenter="showTooltipCodepen = true"
           @mouseleave="showTooltipCodepen = false"
+          @focus="showTooltipCodepen = true"
+          @blur="showTooltipCodepen = false"
         >
           <div class="icon-container">
             <Codepen />
@@ -122,6 +132,8 @@ const showTooltipLab = ref(false);
           :aria-label="`${person.name} on ${socials.lab.label}`"
           @mouseenter="showTooltipLab = true"
           @mouseleave="showTooltipLab = false"
+          @focus="showTooltipLab = true"
+          @blur="showTooltipLab = false"
         >
           <div class="icon-container icon-border">
             <Lab />

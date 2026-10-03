@@ -4,6 +4,10 @@ import { usePreferredReducedMotion } from '@vueuse/core'
 
 export const useMainStore = defineStore('main', () => {
   const finishLoading = ref(false) // to false
+  // The menu waits for the scene, but only up to a cap (theMenu.vue sets this when it is
+  // hit). Past it, the menu shows on top of the loading screen while the scene finishes.
+  const menuWaitExpired = ref(false)
+  const menuReady = computed(() => finishLoading.value || menuWaitExpired.value)
   const gpuTier = ref(null)
 
   const preferredMotion = usePreferredReducedMotion()
@@ -55,7 +59,7 @@ export const useMainStore = defineStore('main', () => {
   }
 
   return {
-    finishLoading, gpuTier, reducedMotion, followSystemMotion, resolveGPUTier,
+    finishLoading, menuWaitExpired, menuReady, gpuTier, reducedMotion, followSystemMotion, resolveGPUTier,
     tierOverride, setTierOverride,
   }
 })

@@ -151,7 +151,9 @@ onMounted(async () => {
   position: absolute;
   background-color: #111;
   overflow: hidden;
-  z-index: 1000;
+  /* Above the canvas (fixed, no z-index) but below the cards (10), the menu (20) and the
+     sound toggle (100): if the scene is slow, the menu shows on top of this screen. */
+  z-index: 5;
 }
 
 .comic-sans {

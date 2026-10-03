@@ -4,8 +4,16 @@ import { useMainStore } from "@/stores";
 
 const store = useMainStore();
 
-const audio = new Audio('/walking-sound.mp3');
-audio.loop = true;
+// Created on the first click rather than at load: the MP3 is large, and `new Audio()`
+// starts downloading straight away, even for visitors who never hear it.
+let walkingAudio = null;
+const getWalkingAudio = () => {
+  if (!walkingAudio) {
+    walkingAudio = new Audio('/walking-sound.mp3');
+    walkingAudio.loop = true;
+  }
+  return walkingAudio;
+};
 
 const playing = ref(false);
 
@@ -15,23 +23,23 @@ onMounted(() => {
   if (store.reducedMotion) return;
   document.addEventListener('pointerdown', () => {
     if (store.reducedMotion) return;
-    audio.play();
+    getWalkingAudio().play();
     playing.value = true;
   }, { once: true });
 });
 
 watch(() => store.reducedMotion, (reduce) => {
   if (!reduce) return;
-  audio.pause();
+  walkingAudio?.pause();
   playing.value = false;
 });
 
 function toggle() {
   if (playing.value) {
-    audio.pause();
+    walkingAudio?.pause();
     playing.value = false;
   } else {
-    audio.play();
+    getWalkingAudio().play();
     playing.value = true;
   }
 }

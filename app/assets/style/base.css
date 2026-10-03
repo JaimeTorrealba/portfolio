@@ -61,6 +61,13 @@ button {
   padding: 0;
 }
 
+/* Keyboard focus ring. The browser default is thin and blue-on-dark over the glass
+   cards; currentColor is the light text color everywhere on the page. */
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
 .debug {
   outline: 1px solid red;
 }

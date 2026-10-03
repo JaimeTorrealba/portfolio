@@ -14,6 +14,9 @@ export const site = {
   language: 'en',
   locale: 'en_US',
   twitter: '@jaimebboyjt',
+  // When the content in this file last changed (YYYY-MM-DD). The sitemap's <lastmod>
+  // reads it, so bump it with any edit to the bio, socials, experiences or content.
+  updated: '2026-09-27',
   image: {
     path: '/img/Foto_Perfil.png',
     width: 547,

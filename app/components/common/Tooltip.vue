@@ -5,11 +5,12 @@
       <slot />
     </div>
 
-    <!-- Tooltip -->
+    <!-- Tooltip. Hidden from screen readers: the trigger's own label already says it. -->
     <transition>
       <div
         v-if="show"
         class="tooltip-styles notification"
+        aria-hidden="true"
       >
         {{ text }}
       </div>

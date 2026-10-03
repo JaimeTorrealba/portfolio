@@ -1,23 +1,51 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { gsap } from "gsap";
-import { useWindowSize } from "@vueuse/core";
+import { useWindowSize, useEventListener } from "@vueuse/core";
 import { useMainStore } from "@/stores";
 import { prefersReducedMotion } from "@/utils/motion.js";
 import AboutMeCard from "@/components/cards/AboutMeCard.vue";
 import ContentCard from "@/components/cards/ContentCard.vue";
 import ExperienceCard from "@/components/cards/ExperienceCard.vue";
 
+// Longest a visitor waits for the scene before the menu shows anyway, counted from page
+// load rather than from this component's mount.
+const MENU_MAX_WAIT_MS = 2500;
+
 const store = useMainStore();
 const showAboutMeCard = ref(false);
 const showContentCard = ref(false);
 const showExperienceCard = ref(false);
 
-const { width } = useWindowSize();
-watch(width, () => {
+const showMenuButtons = computed(
+  () =>
+    store.menuReady &&
+    !showAboutMeCard.value &&
+    !showContentCard.value &&
+    !showExperienceCard.value
+);
+// Only when the cap was hit: tells the visitor the menu works while the scene loads.
+const showLoadingNote = computed(() => showMenuButtons.value && !store.finishLoading);
+
+let menuWaitTimer = null;
+onMounted(() => {
+  menuWaitTimer = setTimeout(() => {
+    store.menuWaitExpired = true;
+  }, Math.max(0, MENU_MAX_WAIT_MS - performance.now()));
+});
+onUnmounted(() => clearTimeout(menuWaitTimer));
+
+const closeAllCards = () => {
   showAboutMeCard.value = false;
   showContentCard.value = false;
   showExperienceCard.value = false;
+};
+
+const { width } = useWindowSize();
+watch(width, closeAllCards);
+
+useEventListener(document, "keydown", (event) => {
+  if (event.key === "Escape") closeAllCards();
 });
 
 const onEnter = (el, done) => {
@@ -26,10 +54,23 @@ const onEnter = (el, done) => {
     done();
     return;
   }
+  // The card's blurred glass sits over a canvas that redraws every frame. Promoting it
+  // to its own layer for the scale-in lets the compositor move it instead of repainting
+  // it each frame; dropped afterwards so an open card does not hold the layer.
+  el.style.willChange = "transform";
   gsap.fromTo(
     el,
     { scale: 0.88, y: 48 },
-    { scale: 1, y: 0, duration: 0.65, ease: "power3.out", onComplete: done }
+    {
+      scale: 1,
+      y: 0,
+      duration: 0.65,
+      ease: "power3.out",
+      onComplete: () => {
+        el.style.willChange = "";
+        done();
+      },
+    }
   );
 };
 
@@ -38,6 +79,8 @@ const onLeave = (el, done) => {
     done();
     return;
   }
+  // Same layer promotion as onEnter; the element is removed when this finishes.
+  el.style.willChange = "transform";
   gsap.to(el, {
     opacity: 0,
     scale: 0.92,
@@ -109,9 +152,7 @@ const onBtnLeave = (el, done) => {
     class="btn-group"
   >
     <button
-      v-if="
-        store.finishLoading && !showAboutMeCard && !showContentCard && !showExperienceCard
-      "
+      v-if="showMenuButtons"
       key="about"
       data-index="0"
       class="menu-btn"
@@ -121,9 +162,7 @@ const onBtnLeave = (el, done) => {
       About me
     </button>
     <button
-      v-if="
-        store.finishLoading && !showAboutMeCard && !showContentCard && !showExperienceCard
-      "
+      v-if="showMenuButtons"
       key="content"
       data-index="1"
       class="menu-btn"
@@ -133,9 +172,7 @@ const onBtnLeave = (el, done) => {
       Content
     </button>
     <button
-      v-if="
-        store.finishLoading && !showAboutMeCard && !showContentCard && !showExperienceCard
-      "
+      v-if="showMenuButtons"
       key="experience"
       data-index="2"
       class="menu-btn"
@@ -145,6 +182,15 @@ const onBtnLeave = (el, done) => {
       Experience
     </button>
   </TransitionGroup>
+
+  <!-- The live region stays mounted so the message is announced when it appears. -->
+  <p class="loading-note" role="status">
+    <Transition name="loading-note">
+      <span v-if="showLoadingNote">
+        The experience is still loading, but you can start here.
+      </span>
+    </Transition>
+  </p>
 </template>
 
 <style scoped>
@@ -165,5 +211,29 @@ const onBtnLeave = (el, done) => {
   font-size: calc(1.125rem * 1.5);
   border-radius: 0.75rem;
   background-color: transparent;
+}
+
+.loading-note {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  width: max-content;
+  max-width: calc(100vw - 2rem);
+  text-align: center;
+  font-size: 0.875rem;
+  color: hsl(0 0% 97% / 0.75);
+  pointer-events: none;
+}
+
+.loading-note-enter-active,
+.loading-note-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.loading-note-enter-from,
+.loading-note-leave-to {
+  opacity: 0;
 }
 </style>

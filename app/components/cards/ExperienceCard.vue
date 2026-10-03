@@ -1,29 +1,16 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import { gsap } from "gsap";
 import { showText } from "@/utils/gsaps.js";
-import { prefersReducedMotion } from "@/utils/motion.js";
 import CloseButton from "@/components/common/CloseButton.vue";
+import AnimatedList from "@/components/common/AnimatedList.vue";
 import { experiences } from "#shared/profile";
 
 const emit = defineEmits(["close"]);
 
 const titleRef = ref(null);
-const listRef = ref(null);
 
 onMounted(() => {
-  const master = gsap.timeline();
-  master.add(showText(titleRef.value));
-  if (prefersReducedMotion()) {
-    gsap.set(listRef.value.children, { opacity: 1, y: 0 });
-    return;
-  }
-  master.fromTo(
-    listRef.value.children,
-    { opacity: 0, y: 40 },
-    { opacity: 1, y: 0, duration: 0.55, stagger: 0.1, ease: "power2.out" },
-    "-=0.3"
-  );
+  showText(titleRef.value);
 });
 </script>
 
@@ -33,10 +20,10 @@ onMounted(() => {
       <CloseButton @click="emit('close')" />
       <div class="glass-content">
         <div class="overflow-hidden">
-          <h1 ref="titleRef" class="is-size-1 has-text-light">Experience</h1>
+          <h2 ref="titleRef" class="is-size-1 has-text-light">Experience</h2>
         </div>
-        <ul ref="listRef" class="experience-list">
-          <li v-for="item in experiences" :key="item.id" class="experience-item">
+        <AnimatedList :items="experiences" list-class="experience-list" item-class="experience-item">
+          <template #default="{ item }">
             <img
               :src="item.logo"
               class="experience-logo"
@@ -51,8 +38,8 @@ onMounted(() => {
               <p class="experience-description">{{ item.description }}</p>
             </div>
             <span class="experience-role" :data-role="item.role">{{ item.role }}</span>
-          </li>
-        </ul>
+          </template>
+        </AnimatedList>
       </div>
     </div>
   </section>
@@ -87,11 +74,8 @@ onMounted(() => {
   height: 100%;
 }
 
-.overflow-hidden {
-  overflow: hidden;
-}
-
-.experience-list {
+/* The list and its items are rendered by AnimatedList, hence :deep(). */
+:deep(.experience-list) {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -103,18 +87,18 @@ onMounted(() => {
   padding-right: 0.25rem;
 }
 
-.experience-list::-webkit-scrollbar {
+:deep(.experience-list::-webkit-scrollbar) {
   width: 4px;
 }
-.experience-list::-webkit-scrollbar-track {
+:deep(.experience-list::-webkit-scrollbar-track) {
   background: transparent;
 }
-.experience-list::-webkit-scrollbar-thumb {
+:deep(.experience-list::-webkit-scrollbar-thumb) {
   background: hsla(0, 0%, 60%, 0.3);
   border-radius: 2px;
 }
 
-.experience-item {
+:deep(.experience-item) {
   display: flex;
   align-items: flex-start;
   gap: 0.875rem;
@@ -125,7 +109,8 @@ onMounted(() => {
   transition: background 0.2s ease;
 }
 
-.experience-item:hover {
+:deep(.experience-item:hover),
+:deep(.experience-item.is-selected) {
   background: hsla(0, 0%, 100%, 0.08);
 }
 
@@ -203,7 +188,7 @@ onMounted(() => {
 }
 
 @media screen and (max-width: 640px) {
-  .experience-item {
+  :deep(.experience-item) {
     flex-wrap: wrap;
   }
   .experience-body {
@@ -216,63 +201,5 @@ onMounted(() => {
     margin-left: calc(36px + 0.875rem);
   }
 }
-
-.container :deep(.glass-surface) {
-  overflow: visible;
-}
-
-.glass3d {
-  --filter-glass3d: blur(8px) brightness(0.4) saturate(1.5);
-  --color-glass3d: hsl(189 80% 10% / 0.2);
-  border-radius: 1rem;
-  min-width: 400px;
-  border: 1px solid hsla(0, 0%, 35%, 0.5);
-  @media screen and (max-width: 1024px) {
-    min-width: 0;
-  }
-
-  position: relative;
-  z-index: 4;
-  box-shadow: 0 0 0.75px hsl(205 20% 10% / 0.2),
-    0.7px 0.8px 1.2px -0.4px hsl(205 20% 10% / 0.1),
-    1.3px 1.5px 2.2px -0.8px hsl(205 20% 10% / 0.1),
-    2.3px 2.6px 3.9px -1.2px hsl(205 20% 10% / 0.1),
-    3.9px 4.4px 6.6px -1.7px hsl(205 20% 10% / 0.1),
-    6.5px 7.2px 10.9px -2.1px hsl(205 20% 10% / 0.1),
-    8px 9px 14px -2.5px hsl(205 20% 10% / 0.2);
-}
-
-.glass3d::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  overflow: hidden;
-  z-index: 3;
-
-  -webkit-backdrop-filter: var(--filter-glass3d);
-  backdrop-filter: var(--filter-glass3d);
-}
-
-.glass3d::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  overflow: hidden;
-  z-index: 5;
-
-  box-shadow: inset 2px 2px 1px -3px hsl(205 20% 90% / 0.8),
-    inset 4px 4px 2px -6px hsl(205 20% 90% / 0.3),
-    inset 1.5px 1.5px 1.5px -0.75px hsl(205 20% 90% / 0.15),
-    inset 1.5px 1.5px 0.25px hsl(205 20% 90% / 0.03),
-    inset 0 0 0.25px 0.5px hsl(205 20% 90% / 0.03);
-}
-
-.glass3d > * {
-  position: relative;
-  z-index: 6;
-}
 </style>
+<style scoped src="./GlassCard.css"></style>
