@@ -41,3 +41,10 @@
 2. Almost good, but the loader ring text overlaps the options and the contrast between them is too low. For now remove the "Loading - Cargando - Caricando" ring from the loader.
 3. Update the dependencies, for everything that is not a breaking change.
 4. When an option is picked, the loader exit and the menu entrance start together. Make the menu enter when the loader is almost gone.
+
+## node-forge Dependabot alert #70 triage — 2026-10-23 21:46
+
+1. Pasted Dependabot alert #70: node-forge <= 1.4.0 RSA PKCS#1 v1.5 signature forgery via extra nested DigestAlgorithm elements (incomplete fix for CVE-2026-33894).
+2. Dependabot alert #66: postcss-selector-parser < 7.1.6 quadratic parse of flat selectors (CPU DoS). Fix it and check where PostCSS is used.
+3. Review the non-core deps (excluding three, vue, etc.): which ones are best to remove, and how hard would it be?
+4. Bump vueuse and do the ESLint migration (drop the rushstack patch); leave the rest as is.
