@@ -17,6 +17,7 @@ import PostProcessing from "./components/PostProcessing.vue";
 import Moon from "./components/Moon.vue";
 import Clouds from "./components/Clouds.vue";
 import Atmosphere from "./components/Atmosphere.vue";
+import StillFrame from "./components/StillFrame.vue";
 
 // TODO: addons like SPACE for running
 // TODO: Add variation to the floor
@@ -134,10 +135,11 @@ onMounted(() => {
     v-bind="gl"
     window-size
     :renderer="createWebGPURenderer"
-    :render-mode="store.reducedMotion ? 'on-demand' : 'always'"
+    :render-mode="store.staticScene ? 'on-demand' : 'always'"
   >
     <TresPerspectiveCamera ref="cameraRef" :position="[0, 5, 25]" />
     <Stats v-if="showDebug" />
+    <StillFrame />
     <CameraMouse />
     <Atmosphere />
     <Trees />

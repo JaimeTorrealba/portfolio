@@ -61,8 +61,18 @@ export const useMainStore = defineStore('main', () => {
     window.location.reload()
   }
 
+  // The tier the scene is built for, as resolveGPUTier() hands it out. null until detection
+  // has settled (unless the #debug override already says).
+  const activeTier = computed(() => tierOverride.value ?? gpuTier.value?.tier ?? null)
+
+  // Tier 0 is a blocklisted GPU or no GPU at all: SwiftShader, hardware acceleration off,
+  // headless Chrome (Lighthouse). Every frame there costs hundreds of ms of CPU, and a
+  // continuous loop at that price never lets the page go idle. Those devices get the same
+  // still frame reduced motion does (on-demand rendering, see theExperience.vue).
+  const staticScene = computed(() => reducedMotion.value || activeTier.value === 0)
+
   return {
     finishLoading, menuWaitExpired, menuReady, gpuTier, reducedMotion, followSystemMotion, resolveGPUTier,
-    tierOverride, setTierOverride,
+    tierOverride, setTierOverride, activeTier, staticScene,
   }
 })

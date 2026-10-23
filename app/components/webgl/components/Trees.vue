@@ -1,7 +1,7 @@
 <script setup>
 import { reactive, onMounted, shallowRef, nextTick } from "vue";
 import { useTres, useLoop } from "@tresjs/core";
-import { Tree } from "@dgreenheck/ez-tree";
+import { Tree } from "@/vendor/ez-tree";
 import { usePaneStore } from "@/stores/pane";
 import { useMainStore } from "@/stores";
 import gsap from "gsap";
@@ -34,6 +34,8 @@ const getRandomTreeZ = () =>
 
 onMounted(async () => {
   await nextTick();
+  // prepareTree() reads store.staticScene, which is only settled once the tier is known.
+  await mainStore.resolveGPUTier();
   for (let i = 0; i < options.treeCount; i++) {
     const side = i < 2 ? (i === 0 ? -1 : 1) : Math.random() < 0.5 ? -1 : 1;
     createTree(getRandomTreeX(side));
@@ -77,7 +79,7 @@ const prepareTree = (tree) => {
 
       // A GSAP tween on a raw material does not invalidate the TresJS scene, so
       // in on-demand mode the fade would never repaint. Land on the end state.
-      if (mainStore.reducedMotion) {
+      if (mainStore.staticScene) {
         mat.opacity = 1;
         mat.transparent = false;
         return;
@@ -146,7 +148,7 @@ const respawnTree = (_x) => {
 const { onBeforeRender } = useLoop();
 
 onBeforeRender(({ delta }) => {
-  if (trees.length === 0 || mainStore.reducedMotion) return;
+  if (trees.length === 0 || mainStore.staticScene) return;
   for (let i = trees.length - 1; i >= 0; i--) {
     const tree = trees[i];
     tree.position.z += delta * options.speed;

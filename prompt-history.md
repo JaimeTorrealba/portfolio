@@ -26,3 +26,10 @@
 6. No, the blur starts way too early. It should only start blurring when the loader starts fading.
 7. The icon with drawLines needs to be faster.
 8. The icon has a wrong, sudden fill, like a flash and then it disappears. Can we fill it smoothly?
+
+## Lighthouse report triage — 2026-10-23 20:46
+
+1. Read the Lighthouse report (Downloads/CLAUDE.md, desktop, Perf 40 / BP 92). Understand it before applying any code and come back with the top thing to improve.
+2. Go ahead: (1) tier-0 render fix, (2) fix the grass shader, (3) research the options for the ez-tree embedded textures.
+3. Liked option 1 but does not want to track ez-tree upgrades (fails silently). Copy the whole module into the repo (dedicated folder, .js or .ts) and make the changes there.
+4. Uninstall ez-tree (pnpm remove @dgreenheck/ez-tree).

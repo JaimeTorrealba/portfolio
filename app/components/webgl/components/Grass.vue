@@ -243,7 +243,10 @@ const hash21 = Fn(([src]) => {
   const mask = uvec2(uint(0x007fffff), uint(0x007fffff));
   const one = uvec2(uint(0x3f800000), uint(0x3f800000));
   const bits = bitOr(bitAnd(h, mask), one);
-  return uintBitsToFloat(bits).sub(1.0);
+  // One lane at a time: three r182's WebGL fallback only maps the scalar bitcast. On a
+  // uvec2 it emits an undefined `bitcast_uvec2_vec2`, the vertex shader fails to compile,
+  // and the grass is missing in every browser that falls back from WebGPU.
+  return vec2(uintBitsToFloat(bits.x), uintBitsToFloat(bits.y)).sub(1.0);
 });
 
 const noise = Fn(([p]) => {
