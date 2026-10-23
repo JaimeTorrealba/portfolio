@@ -36,7 +36,7 @@ const playAnimation = async () => {
 onBeforeUnmount(() => iconsContext?.kill());
 
 watchEffect(() => {
-  if (store.menuReady) {
+  if (store.sceneRevealed) {
     playAnimation();
   }
 });

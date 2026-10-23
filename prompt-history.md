@@ -33,3 +33,11 @@
 2. Go ahead: (1) tier-0 render fix, (2) fix the grass shader, (3) research the options for the ez-tree embedded textures.
 3. Liked option 1 but does not want to track ez-tree upgrades (fails silently). Copy the whole module into the repo (dedicated folder, .js or .ts) and make the changes there.
 4. Uninstall ez-tree (pnpm remove @dgreenheck/ez-tree).
+
+## Sound choice screen replacing the early menu — 2026-10-23 21:30
+
+1. Add a first screen that only asks "Full experience" / "Better mute, please", shown in place of the menu that currently appears over the loading screen. Save the choice in sessionStorage. Centre the two options one above the other, reusing the menu's button component so a later hover state applies to both. Comment out the loader's centre icon to see how it looks.
+
+2. Almost good, but the loader ring text overlaps the options and the contrast between them is too low. For now remove the "Loading - Cargando - Caricando" ring from the loader.
+3. Update the dependencies, for everything that is not a breaking change.
+4. When an option is picked, the loader exit and the menu entrance start together. Make the menu enter when the loader is almost gone.

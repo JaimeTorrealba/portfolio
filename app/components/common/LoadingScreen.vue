@@ -3,14 +3,16 @@ import { onMounted, onUnmounted, nextTick, ref } from "vue";
 import { useMainStore } from "@/stores";
 import { prefersReducedMotion } from "@/utils/motion.js";
 import { createLoaderClock } from "@/utils/spiralLoader/clock.js";
-import Azathoth from "@/assets/icons/Lovecraft/Azathoth.vue";
+// Centre icon commented out while the sound choice sits in the middle of the loader.
+// import Azathoth from "@/assets/icons/Lovecraft/Azathoth.vue";
 
 const store = useMainStore();
 const foregroundRef = ref(null);
 
 // Each ring and the direction it spins in.
 const RING_SPINS = [
-  { id: "innerText", dir: 1 },
+  // Inner "Loading" ring commented out: it overlapped the sound choice.
+  // { id: "innerText", dir: 1 },
   { id: "secondText", dir: -1 },
   { id: "outerText", dir: 1 },
 ];
@@ -24,8 +26,19 @@ const stopLoaderClock = () => {
 };
 onUnmounted(stopLoaderClock);
 
-// Vue keeps the loader in the DOM until `done`, so the whole exit plays out.
-const playLoaderExit = (el, done) => (loaderClock ? loaderClock.playExit(el, done) : done());
+const revealMenu = () => {
+  store.loaderAlmostGone = true;
+};
+
+// Vue keeps the loader in the DOM until `done`, so the whole exit plays out. The menu is
+// cued near the end of it; without a clock there is no exit, so it is cued on removal.
+const playLoaderExit = (el, done) =>
+  loaderClock ? loaderClock.playExit(el, done, revealMenu) : done();
+
+const onLoaderRemoved = () => {
+  stopLoaderClock();
+  revealMenu();
+};
 
 const collectRings = () =>
   RING_SPINS.map(({ id, dir }) => {
@@ -35,8 +48,9 @@ const collectRings = () =>
 
 onMounted(async () => {
   await nextTick();
-  // Loading may already be done, in which case the rings were never rendered.
-  if (!document.getElementById(RING_SPINS[0].id)) return;
+  // Loading may already be done, in which case the rings were never rendered and there
+  // is no exit to wait for.
+  if (!document.getElementById(RING_SPINS[0].id)) return revealMenu();
   loaderClock = createLoaderClock({
     rings: collectRings(),
     foreground: foregroundRef.value,
@@ -46,14 +60,15 @@ onMounted(async () => {
 });
 </script>
 <template>
-  <Transition mode="out-in" :css="false" @leave="playLoaderExit" @after-leave="stopLoaderClock">
-    <div v-if="!store.finishLoading" class="perfect-center" role="status">
+  <Transition mode="out-in" :css="false" @leave="playLoaderExit" @after-leave="onLoaderRemoved">
+    <div v-if="!store.sceneRevealed" class="perfect-center" role="status">
       <span class="visually-hidden">Loading</span>
       <!-- Decorative: the ring text would otherwise be read out in three languages. -->
       <div aria-hidden="true">
         <div ref="foregroundRef">
-          <Azathoth id="Azathoth" width="92" height="92" />
+          <!-- <Azathoth id="Azathoth" width="92" height="92" /> -->
         </div>
+        <!-- Commented out with the inner ring in RING_SPINS above.
         <svg
           class="center-svg-inner"
           id="innerText"
@@ -86,6 +101,7 @@ onMounted(async () => {
             </textPath>
           </text>
         </svg>
+        -->
         <svg
           class="center-svg-second"
           id="secondText"
@@ -159,8 +175,8 @@ onMounted(async () => {
   position: absolute;
   background-color: #111;
   overflow: hidden;
-  /* Above the canvas (fixed, no z-index) but below the cards (10), the menu (20) and the
-     sound toggle (100): if the scene is slow, the menu shows on top of this screen. */
+  /* Above the canvas (fixed, no z-index) but below the cards (10), the sound choice (20)
+     and the sound toggle (100): the choice is made on top of this screen. */
   z-index: 5;
 }
 

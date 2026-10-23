@@ -116,6 +116,11 @@ export const createLoaderClock = ({ rings, foreground, reducedMotion }) => {
       paintRings(exitTime);
       if (exit) paintExit(exitTime);
     }
+    // Under reduced motion the whole exit is shorter than the cue, so it fires at the end.
+    if (exit && !exit.cued && exitTime >= Math.min(config.exitMenuCue, exitEnd)) {
+      exit.cued = true;
+      exit.onAlmostGone();
+    }
     if (exit && exitTime >= exitEnd) return exit.done();
     frameId = requestAnimationFrame(tick);
   };
@@ -126,11 +131,14 @@ export const createLoaderClock = ({ rings, foreground, reducedMotion }) => {
     frameId = requestAnimationFrame(tick);
   };
 
-  // Called from the Transition's leave hook; `done` lets Vue remove the loader.
-  const playExit = (root, done) => {
+  // Called from the Transition's leave hook; `done` lets Vue remove the loader, and
+  // `onAlmostGone` fires at config.exitMenuCue.
+  const playExit = (root, done, onAlmostGone) => {
     exit = {
       root,
       done,
+      onAlmostGone,
+      cued: false,
       // Waiting for the settle to finish keeps the exit from cutting a tween mid-flight.
       start: Math.max(elapsed, introEnd),
       page: document.querySelector(PAGE_CANVAS_SELECTOR),

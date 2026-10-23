@@ -22,6 +22,8 @@ export const spiralLoaderConfig = {
   exitScale: { start: 0.3, end: 1.0, ease: "power2.in" },
   exitFade: { start: 0.6, end: 0.9, ease: "power1.inOut" },
   exitPageBlur: { start: 0.4, end: 0.95, ease: "power3.out", fromPx: 20 },
+  // The menu starts entering here, with the loader about 80% faded out.
+  exitMenuCue: 0.8,
 
   // Resting blur: blurMax · smoothstep(inner, outer, r)^power, r = 0 centre → 1 corner.
   blurMaxVw: 1.5,

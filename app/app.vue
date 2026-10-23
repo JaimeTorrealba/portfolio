@@ -5,6 +5,7 @@ import { site, person, socials, experiences } from "#shared/profile";
 import AccessibleContent from "@/components/AccessibleContent.vue";
 import LoadingScreen from "@/components/common/LoadingScreen.vue";
 import SoundToggle from "@/components/SoundToggle.vue";
+import SoundPrompt from "@/components/SoundPrompt.vue";
 
 // The page is prerendered, but the menu/cards and the WebGPU scene only make sense in a
 // browser (GSAP SplitText, three/webgpu). Loading them async inside <ClientOnly> keeps
@@ -115,6 +116,7 @@ useHead({
   <AccessibleContent />
   <LoadingScreen />
   <ClientOnly>
+    <SoundPrompt />
     <Menu />
     <Suspense>
       <TheExperience />

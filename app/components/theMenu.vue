@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, nextTick, onMounted, onUnmounted } from "vue";
+import { ref, computed, watch, nextTick } from "vue";
 import { useEventListener } from "@vueuse/core";
 import { useMainStore } from "@/stores";
 import {
@@ -12,10 +12,7 @@ import { keepFocusInside } from "@/utils/focusTrap.js";
 import AboutMeCard from "@/components/cards/AboutMeCard.vue";
 import ContentCard from "@/components/cards/ContentCard.vue";
 import ExperienceCard from "@/components/cards/ExperienceCard.vue";
-
-// Longest a visitor waits for the scene before the menu shows anyway, counted from page
-// load rather than from this component's mount.
-const MENU_MAX_WAIT_MS = 2500;
+import MenuButton from "@/components/common/MenuButton.vue";
 
 const store = useMainStore();
 const showAboutMeCard = ref(false);
@@ -24,21 +21,11 @@ const showExperienceCard = ref(false);
 
 const showMenuButtons = computed(
   () =>
-    store.menuReady &&
+    store.loaderAlmostGone &&
     !showAboutMeCard.value &&
     !showContentCard.value &&
     !showExperienceCard.value
 );
-// Only when the cap was hit: tells the visitor the menu works while the scene loads.
-const showLoadingNote = computed(() => showMenuButtons.value && !store.finishLoading);
-
-let menuWaitTimer = null;
-onMounted(() => {
-  menuWaitTimer = setTimeout(() => {
-    store.menuWaitExpired = true;
-  }, Math.max(0, MENU_MAX_WAIT_MS - performance.now()));
-});
-onUnmounted(() => clearTimeout(menuWaitTimer));
 
 const cardVisibility = {
   about: showAboutMeCard,
@@ -114,46 +101,34 @@ const onLeave = (el, done) => {
     tag="div"
     class="btn-group"
   >
-    <button
+    <MenuButton
       v-if="showMenuButtons"
       key="about"
       data-index="0"
       ref="aboutBtnRef"
-      class="menu-btn"
       @click="openCard('about')"
     >
       About me
-    </button>
-    <button
+    </MenuButton>
+    <MenuButton
       v-if="showMenuButtons"
       key="content"
       data-index="1"
       ref="contentBtnRef"
-      class="menu-btn"
       @click="openCard('content')"
     >
       Content
-    </button>
-    <button
+    </MenuButton>
+    <MenuButton
       v-if="showMenuButtons"
       key="experience"
       data-index="2"
       ref="experienceBtnRef"
-      class="menu-btn"
       @click="openCard('experience')"
     >
       Experience
-    </button>
+    </MenuButton>
   </TransitionGroup>
-
-  <!-- The live region stays mounted so the message is announced when it appears. -->
-  <p class="loading-note" role="status">
-    <Transition name="loading-note">
-      <span v-if="showLoadingNote">
-        The experience is still loading, but you can start here.
-      </span>
-    </Transition>
-  </p>
 </template>
 
 <style scoped>
@@ -166,40 +141,5 @@ const onLeave = (el, done) => {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-}
-
-.menu-btn {
-  color: var(--white);
-  font-family: "sentient";
-  font-size: calc(1.125rem * 1.5);
-  border-radius: 0.75rem;
-  background-color: transparent;
-  /* The labels sit straight on the scene, which brightens under the moon and the
-     spotlight; a soft dark halo keeps them readable wherever they land. */
-  text-shadow: 0 0 0.75rem rgb(0 0 0 / 0.85), 0 1px 2px rgb(0 0 0 / 0.9);
-}
-
-.loading-note {
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 20;
-  width: max-content;
-  max-width: calc(100vw - 2rem);
-  text-align: center;
-  font-size: 0.875rem;
-  color: hsl(0 0% 97% / 0.75);
-  pointer-events: none;
-}
-
-.loading-note-enter-active,
-.loading-note-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.loading-note-enter-from,
-.loading-note-leave-to {
-  opacity: 0;
 }
 </style>

@@ -4,10 +4,6 @@ import { usePreferredReducedMotion } from '@vueuse/core'
 
 export const useMainStore = defineStore('main', () => {
   const finishLoading = ref(false) // to false
-  // The menu waits for the scene, but only up to a cap (theMenu.vue sets this when it is
-  // hit). Past it, the menu shows on top of the loading screen while the scene finishes.
-  const menuWaitExpired = ref(false)
-  const menuReady = computed(() => finishLoading.value || menuWaitExpired.value)
   const gpuTier = ref(null)
 
   const preferredMotion = usePreferredReducedMotion()
@@ -19,6 +15,24 @@ export const useMainStore = defineStore('main', () => {
     set: (value) => { motionOverride.value = value },
   })
   const followSystemMotion = () => { motionOverride.value = null }
+
+  // 'on' | 'off' | null, from the sound choice screen (SoundPrompt.vue) and the sound
+  // toggle. Session-scoped like the tier override, and skipHydrate for the same reason.
+  const SOUND_PREFERENCE_KEY = 'soundPreference'
+  const storedSound = import.meta.client ? sessionStorage.getItem(SOUND_PREFERENCE_KEY) : null
+  const soundPreference = skipHydrate(ref(storedSound))
+  const setSoundPreference = (value) => {
+    soundPreference.value = value
+    sessionStorage.setItem(SOUND_PREFERENCE_KEY, value)
+  }
+  // Reduced motion never plays the walking sound, so there is nothing to ask.
+  const soundChosen = computed(() => soundPreference.value !== null || reducedMotion.value)
+  // The loading screen stays up until the scene is ready and the visitor has chosen;
+  // the menu only shows once it has lifted.
+  const sceneRevealed = computed(() => finishLoading.value && soundChosen.value)
+  // Set by LoadingScreen.vue near the end of its exit, so the menu enters as it clears
+  // instead of while it is still on screen.
+  const loaderAlmostGone = ref(false)
 
   // null = use whatever detect-gpu reports. The #debug pane writes a tier here to see
   // how the scene builds itself for another class of GPU. Session-scoped, so closing
@@ -72,7 +86,8 @@ export const useMainStore = defineStore('main', () => {
   const staticScene = computed(() => reducedMotion.value || activeTier.value === 0)
 
   return {
-    finishLoading, menuWaitExpired, menuReady, gpuTier, reducedMotion, followSystemMotion, resolveGPUTier,
+    finishLoading, gpuTier, reducedMotion, followSystemMotion, resolveGPUTier,
+    soundPreference, setSoundPreference, soundChosen, sceneRevealed, loaderAlmostGone,
     tierOverride, setTierOverride, activeTier, staticScene,
   }
 })

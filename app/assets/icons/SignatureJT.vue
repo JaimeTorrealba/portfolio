@@ -26,7 +26,7 @@ const playAnimation = async () => {
 onBeforeUnmount(() => gsap.killTweensOf(pathRef.value));
 
 watchEffect(() => {
-  if (store.menuReady) {
+  if (store.sceneRevealed) {
     playAnimation();
   }
 });

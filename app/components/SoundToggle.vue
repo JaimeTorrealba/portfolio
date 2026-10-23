@@ -25,12 +25,21 @@ const startWalkingAudio = () => {
   });
 };
 
+// The click on "Full experience" is the user gesture browsers want before playing audio.
+// A sync watcher calls play() inside that click rather than after it, which Safari needs.
+watch(() => store.soundPreference, (preference, previous) => {
+  if (previous === null && preference === 'on') startWalkingAudio();
+}, { flush: 'sync' });
+
 onMounted(() => {
   // The loop is a walking sound: with the scene frozen there is nothing to be
   // walking through, so never arm the autoplay under reduced motion.
   if (store.reducedMotion) return;
+  // Only a reload with "on" already saved lands here: there was no click to play from,
+  // so wait for the first one.
+  if (store.soundPreference !== 'on') return;
   document.addEventListener('pointerdown', () => {
-    if (store.reducedMotion) return;
+    if (store.reducedMotion || store.soundPreference !== 'on') return;
     startWalkingAudio();
   }, { once: true });
 });
@@ -45,8 +54,10 @@ function toggle() {
   if (playing.value) {
     walkingAudio?.pause();
     playing.value = false;
+    store.setSoundPreference('off');
   } else {
     startWalkingAudio();
+    store.setSoundPreference('on');
   }
 }
 </script>
