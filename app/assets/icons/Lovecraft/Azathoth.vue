@@ -23,15 +23,17 @@ onMounted(() => {
   const cls2 = svgEl.querySelectorAll(".cls-2");
   if (prefersReducedMotion()) {
     // Skip the draw-on entirely and land on the filled end state.
-    gsap.set(cls1, { fill: "#ccc", stroke: "none" });
-    gsap.set(cls2, { fill: "#b2b2b2", stroke: "none" });
+    gsap.set(cls1, { fill: "#ccc", fillOpacity: 1, stroke: "none" });
+    gsap.set(cls2, { fill: "#b2b2b2", fillOpacity: 1, stroke: "none" });
     return;
   }
 
   const tl = gsap.timeline();
 
+  // The fill keeps its colour and only its opacity animates: tweening from `fill: none`
+  // can't interpolate, so the colour used to snap on in one frame.
   gsap.set([cls1, cls2], {
-    fill: "none",
+    fillOpacity: 0,
     strokeWidth: 1,
     strokeLinecap: "round",
   });
@@ -43,27 +45,24 @@ onMounted(() => {
     stroke: "#b2b2b2",
     drawSVG: "0% 0%",
   });
+  // Draws alongside the loader rings and is filled (~1.6s) as they settle (1.6s).
   tl.to(cls1, {
-    duration: 1.6,
-    delay: 0.5,
+    duration: 0.9,
     drawSVG: "0% 100%",
     ease: "power2.inOut",
   });
   tl.to(cls2, {
-    duration: 1.9,
+    duration: 1.0,
     drawSVG: "0% 100%",
     ease: "power2.inOut",
-  }, "-=1.25");
-  tl.to(cls1, {
-    duration: 0.25,
-    fill: "#ccc",
-    stroke: "none",
-  });
-  tl.to(cls2, {
-    duration: 0.25,
-    fill: "#b2b2b2",
-    stroke: "none",
-  }, "-=0.25");
+  }, "-=0.6");
+  // The fill rises while the last lines finish, and the outline melts into it.
+  tl.to([cls1, cls2], {
+    duration: 0.6,
+    fillOpacity: 1,
+    strokeOpacity: 0,
+    ease: "power2.out",
+  }, "-=0.3");
 });
 </script>
 <template>
@@ -169,5 +168,14 @@ onMounted(() => {
 
 .cls-2 {
   fill: #b2b2b2;
+}
+
+/* The icon is in the prerendered HTML, so without this it would show filled until the JS
+   loads, then vanish to be drawn on. Under reduced motion there is no draw-on. */
+@media (prefers-reduced-motion: no-preference) {
+  .cls-1,
+  .cls-2 {
+    fill-opacity: 0;
+  }
 }
 </style>

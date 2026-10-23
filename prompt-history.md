@@ -15,3 +15,14 @@
 11. On the content card and on the experiences card I got lists, can we mantain the same layout and elements but use this: https://vue-bits.dev/components/animated-list — DO not install any additional library
 12. I asked you to fix all the items on the table (except #4 and #7 that were questions) you did it?
 13. When you finish that I ran again the audit and come with several duplicates, but not all of them are duplicates can you double check them and fix the non duplicates (pasted a new 15-item "Top issues" table)
+
+## Loader motion retime to spec — 2026-10-23 20:19
+
+1. Retime/re-ease the loader motion to a spec (A entry curtain 0.9s power3.in + velocity motion blur, B settle scale 1.2→1 + blur multiplier 1.0→0.35, C idle 6.5°/s accumulated spin, D 1.0s staged exit with page blur 20px→0, radius-based blur profile blurMax·smoothstep(0.15,0.95,r)^1.3 at 1.5vw, one master clock, reduced-motion 0.3s fade, named config object). Asked for a current-vs-spec table, motion-only code changes, and one line on what could not be matched. (Said "I'm pasting my current loader" but nothing was pasted.)
+2. Why is it coming from the bottom? Why does the first "loader" only show the icon?
+3. Go with option 1: no travel, the rings appear in place, and the 0.9s entry blur and the settle still play.
+4. The animation is horrible; why does it start in the middle? Are there skills that can help? It should start blurred and gradually come into focus.
+5. Almost good. Two details: on leave the letters should go back to blur, and the centre icon should disappear instead of moving to the top.
+6. No, the blur starts way too early. It should only start blurring when the loader starts fading.
+7. The icon with drawLines needs to be faster.
+8. The icon has a wrong, sudden fill, like a flash and then it disappears. Can we fill it smoothly?

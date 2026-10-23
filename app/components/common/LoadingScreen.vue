@@ -1,62 +1,57 @@
 <script setup>
-import { onMounted, onUnmounted, nextTick } from "vue";
-import { gsap } from "gsap";
+import { onMounted, onUnmounted, nextTick, ref } from "vue";
 import { useMainStore } from "@/stores";
 import { prefersReducedMotion } from "@/utils/motion.js";
+import { createLoaderClock } from "@/utils/spiralLoader/clock.js";
 import Azathoth from "@/assets/icons/Lovecraft/Azathoth.vue";
 
 const store = useMainStore();
+const foregroundRef = ref(null);
 
-// The ring spins repeat forever, so they are collected in a context and killed once the
-// loader has faded out; otherwise GSAP keeps rotating detached nodes for the whole visit.
-let ringsContext = null;
-const stopRingSpins = () => {
-  ringsContext?.kill();
-  ringsContext = null;
+// Each ring and the direction it spins in.
+const RING_SPINS = [
+  { id: "innerText", dir: 1 },
+  { id: "secondText", dir: -1 },
+  { id: "outerText", dir: 1 },
+];
+
+// One clock drives every loader value (see utils/spiralLoader). It is stopped once the
+// exit has played, or on unmount, so nothing keeps animating detached nodes.
+let loaderClock = null;
+const stopLoaderClock = () => {
+  loaderClock?.stop();
+  loaderClock = null;
 };
-onUnmounted(stopRingSpins);
+onUnmounted(stopLoaderClock);
+
+// Vue keeps the loader in the DOM until `done`, so the whole exit plays out.
+const playLoaderExit = (el, done) => (loaderClock ? loaderClock.playExit(el, done) : done());
+
+const collectRings = () =>
+  RING_SPINS.map(({ id, dir }) => {
+    const svg = document.getElementById(id);
+    return { svg, text: svg.querySelector("text"), dir };
+  });
 
 onMounted(async () => {
   await nextTick();
-  // Elements already sit at their resting opacity/rotation; the ring spins are
-  // infinite, so there is no end state to jump to -- skip the whole sequence.
-  if (prefersReducedMotion()) return;
-  ringsContext = gsap.context(() => {
-    // The rings start at opacity 0 in CSS (see the style block), so fade them in.
-    gsap.to(["#innerText", "#secondText", "#outerText"], {
-      duration: 3,
-      opacity: 1,
-    });
-    gsap.to("#innerText", {
-      duration: 40,
-      rotate: 360,
-      ease: "none",
-      repeat: -1,
-    });
-    gsap.to("#secondText", {
-      duration: 50,
-      delay: 0.5,
-      rotate: -360,
-      ease: "none",
-      repeat: -1,
-    });
-    gsap.to("#outerText", {
-      duration: 50,
-      delay: 0.5,
-      rotate: 360,
-      ease: "none",
-      repeat: -1,
-    });
+  // Loading may already be done, in which case the rings were never rendered.
+  if (!document.getElementById(RING_SPINS[0].id)) return;
+  loaderClock = createLoaderClock({
+    rings: collectRings(),
+    foreground: foregroundRef.value,
+    reducedMotion: prefersReducedMotion(),
   });
+  loaderClock.start();
 });
 </script>
 <template>
-  <Transition mode="out-in" @after-leave="stopRingSpins">
+  <Transition mode="out-in" :css="false" @leave="playLoaderExit" @after-leave="stopLoaderClock">
     <div v-if="!store.finishLoading" class="perfect-center" role="status">
       <span class="visually-hidden">Loading</span>
       <!-- Decorative: the ring text would otherwise be read out in three languages. -->
       <div aria-hidden="true">
-        <div>
+        <div ref="foregroundRef">
           <Azathoth id="Azathoth" width="92" height="92" />
         </div>
         <svg
@@ -203,15 +198,5 @@ onMounted(async () => {
 
 .center-svg-outer {
   width: 95vmin;
-}
-
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
 }
 </style>
