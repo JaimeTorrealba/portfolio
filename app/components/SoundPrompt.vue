@@ -22,7 +22,7 @@ const visibleChoices = computed(() => (store.soundChosen ? [] : SOUND_CHOICES));
     @enter="animateMenuButtonIn"
     @leave="animateMenuButtonOut"
     tag="div"
-    class="sound-prompt"
+    class="sound-prompt menu-btn-group"
     role="group"
     aria-label="How do you want to enter?"
   >
@@ -46,7 +46,5 @@ const visibleChoices = computed(() => (store.soundChosen ? [] : SOUND_CHOICES));
   z-index: 20;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1.25rem;
 }
 </style>

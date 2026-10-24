@@ -2,11 +2,16 @@
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { gsap } from "gsap";
 import { showText } from "@/utils/gsaps.js";
-import CloseButton from "@/components/common/CloseButton.vue";
+import CardFrame from "@/components/cards/CardFrame.vue";
 import AnimatedList from "@/components/common/AnimatedList.vue";
 import { experiences } from "#shared/profile";
 
 const emit = defineEmits(["close"]);
+
+// The frame's red footer button is the card's close button.
+const frameOptions = {
+  footer: { button: { label: "Close", ariaLabel: "Close card", onClick: () => emit("close") } },
+};
 
 const titleRef = ref(null);
 
@@ -20,8 +25,7 @@ onBeforeUnmount(() => titleContext?.kill());
 
 <template>
   <section class="container" role="dialog" aria-modal="true" aria-labelledby="experience-card-title">
-    <div class="glass3d">
-      <CloseButton @click="emit('close')" />
+    <CardFrame class="card-panel" :seed="41" :options="frameOptions">
       <div class="glass-content">
         <div class="overflow-hidden">
           <h2 id="experience-card-title" ref="titleRef" class="is-size-1">Experience</h2>
@@ -45,7 +49,7 @@ onBeforeUnmount(() => titleContext?.kill());
           </template>
         </AnimatedList>
       </div>
-    </div>
+    </CardFrame>
   </section>
 </template>
 
@@ -188,4 +192,4 @@ onBeforeUnmount(() => titleContext?.kill());
   }
 }
 </style>
-<style scoped src="./GlassCard.css"></style>
+<style scoped src="./CardLayout.css"></style>

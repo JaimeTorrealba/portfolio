@@ -1,0 +1,239 @@
+/* Styles for createRedButton() (./red-button.js), imported by ./card-frame.css.
+   3. Every state is CSS on top of the art the JS rendered once: a CSS filter on one
+   element, a transform, variables on plain strokes, a pseudo-element glow. None of them
+   re-runs an SVG filter, and all of them work on a baked (<img>) button too.
+
+   Variables: --cf-btn-text, --cf-btn-glow (set from the palette by the JS),
+   --hl / --sh (bevel highlight / shadow opacity), --cf-btn-label-max (label width). */
+
+.cf-btn {
+  --cf-btn-text: #e8dfd0;
+  --cf-btn-glow: rgb(209 42 48 / 0.45);
+  --hl: 0.35;
+  --sh: 0.5;
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  /* ~132x36 at the default size, never under 96x30, and it all scales with font-size. */
+  min-width: max(96px, 8.7em);
+  height: max(30px, 2.4em);
+  padding: 0 1.4em;
+  margin: 0;
+  border: 0;
+  border-radius: 3px;
+  background: none;
+  color: var(--cf-btn-text);
+  /* 4. System fonts only. To use Cinzel, load it yourself (@font-face or a <link>); this
+     stack picks it up first once it is available. */
+  font-family: "Cinzel", "Trajan Pro", "Palatino Linotype", Georgia, serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-variant: small-caps;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  line-height: 1;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 80ms ease;
+}
+
+/* Hover glow, behind the art (z-index -1 inside the button's own stacking context). */
+.cf-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  box-shadow: 0 0 14px var(--cf-btn-glow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+}
+
+/* Touch target: at least 44px tall, even though the art is 36px. */
+.cf-btn::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: max(100%, 44px);
+  transform: translateY(-50%);
+}
+
+.cf-btn__art,
+.cf-btn__overlay,
+.cf-btn__shine {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.cf-btn__art {
+  display: block;
+  max-width: none;
+  /* Its own layer, so the hover / pressed filters are applied by the compositor. */
+  will-change: filter;
+  transition: filter 150ms ease;
+}
+
+.cf-btn__overlay > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.cf-btn__highlight {
+  stroke-opacity: var(--hl);
+}
+
+.cf-btn__shadow {
+  stroke-opacity: var(--sh);
+}
+
+/* Ember pulse on the worn inner outline: opacity only, so the compositor runs it. */
+.cf-btn__ember {
+  animation: cf-btn-ember 2.4s ease-in-out infinite alternate;
+  will-change: opacity;
+}
+
+@keyframes cf-btn-ember {
+  from {
+    opacity: 0.65;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.cf-btn__shine {
+  background: radial-gradient(
+    circle at calc(var(--lx, 0.5) * 100%) calc(var(--ly, 0.5) * 100%),
+    rgb(255 220 210 / 0.6),
+    transparent 60%
+  );
+  mix-blend-mode: soft-light;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+/* Real DOM text above the art, no filter. The etched look is a dark duplicate nudged
+   0.5px up (::before, alt text "" so screen readers skip it) plus a drop shadow. */
+.cf-btn__label {
+  position: relative;
+  z-index: 1;
+  max-width: var(--cf-btn-label-max, 14em);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow:
+    0 1px 0 rgb(0 0 0 / 0.9),
+    0 0 6px rgb(0 0 0 / 0.5);
+}
+
+.cf-btn__label::before {
+  content: attr(data-label);
+  content: attr(data-label) / "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: rgb(0 0 0 / 0.4);
+  text-shadow: none;
+  transform: translate(0.3px, -0.5px);
+}
+
+@media (hover: hover) {
+  .cf-btn:hover:not(:disabled) .cf-btn__art {
+    filter: brightness(1.12) saturate(1.1);
+  }
+
+  .cf-btn:hover:not(:disabled)::before,
+  .cf-btn:hover:not(:disabled) .cf-btn__shine {
+    opacity: 1;
+  }
+}
+
+/* Pressed: pushed in 1px, darker, bevel light swapped toward shade, less glow. */
+.cf-btn:active:not(:disabled) {
+  --hl: 0.15;
+  --sh: 0.8;
+  transform: translateY(1px);
+}
+
+.cf-btn:active:not(:disabled) .cf-btn__art {
+  filter: brightness(0.9);
+}
+
+.cf-btn:active:not(:disabled)::before {
+  opacity: 0.4;
+}
+
+/* Outside the art, and nothing around it hides overflow, so it is never clipped. */
+.cf-btn:focus-visible {
+  outline: 2px solid var(--cf-btn-text);
+  outline-offset: 3px;
+}
+
+.cf-btn:disabled {
+  cursor: not-allowed;
+}
+
+.cf-btn:disabled .cf-btn__art,
+.cf-btn:disabled .cf-btn__overlay {
+  filter: grayscale(0.8) brightness(0.6);
+}
+
+.cf-btn:disabled::before {
+  display: none;
+}
+
+.cf-btn:disabled .cf-btn__ember {
+  animation: none;
+  opacity: 0.5;
+}
+
+.cf-btn:disabled .cf-btn__label {
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-btn {
+    transition: none;
+  }
+
+  .cf-btn__ember {
+    animation: none;
+  }
+
+  .cf-btn__shine {
+    display: none;
+  }
+}
+
+/* Fallback (no SVG lighting filters): a CSS-only plate with the same label. */
+.cf-btn--fallback {
+  border: 3px solid #1a1b1f;
+  background: linear-gradient(#9a1c22, #4e0c10);
+  box-shadow:
+    inset 1px 1px 0 rgb(255 106 106 / 0.35),
+    inset -1px -1px 0 rgb(0 0 0 / 0.5);
+}
+
+.cf-btn--fallback[data-variant="primary"] {
+  background: linear-gradient(#7d6128, #33250c);
+}
+
+.cf-btn--fallback:disabled {
+  filter: grayscale(0.8) brightness(0.6);
+}

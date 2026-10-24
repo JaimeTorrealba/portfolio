@@ -51,7 +51,7 @@ const showTooltipLab = ref(false);
 <template>
   <section ref="rrssRef" class="icon-containers">
     <div class="rrss-container">
-      <Tooltip text="Bluesky" :show="showTooltipBlueSky" anchor="top center">
+      <Tooltip text="Bluesky" :show="showTooltipBlueSky" anchor="bottom center">
         <a
           :href="socials.bluesky.url"
           target="_blank"
@@ -67,7 +67,7 @@ const showTooltipLab = ref(false);
           </div>
         </a>
       </Tooltip>
-      <Tooltip text="Twitter" :show="showTooltipTwitter" anchor="top center">
+      <Tooltip text="Twitter" :show="showTooltipTwitter" anchor="bottom center">
         <a
           :href="socials.twitter.url"
           target="_blank"
@@ -84,7 +84,7 @@ const showTooltipLab = ref(false);
         </a>
       </Tooltip>
 
-      <Tooltip text="Github" :show="showTooltipGithub" anchor="top center">
+      <Tooltip text="Github" :show="showTooltipGithub" anchor="bottom center">
         <a
           :href="socials.github.url"
           target="_blank"
@@ -100,7 +100,7 @@ const showTooltipLab = ref(false);
           </div>
         </a>
       </Tooltip>
-      <Tooltip text="LinkedIn" :show="showTooltipLinkedin" anchor="top center">
+      <Tooltip text="LinkedIn" :show="showTooltipLinkedin" anchor="bottom center">
         <a
           :href="socials.linkedin.url"
           target="_blank"
@@ -116,7 +116,7 @@ const showTooltipLab = ref(false);
           </div>
         </a>
       </Tooltip>
-      <Tooltip text="CodePen" :show="showTooltipCodepen" anchor="top center">
+      <Tooltip text="CodePen" :show="showTooltipCodepen" anchor="bottom center">
         <a
           :href="socials.codepen.url"
           target="_blank"
@@ -132,7 +132,7 @@ const showTooltipLab = ref(false);
           </div>
         </a>
       </Tooltip>
-      <Tooltip text="Lab" :show="showTooltipLab" anchor="top center">
+      <Tooltip text="Lab" :show="showTooltipLab" anchor="bottom center">
         <a
           :href="socials.lab.url"
           target="_blank"
@@ -143,7 +143,7 @@ const showTooltipLab = ref(false);
           @focus="showTooltipLab = true"
           @blur="showTooltipLab = false"
         >
-          <div class="icon-container icon-border">
+          <div class="icon-container icon-centered">
             <Lab />
           </div>
         </a>
@@ -158,10 +158,7 @@ const showTooltipLab = ref(false);
   margin: 0 auto;
   overflow: hidden;
 }
-.icon-border {
-  background-color: #f7f7f7;
-  border-radius: 50%;
-  padding: 0.2rem;
+.icon-centered {
   display: grid;
   place-items: center;
 }

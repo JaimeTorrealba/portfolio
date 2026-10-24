@@ -54,3 +54,28 @@
 1. Add the Downloads "back_drop dark piano ambient" MP3 as background music, quieter than the walking sound, not looped (the track is long). Rename the file to something shorter.
 2. Add a Projects link to the menu, struck through, with a "work in progress" / "building" tooltip.
 3. Put ALL the cards fully centred, always centred.
+
+## Menu button hover scale — 2026-10-24 21:30
+
+1. Hover effect for the menu links (including the sound options at the start): scale all elements to 0.9, and the active one (hover or focus) scales with a 0.15s ease-out animation.
+2. No visible effect on screen. Make the active element scale to 1.5.
+3. Fix the flash: moving the mouse across the gap between two buttons briefly returns them all to full size.
+
+## Procedural dark-fantasy card frame and red button replacing the glass cards — 2026-10-24 21:36
+
+1. Build a reusable, purely procedural "dark-fantasy card frame" (HTML/CSS/SVG/vanilla ES modules, no images or deps, seeded, framework-agnostic `createCardFrame(el, options) -> { update, setSeed, destroy }`): leather/stone surface, bevelled metal frame, corner and top thorns, wobbling outline, chips, scratches, wear, recessed panel, optional footer plate, bake-to-bitmap with cache, lazy IntersectionObserver, pointer shine, CSS fallback. It replaces the current card styles. (The deliverables list was cut off after "card-frame.js: the module".)
+2. Extend the card frame with a procedural dark-fantasy red button (`createRedButton(el, options) -> { update, setSeed, setLabel, destroy }`, danger/primary variants) mounted in the footer plate via `footer: { height: 64, button: { label, onClick, variant } }`: worn lacquered face in a chipped metal rim, broken inner glow line, bevel lines, real DOM label, CSS-only hover/pressed/focus/disabled states that never re-run filters, bake support, CSS fallback, 44px hit area. Update card-frame.js/css, demo.html (labels Cancel/Close/Retreat/Abandon, controls, disabled toggle) and the README. Replace the current close button with it.
+3. Make the borders darker.
+
+## About card without photo and white social icons — 2026-10-24 22:00
+
+1. On the About me card, delete my image and use all the available space. On the icons, get rid of the white background and make the logo shape white.
+2. Remove the whole scale-down on the menu buttons, just to see how it looks.
+3. Looks best with the scale-down; revert the last change.
+4. The social icons open their tooltip at the top; open it at the bottom instead.
+5. Twitter, GitHub, LinkedIn and CodePen still have the white circle; invert their colours.
+6. Almost, but the 4 icons have a black background; make it transparent.
+
+## Horizontal scroll on the cards on small screens — 2026-10-24 22:10
+
+1. There is a horizontal scroll on the cards on small screens; why, and get rid of it.

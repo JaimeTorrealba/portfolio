@@ -33,8 +33,8 @@ export const person = {
   jobTitle: 'Creative developer',
   // The two paragraphs of the About me card, verbatim.
   bio: [
-    'Creative developer focused on immersive web experiences, real-time 3D, micro-interactions and expressive animations.',
-    'I enjoy blending design and code using Vue.js, Three.js, Tres.js, and GSAP.',
+    'Expert on immersive web experiences, real-time 3D, micro-interactions, expressive animations, fluid design and generic algorithms',
+    'A website is about what you feel, not what you see, each UI needs to be unique',
   ],
   knowsAbout: [
     'Three.js',

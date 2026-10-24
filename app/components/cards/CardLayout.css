@@ -1,0 +1,62 @@
+/* Layout shared by the About me, Content and Experience cards. Each card pulls this in
+   with <style scoped src>. The panel's look (leather, metal frame, thorns) comes from
+   CardFrame.vue, not from here. */
+
+/* Every card sits dead centre of the viewport, at any size. The section fills the
+   screen and the panel centres itself with margin: auto, which (unlike align-items:
+   center) keeps the top reachable when a card is taller than a phone screen: the
+   section scrolls instead. Centring without a transform also leaves transform free
+   for the GSAP open/close animation. */
+.container {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  overflow-y: auto;
+  /* The frame's art box sticks out ~44px past the card on each side (thorn and shadow
+     room), more than the side padding on phones. overflow-y: auto would turn that into
+     a horizontal scroll; only empty space and the shadow's blur edge get clipped. */
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  /* Clicks outside the panel still reach the scene, as before. */
+  pointer-events: none;
+  /* Room for the frame's thorns, which overflow the card and would be clipped by the
+     scroll container. */
+  padding: 2.25rem;
+  @media screen and (max-width: 1024px) {
+    padding: 2rem 1.5rem;
+  }
+}
+
+.container > .card-panel {
+  margin: auto;
+  width: 50%;
+  pointer-events: auto;
+  @media screen and (max-width: 1024px) {
+    width: 100%;
+  }
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+/* Card titles are <h2> and the About me subtitle a <p>: the page's one <h1> lives in
+   AccessibleContent.vue. These keep the sizes they had from the browser's h1/h2 defaults. */
+.is-size-1 {
+  font-size: 2em;
+}
+
+.is-size-2 {
+  font-size: 1.5em;
+}
+
+.card-panel {
+  min-width: 400px;
+  /* Below this the card spans the viewport; a fixed 400px would clip it on phones. */
+  @media screen and (max-width: 1024px) {
+    min-width: 0;
+  }
+  position: relative;
+  z-index: 4;
+}

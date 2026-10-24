@@ -71,7 +71,8 @@ useEventListener(document, "keydown", (event) => {
 
 const onEnter = (el, done) => {
   openCardEl = el;
-  el.querySelector(".close-btn")?.focus({ preventScroll: true });
+  // The close button is the red button the card frame mounts in its footer.
+  el.querySelector(".card-frame__footer .cf-btn")?.focus({ preventScroll: true });
   animateCardIn(el, done);
 };
 
@@ -99,7 +100,7 @@ const onLeave = (el, done) => {
     @enter="animateMenuButtonIn"
     @leave="animateMenuButtonOut"
     tag="div"
-    class="btn-group"
+    class="btn-group menu-btn-group"
   >
     <MenuButton
       v-if="showMenuButtons"
@@ -142,12 +143,12 @@ const onLeave = (el, done) => {
 <style scoped>
 .btn-group {
   position: fixed;
-  bottom: 5rem;
+  /* 5rem to the last label; the buttons' own padding-block covers the rest. */
+  bottom: 4.375rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 20;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
 }
 </style>

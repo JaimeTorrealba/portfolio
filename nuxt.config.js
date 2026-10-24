@@ -25,7 +25,6 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', href: '/favicon.ico', sizes: 'any' },
         { rel: 'preload', href: '/fonts/Sentient-Regular.woff2', as: 'font', type: 'font/woff2', crossorigin: 'anonymous' },
-        { rel: 'prefetch', href: '/img/Foto_Perfil.webp', as: 'image' },
       ],
       script: [
         { src: `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`, async: true },
