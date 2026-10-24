@@ -135,25 +135,6 @@ onBeforeUnmount(() => animationContext.kill());
   </section>
 </template>
 <style scoped>
-.container {
-  position: fixed;
-  top: 25%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
-  overflow: visible;
-  width: 50%;
-  @media screen and (max-width: 1024px) {
-    position: fixed;
-    top: 5%;
-    left: 0;
-    transform: translate(0, 0);
-    min-height: 100vh;
-    width: 100%;
-    padding: 0 0.5rem;
-  }
-}
-
 .glass-content {
   display: grid;
   grid-template-areas:

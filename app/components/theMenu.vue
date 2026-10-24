@@ -128,6 +128,14 @@ const onLeave = (el, done) => {
     >
       Experience
     </MenuButton>
+    <MenuButton
+      v-if="showMenuButtons"
+      key="projects"
+      data-index="3"
+      work-in-progress
+    >
+      Projects
+    </MenuButton>
   </TransitionGroup>
 </template>
 

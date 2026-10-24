@@ -15,14 +15,34 @@ const getWalkingAudio = () => {
   return walkingAudio;
 };
 
+// Background music sits under the walking sound. The track is long enough that it
+// plays once and ends instead of looping.
+const MUSIC_VOLUME = 0.35;
+let musicAudio = null;
+const getMusicAudio = () => {
+  if (!musicAudio) {
+    musicAudio = new Audio('/ambient-piano.mp3');
+    musicAudio.volume = MUSIC_VOLUME;
+  }
+  return musicAudio;
+};
+
 const playing = ref(false);
 
 // play() rejects when the browser blocks playback; keep the button showing the truth.
+// The music's own rejection is ignored: the walking sound drives the button state.
 const startWalkingAudio = () => {
   playing.value = true;
   getWalkingAudio().play().catch(() => {
     playing.value = false;
   });
+  getMusicAudio().play().catch(() => {});
+};
+
+const pauseAllAudio = () => {
+  walkingAudio?.pause();
+  musicAudio?.pause();
+  playing.value = false;
 };
 
 // The click on "Full experience" is the user gesture browsers want before playing audio.
@@ -46,14 +66,12 @@ onMounted(() => {
 
 watch(() => store.reducedMotion, (reduce) => {
   if (!reduce) return;
-  walkingAudio?.pause();
-  playing.value = false;
+  pauseAllAudio();
 });
 
 function toggle() {
   if (playing.value) {
-    walkingAudio?.pause();
-    playing.value = false;
+    pauseAllAudio();
     store.setSoundPreference('off');
   } else {
     startWalkingAudio();

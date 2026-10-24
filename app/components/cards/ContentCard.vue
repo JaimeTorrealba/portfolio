@@ -52,27 +52,6 @@ onBeforeUnmount(() => titleContext?.kill());
 </template>
 
 <style scoped>
-.container {
-  position: fixed;
-  top: 25%;
-  left: 50%;
-  /* Where the card has always rendered: GSAP's open animation used to override the
-     old -25% with 0, and now hands positioning back to this rule when it finishes. */
-  transform: translate(-50%, 0);
-  z-index: 10;
-  overflow: visible;
-  width: 50%;
-  @media screen and (max-width: 1024px) {
-    position: fixed;
-    top: 5%;
-    left: 0;
-    transform: translate(0, 0);
-    min-height: 100vh;
-    width: 100%;
-    padding: 0 0.5rem;
-  }
-}
-
 .glass-content {
   display: flex;
   flex-direction: column;

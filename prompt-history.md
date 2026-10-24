@@ -48,3 +48,9 @@
 2. Dependabot alert #66: postcss-selector-parser < 7.1.6 quadratic parse of flat selectors (CPU DoS). Fix it and check where PostCSS is used.
 3. Review the non-core deps (excluding three, vue, etc.): which ones are best to remove, and how hard would it be?
 4. Bump vueuse and do the ESLint migration (drop the rushstack patch); leave the rest as is.
+
+## Background music and Projects menu entry — 2026-10-24 20:48
+
+1. Add the Downloads "back_drop dark piano ambient" MP3 as background music, quieter than the walking sound, not looped (the track is long). Rename the file to something shorter.
+2. Add a Projects link to the menu, struck through, with a "work in progress" / "building" tooltip.
+3. Put ALL the cards fully centred, always centred.

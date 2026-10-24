@@ -2,6 +2,35 @@
    in with <style scoped src>, so the selectors stay scoped exactly as when they were
    copied into every card. */
 
+/* Every card sits dead centre of the viewport, at any size. The section fills the
+   screen and the panel centres itself with margin: auto, which (unlike align-items:
+   center) keeps the top reachable when a card is taller than a phone screen: the
+   section scrolls instead. Centring without a transform also leaves transform free
+   for the GSAP open/close animation. */
+.container {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  padding: 1rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* Clicks outside the panel still reach the scene, as before. */
+  pointer-events: none;
+  @media screen and (max-width: 1024px) {
+    padding: 1rem 0.5rem;
+  }
+}
+
+.container > .glass3d {
+  margin: auto;
+  width: 50%;
+  pointer-events: auto;
+  @media screen and (max-width: 1024px) {
+    width: 100%;
+  }
+}
+
 .overflow-hidden {
   overflow: hidden;
 }
