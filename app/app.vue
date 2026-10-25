@@ -31,7 +31,7 @@ useSeoMeta({
   ogSiteName: site.name,
   ogLocale: site.locale,
   ogImage: imageUrl,
-  ogImageType: "image/png",
+  ogImageType: "image/webp",
   ogImageWidth: site.image.width,
   ogImageHeight: site.image.height,
   ogImageAlt: site.image.alt,

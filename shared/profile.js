@@ -18,7 +18,7 @@ export const site = {
   // reads it, so bump it with any edit to the bio, socials, experiences or content.
   updated: '2026-09-27',
   image: {
-    path: '/img/Foto_Perfil.png',
+    path: '/img/Foto_Perfil.webp',
     width: 547,
     height: 456,
     alt: 'Portrait of Jaime Torrealba',

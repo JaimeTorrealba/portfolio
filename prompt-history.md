@@ -79,3 +79,8 @@
 ## Horizontal scroll on the cards on small screens — 2026-10-24 22:10
 
 1. There is a horizontal scroll on the cards on small screens; why, and get rid of it.
+
+## Profile photo: drop the PNG, WebP as OG image — 2026-10-25
+
+1. We got Foto_Perfil.png and Foto_Perfil.webp. First get rid of the PNG (heavier, we have the WebP). Second, can we use it as an OG image (I think we needed one)?
+2. Update llm.js then (drop the stale About card photo line).

@@ -189,8 +189,6 @@ A dark screen with a small emblem in the centre, surrounded by three rings of sl
 - Sound button (icon only): labelled "Unmute" while muted and "Mute" while the footsteps play.`,
     `## About me card
 
-Photo: ${site.image.alt} (on wide screens only).
-
 ### ${person.name}
 
 #### ${person.jobTitle}
