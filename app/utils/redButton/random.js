@@ -1,5 +1,5 @@
-// Seeded randomness for the card frame. Nothing in the frame may call Math.random():
-// the same seed has to draw the same card every time.
+// Seeded randomness for the red button. Nothing in it may call Math.random():
+// the same seed has to draw the same button every time.
 
 // mulberry32: tiny, fast, good enough for visuals. Returns floats in [0, 1).
 export const createRandom = (seed) => {
@@ -13,8 +13,8 @@ export const createRandom = (seed) => {
   }
 }
 
-// Every feature (thorns, chips, scratches...) draws from its own stream, so a card that
-// grows taller and samples more outline points keeps the same thorns and chips.
+// Every feature (chips, scratches...) draws from its own stream, so a button that
+// grows taller and samples more outline points keeps the same chips.
 export const createStream = (seed, streamName) => {
   let hash = seed ^ 0x811c9dc5
   for (const char of streamName) hash = Math.imul(hash ^ char.charCodeAt(0), 0x01000193)

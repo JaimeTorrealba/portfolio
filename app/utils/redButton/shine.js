@@ -1,5 +1,5 @@
-// Moving specular highlight: a CSS radial gradient clipped to part of the art (the card's
-// frame band, a button's face), following the pointer through --lx / --ly. Pure CSS on
+// Moving specular highlight: a CSS radial gradient clipped to part of the art (the
+// button's face), following the pointer through --lx / --ly. Pure CSS on
 // its own element: it never touches the SVG, so moving it never re-runs a filter.
 // Off under prefers-reduced-motion.
 import { serializeCommands } from './rectWalker.js'

@@ -22,6 +22,7 @@
     "nuxt": "^4.6.2",
     "pinia": "^4.1.0",
     "three": "^0.182.0",
+    "uisfx": "0.4.0",
     "vue": "^3.5.44"
   },
   "devDependencies": {

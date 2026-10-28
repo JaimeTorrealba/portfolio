@@ -12,11 +12,6 @@ gsap.registerPlugin(SplitText);
 
 const emit = defineEmits(["close"]);
 
-// The frame's red footer button is the card's close button.
-const frameOptions = {
-  footer: { button: { label: "Close", ariaLabel: "Close card", onClick: () => emit("close") } },
-};
-
 const titleRef = ref(null);
 const subTitleRef = ref(null);
 const firstTextRef = ref(null);
@@ -74,7 +69,7 @@ onBeforeUnmount(() => animationContext.kill());
 </script>
 <template>
   <section class="container" role="dialog" aria-modal="true" aria-labelledby="about-card-title">
-    <CardFrame class="card-panel" :seed="7" :options="frameOptions">
+    <CardFrame class="card-panel" :seed="7" @close="emit('close')">
       <div class="glass-content">
         <div class="content-glass">
           <div class="overflow-hidden">

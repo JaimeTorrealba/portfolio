@@ -84,3 +84,26 @@
 
 1. We got Foto_Perfil.png and Foto_Perfil.webp. First get rid of the PNG (heavier, we have the WebP). Second, can we use it as an OG image (I think we needed one)?
 2. Update llm.js then (drop the stale About card photo line).
+
+## Replace the metal card frame with a torn, noisy modal border — 2026-10-28 22:05
+
+1. (Screenshot of a game save dialog.) Ignore the background and the card content; the modal border matters. Replace our card metallic border with this one: much simpler, looks like a noise effect. No new deps, only SVG, CSS or plain JS, no interaction effect; replace the current border and delete everything related.
+2. It is what I want but way too strong; add tweakable parameters to our tweak panel to find the right values.
+3. Use this as default: tear 15.5, tearSize 0.031, fringe 2.75, grain 0, grainSize 0.05, hardness 1.4, colour #111111, opacity 1.
+4. Change the colour back to #0000, pure black.
+
+## Sci-fi UI sounds (uisfx) on the menu, cards, social links and card buttons — 2026-10-28 22:30
+
+1. Install uisfx (https://uisfx.com/#sound-library), sci-fi theme, input -> hover; play that sound when hovering the menu links. Check the tree shaking: only ONE sound imported in the final build.
+2. Add the open and close sounds when the cards open and close.
+3. (Interrupted a request to revert this session's changes.) Swap the open and close sounds for drag start and drop.
+4. Reuse the hover sound when hovering the social icons (RRSS).
+5. Also the hover sound on the close button and on the Content card list items.
+
+## Content and Experience card titles fade in; Content items fully clickable — 2026-10-28 22:45
+
+1. For the title on the "Content" and "Experience" cards, animate just a fade-in; the text coming from the bottom looks weird.
+2. It is barely visible; can you wait a little before starting the animation? Just some ms.
+3. Too much; let's go with 200.
+4. On the Content card, make the whole item the link, not only the text.
+5. Push Security still says "Present"; it should say October 2026.

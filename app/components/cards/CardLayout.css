@@ -1,5 +1,5 @@
 /* Layout shared by the About me, Content and Experience cards. Each card pulls this in
-   with <style scoped src>. The panel's look (leather, metal frame, thorns) comes from
+   with <style scoped src>. The panel's look (black slab with a torn, grainy edge) comes from
    CardFrame.vue, not from here. */
 
 /* Every card sits dead centre of the viewport, at any size. The section fills the
@@ -13,14 +13,13 @@
   z-index: 10;
   display: flex;
   overflow-y: auto;
-  /* The frame's art box sticks out ~44px past the card on each side (thorn and shadow
-     room), more than the side padding on phones. overflow-y: auto would turn that into
-     a horizontal scroll; only empty space and the shadow's blur edge get clipped. */
+  /* The torn edge spills a few px past the card; overflow-y: auto would turn anything
+     sticking out into a horizontal scroll. */
   overflow-x: hidden;
   overscroll-behavior: contain;
   /* Clicks outside the panel still reach the scene, as before. */
   pointer-events: none;
-  /* Room for the frame's thorns, which overflow the card and would be clipped by the
+  /* Room for the torn edge, which overflows the card and would be clipped by the
      scroll container. */
   padding: 2.25rem;
   @media screen and (max-width: 1024px) {

@@ -68,7 +68,7 @@ export const experiences = [
     id: 'push-security',
     title: 'Push Security',
     role: 'Senior Software Developer',
-    period: 'Nov 2024 – Present',
+    period: 'Nov 2024 – Oct 2026',
     description: 'Top leader in the browser security space.',
     logo: '/img/logos/push-security.svg',
   },

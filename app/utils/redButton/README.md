@@ -1,26 +1,10 @@
-# Card frame and red button
+# Red button
 
-Procedural dark-fantasy card frame and button. HTML, CSS, SVG and vanilla ES modules
-only: no images, no dependencies, no `Math.random()`. Everything is generated from a
-numeric seed, so the same seed always draws the same thing.
+Procedural dark-fantasy button, used as the cards' Close button (`CardFrame.vue`). HTML,
+CSS, SVG and vanilla ES modules only: no images, no dependencies, no `Math.random()`.
+Everything is generated from a numeric seed, so the same seed always draws the same thing.
 
-- Styles: import `card-frame.css` (it `@import`s `red-button.css`). They are global on
-  purpose: the module creates its own elements.
-- Demo: `demo.html` shows 20 framed cards with buttons and controls. ES modules don't
-  load from `file://`, so serve this folder over http with any static server.
-
-## Card frame
-
-```js
-import { createCardFrame } from './card-frame.js'
-
-const frame = createCardFrame(element, { seed: 7 })
-frame.update({ thickness: 14 }) // merge options, regenerate if the drawing changed
-frame.setSeed(8)
-frame.destroy() // or destroy({ keepDom: true }) while the card animates out
-```
-
-Options and their defaults are in `DEFAULT_CARD_FRAME_OPTIONS` (`card-frame.js`).
+- Styles: `red-button.css`. Global on purpose: the module creates its own elements.
 
 ## Red button
 
@@ -29,7 +13,7 @@ Options and their defaults are in `DEFAULT_CARD_FRAME_OPTIONS` (`card-frame.js`)
 ```
 
 ```js
-import { createRedButton } from './card-frame.js' // also exported by ./red-button.js
+import { createRedButton } from './red-button.js'
 
 const button = createRedButton(buttonElement, { seed: 42, variant: 'danger' })
 button.setLabel('Retreat')
@@ -40,33 +24,19 @@ button.destroy()
 
 | Option | Default | |
 | --- | --- | --- |
-| `seed` | `1337 + 101` | A footer button uses the card seed + 101, so every card's button is different |
+| `seed` | `1337 + 101` | `CardFrame.vue` passes the card seed + 101, so every card's button is different |
 | `variant` | `'danger'` | `'danger'` (blood red) or `'primary'` (dark gold) |
 | `wobble` | `0.6` | px amplitude of the outline displacement |
 | `chipCount` | `2` | notches in the rim |
 | `scratchCount` | `2` | hairline scratches on the rim |
 | `grain` | `0.5` | 0–1 strength of the lacquer grain |
 | `palette` | variant's | `{ faceTop, faceBottom, outline, highlight, rim, metalLight, metalDark, text, glow }`; any subset overrides the variant |
-| `lightAngle` | `225` | deg; a footer button inherits the card's |
-| `bake` | `'auto'` | see Bake mode; a footer button inherits the card's |
+| `lightAngle` | `225` | deg |
+| `bake` | `'auto'` | see Bake mode |
 | `interactive` | `true` | pointer highlight on the face |
 | `lazy` | `false` | wait until the button nears the viewport |
 | `label` | – | replaces the label text |
 | `labelMaxWidth` | `14em` | longer labels end in an ellipsis |
-
-### In the card footer
-
-```js
-createCardFrame(element, {
-  seed: 7,
-  footer: { height: 64, button: { label: 'Cancel', onClick, variant: 'danger' } },
-})
-```
-
-The card builds a `<button>` in `.card-frame__footer`, centred, 12px above the bottom of
-the footer plate. If you ask for a button without a footer, a 64px footer is turned on.
-The button options also take `ariaLabel` and `type`. `update()` on the card updates the
-button (including a new `onClick`), and the card's `destroy()` destroys the button too.
 
 ### Layers
 
@@ -97,7 +67,7 @@ CSS variables: `--cf-btn-text`, `--cf-btn-glow` (set from the palette), `--hl`, 
 `bake: true` rasterises the SVG once (Blob → Image → canvas at `devicePixelRatio`,
 capped at 2) and swaps in an `<img>`. While a resize bakes the new size, the button keeps
 its old art. Bitmaps are cached by seed, size, DPR, variant and the visual options, so
-buttons and cards that match share one bitmap. `'auto'` bakes only in Safari, where the
+buttons that match share one bitmap. `'auto'` bakes only in Safari, where the
 lighting filters are slow. If baking fails (for example, a tainted canvas), the live SVG
 stays. The CSS fallback (`.cf-btn--fallback`: gradient face, 3px border, inset bevel) is
 used when the browser has no SVG lighting filters.

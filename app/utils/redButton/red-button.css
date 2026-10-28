@@ -1,4 +1,4 @@
-/* Styles for createRedButton() (./red-button.js), imported by ./card-frame.css.
+/* Styles for createRedButton() (./red-button.js), pulled in by CardFrame.vue.
    3. Every state is CSS on top of the art the JS rendered once: a CSS filter on one
    element, a transform, variables on plain strokes, a pseudo-element glow. None of them
    re-runs an SVG filter, and all of them work on a baked (<img>) button too.

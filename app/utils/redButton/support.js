@@ -1,4 +1,4 @@
-// Feature checks shared by the card and the button.
+// Feature checks for the button.
 
 export const supportsSvgFilters = () =>
   typeof SVGFEDiffuseLightingElement !== 'undefined' && typeof SVGFESpecularLightingElement !== 'undefined'

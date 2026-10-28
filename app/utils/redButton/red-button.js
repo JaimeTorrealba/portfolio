@@ -1,5 +1,5 @@
 // Procedural dark-fantasy button: a worn blood-red lacquered face in a chipped metal rim,
-// lit like the card frame. The element stays a real <button>: keyboard, forms and
+// lit from the top-left. The element stays a real <button>: keyboard, forms and
 // screen readers work as usual, and the label is real DOM text that no filter touches.
 //
 //   const button = createRedButton(document.querySelector('button'), { seed: 7 })

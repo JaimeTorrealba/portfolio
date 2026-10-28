@@ -2,7 +2,7 @@
 // pixels, each pushed along the edge's outward normal by a displacement function.
 // Corners and edge features (thorns, chips) are spliced in by the caller.
 //
-// Coordinates are card pixels (y down). Clockwise in y-down space keeps the shape's
+// Coordinates are button pixels (y down). Clockwise in y-down space keeps the shape's
 // inside on the right of the walking direction, so the outward normal is (dir.y, -dir.x).
 
 export const buildEdges = ({ x, y, width, height }) => {

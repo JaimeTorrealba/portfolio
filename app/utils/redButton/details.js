@@ -1,7 +1,7 @@
-// Vector wear on the frame band: scratches, the shading of each chip, grime in the
-// inner corners. Everything here is drawn clipped to the frame shape.
+// Vector wear on the button rim: scratches and the shading of each chip. Everything
+// here is drawn clipped to the rim shape.
 import { buildEdges, getEdgePoint, getEdgePoints, serializePolyline } from './rectWalker.js'
-import { createStream, randomBetween, randomIntBetween } from './random.js'
+import { randomBetween, randomIntBetween } from './random.js'
 
 const DEG = Math.PI / 180
 const SCRATCH_LIGHT = '#9a9ea8'
@@ -19,7 +19,7 @@ const getBandPlacement = (edges, s) => {
   return { edge, u: Math.min(rest, edge.length) }
 }
 
-// 2-4 point polyline, mostly along the frame (+-25deg), drifting a little per segment.
+// 2-4 point polyline, mostly along the rim (+-25deg), drifting a little per segment.
 const buildScratchPoints = (random, origin, baseAngle, lengthRange) => {
   const pointCount = randomIntBetween(random, 2, 4)
   const segmentLength = randomBetween(random, lengthRange[0], lengthRange[1]) / (pointCount - 1)
@@ -59,22 +59,6 @@ export const buildScratchStrokes = ({ random, band, thickness, count, lengthRang
   return `<g fill="none" stroke-linecap="round">${strokes.join('')}</g>`
 }
 
-// The card's scratches: 6-30px on the frame band, count scaled by the perimeter.
-export const buildScratchesMarkup = ({ seed, width, height, options, perimeter }) => {
-  const { thickness, scratchDensity, lightAngle } = options
-  return buildScratchStrokes({
-    random: createStream(seed, 'scratches'),
-    band: { x: thickness / 2, y: thickness / 2, width: width - thickness, height: height - thickness },
-    thickness,
-    count: Math.round((perimeter * scratchDensity) / 25),
-    lengthRange: [6, 30],
-    widthRange: [0.5, 1],
-    lipDistance: 0.7,
-    lightAngle,
-    alternate: true,
-  })
-}
-
 // Splits a rectangular outline into the run of edges facing the light and the run facing
 // away, each as one continuous polyline in walking order (for bevel lines).
 export const splitLitEdges = (commands, lightAngle) => {
@@ -105,7 +89,7 @@ const getLitSegments = (points, light) =>
   })
 
 // Each chip reads as a dent: a dark rim hugging the cut, and a 1px highlight on the walls
-// that face the light. Half of each stroke falls outside the frame and is clipped away.
+// that face the light. Half of each stroke falls outside the rim and is clipped away.
 export const buildChipsMarkup = (chips, lightAngle, { shadeWidth = 3, highlightWidth = 1.2 } = {}) => {
   const light = getLightVector(lightAngle)
   return chips
@@ -116,19 +100,5 @@ export const buildChipsMarkup = (chips, lightAngle, { shadeWidth = 3, highlightW
         .join('')
       return shade + highlights
     })
-    .join('')
-}
-
-// Dark grime pooling where the frame meets the panel, in the four inner corners.
-export const buildGrimeMarkup = ({ width, height, options, gradientId }) => {
-  const { thickness } = options
-  const radius = thickness * 2.6
-  return [
-    [thickness, thickness],
-    [width - thickness, thickness],
-    [width - thickness, height - thickness],
-    [thickness, height - thickness],
-  ]
-    .map(([cx, cy]) => `<circle cx="${cx}" cy="${cy}" r="${radius}" fill="url(#${gradientId})"/>`)
     .join('')
 }

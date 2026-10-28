@@ -1,23 +1,18 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { gsap } from "gsap";
-import { showText } from "@/utils/gsaps.js";
+import { fadeInText } from "@/utils/gsaps.js";
 import CardFrame from "@/components/cards/CardFrame.vue";
 import AnimatedList from "@/components/common/AnimatedList.vue";
 import { experiences } from "#shared/profile";
 
 const emit = defineEmits(["close"]);
 
-// The frame's red footer button is the card's close button.
-const frameOptions = {
-  footer: { button: { label: "Close", ariaLabel: "Close card", onClick: () => emit("close") } },
-};
-
 const titleRef = ref(null);
 
 let titleContext = null;
 onMounted(() => {
-  titleContext = gsap.context(() => showText(titleRef.value));
+  titleContext = gsap.context(() => fadeInText(titleRef.value));
 });
 // Kill, not revert: the card is still fading out when this runs.
 onBeforeUnmount(() => titleContext?.kill());
@@ -25,7 +20,7 @@ onBeforeUnmount(() => titleContext?.kill());
 
 <template>
   <section class="container" role="dialog" aria-modal="true" aria-labelledby="experience-card-title">
-    <CardFrame class="card-panel" :seed="41" :options="frameOptions">
+    <CardFrame class="card-panel" :seed="41" @close="emit('close')">
       <div class="glass-content">
         <div class="overflow-hidden">
           <h2 id="experience-card-title" ref="titleRef" class="is-size-1">Experience</h2>

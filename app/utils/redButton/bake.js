@@ -1,8 +1,8 @@
 // Bake: run the SVG filters once, offscreen, and keep the result as a bitmap. A baked
-// card or button is a plain <img>, so transforms, scroll and the shine overlay never make the
+// button is a plain <img>, so transforms, scroll and the shine overlay never make the
 // browser re-run the lighting filters (slow in Safari over large regions).
 //
-// Results are cached by key; cards (or buttons) with the same seed, size, options and DPR
+// Results are cached by key; buttons with the same seed, size, options and DPR
 // share one bitmap. The cache is capped: evicting a URL does not affect an <img> already showing it.
 
 const CACHE_LIMIT = 64
@@ -12,13 +12,13 @@ const loadImage = (url) =>
   new Promise((resolve, reject) => {
     const image = new Image()
     image.onload = () => resolve(image)
-    image.onerror = () => reject(new Error('card-frame: the SVG could not be loaded for baking'))
+    image.onerror = () => reject(new Error('red-button: the SVG could not be loaded for baking'))
     image.src = url
   })
 
 const canvasToBlob = (canvas) =>
   new Promise((resolve, reject) => {
-    canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('card-frame: toBlob returned nothing'))), 'image/png')
+    canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('red-button: toBlob returned nothing'))), 'image/png')
   })
 
 const rasterizeSvg = async ({ markup, width, height, dpr }) => {
@@ -64,7 +64,7 @@ export const bakeSvg = ({ key, markup, width, height, dpr }) => {
   return pending
 }
 
-// <img> showing a baked URL, decoded before it is swapped in so the frame never flickers.
+// <img> showing a baked URL, decoded before it is swapped in so the button never flickers.
 export const createBakedImage = async (url, className) => {
   const image = new Image()
   image.className = className

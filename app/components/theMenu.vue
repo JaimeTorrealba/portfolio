@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, nextTick } from "vue";
+import { ref, computed, watch, nextTick, onMounted } from "vue";
 import { useEventListener } from "@vueuse/core";
 import { useMainStore } from "@/stores";
 import {
@@ -9,6 +9,13 @@ import {
   animateMenuButtonOut,
 } from "@/utils/menuTransitions.js";
 import { keepFocusInside } from "@/utils/focusTrap.js";
+import { registerCardEdgePane } from "@/utils/cardEdge.js";
+import {
+  isUISoundOn,
+  playHoverSoundOnMouseEnter,
+  playCardOpenSound,
+  playCardCloseSound,
+} from "@/utils/uiSounds.js";
 import AboutMeCard from "@/components/cards/AboutMeCard.vue";
 import ContentCard from "@/components/cards/ContentCard.vue";
 import ExperienceCard from "@/components/cards/ExperienceCard.vue";
@@ -69,15 +76,20 @@ useEventListener(document, "keydown", (event) => {
   else if (event.key === "Tab" && openCardEl) keepFocusInside(openCardEl, event);
 });
 
+// The menu is always mounted, unlike the cards, so the folder is there before one opens.
+onMounted(registerCardEdgePane);
+
 const onEnter = (el, done) => {
   openCardEl = el;
-  // The close button is the red button the card frame mounts in its footer.
+  if (isUISoundOn()) playCardOpenSound();
+  // The close button is the red button in CardFrame.vue's footer.
   el.querySelector(".card-frame__footer .cf-btn")?.focus({ preventScroll: true });
   animateCardIn(el, done);
 };
 
 const onLeave = (el, done) => {
   if (openCardEl === el) openCardEl = null;
+  if (isUISoundOn()) playCardCloseSound();
   animateCardOut(el, done);
 };
 </script>
@@ -105,6 +117,7 @@ const onLeave = (el, done) => {
     <MenuButton
       v-if="showMenuButtons"
       key="about"
+      @pointerenter="playHoverSoundOnMouseEnter"
       data-index="0"
       ref="aboutBtnRef"
       @click="openCard('about')"
@@ -114,6 +127,7 @@ const onLeave = (el, done) => {
     <MenuButton
       v-if="showMenuButtons"
       key="content"
+      @pointerenter="playHoverSoundOnMouseEnter"
       data-index="1"
       ref="contentBtnRef"
       @click="openCard('content')"
@@ -123,6 +137,7 @@ const onLeave = (el, done) => {
     <MenuButton
       v-if="showMenuButtons"
       key="experience"
+      @pointerenter="playHoverSoundOnMouseEnter"
       data-index="2"
       ref="experienceBtnRef"
       @click="openCard('experience')"
@@ -132,6 +147,7 @@ const onLeave = (el, done) => {
     <MenuButton
       v-if="showMenuButtons"
       key="projects"
+      @pointerenter="playHoverSoundOnMouseEnter"
       data-index="3"
       work-in-progress
     >

@@ -14,7 +14,9 @@ const props = defineProps({
   enableArrowNavigation: { type: Boolean, default: true },
 });
 
-const emit = defineEmits(["itemSelected"]);
+// itemPointerEnter hands the raw event up, so a parent can react to the pointer
+// reaching an item (ContentCard.vue plays its hover sound).
+const emit = defineEmits(["itemSelected", "itemPointerEnter"]);
 
 // Distance (px) over which the edge fades ramp up, and the margin kept around
 // a keyboard-selected item when scrolling it into view — both from Vue Bits.
@@ -146,6 +148,7 @@ onBeforeUnmount(() => {
       tabindex="-1"
       @focusin="selectedIndex = index"
       @mouseenter="selectedIndex = index"
+      @pointerenter="emit('itemPointerEnter', $event)"
       @click="selectedIndex = index"
     >
       <slot :item="item" :index="index" :selected="index === selectedIndex" />

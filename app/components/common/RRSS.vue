@@ -3,6 +3,7 @@ import { ref, watchEffect, nextTick, onBeforeUnmount } from "vue";
 import gsap from "gsap";
 import { useMainStore } from "@/stores";
 import { prefersReducedMotion } from "@/utils/motion.js";
+import { playHoverSoundOnMouseEnter } from "@/utils/uiSounds.js";
 import Tooltip from "@/components/common/Tooltip.vue";
 import Twitter from "@/assets/icons/RRSS/Twitter.vue";
 import Github from "@/assets/icons/RRSS/Github.vue";
@@ -57,6 +58,7 @@ const showTooltipLab = ref(false);
           target="_blank"
           rel="me noopener noreferrer"
           :aria-label="`${person.name} on ${socials.bluesky.label}`"
+          @pointerenter="playHoverSoundOnMouseEnter"
           @mouseenter="showTooltipBlueSky = true"
           @mouseleave="showTooltipBlueSky = false"
           @focus="showTooltipBlueSky = true"
@@ -73,6 +75,7 @@ const showTooltipLab = ref(false);
           target="_blank"
           rel="me noopener noreferrer"
           :aria-label="`${person.name} on ${socials.twitter.label}`"
+          @pointerenter="playHoverSoundOnMouseEnter"
           @mouseenter="showTooltipTwitter = true"
           @mouseleave="showTooltipTwitter = false"
           @focus="showTooltipTwitter = true"
@@ -90,6 +93,7 @@ const showTooltipLab = ref(false);
           target="_blank"
           rel="me noopener noreferrer"
           :aria-label="`${person.name} on ${socials.github.label}`"
+          @pointerenter="playHoverSoundOnMouseEnter"
           @mouseenter="showTooltipGithub = true"
           @mouseleave="showTooltipGithub = false"
           @focus="showTooltipGithub = true"
@@ -106,6 +110,7 @@ const showTooltipLab = ref(false);
           target="_blank"
           rel="me noopener noreferrer"
           :aria-label="`${person.name} on ${socials.linkedin.label}`"
+          @pointerenter="playHoverSoundOnMouseEnter"
           @mouseenter="showTooltipLinkedin = true"
           @mouseleave="showTooltipLinkedin = false"
           @focus="showTooltipLinkedin = true"
@@ -122,6 +127,7 @@ const showTooltipLab = ref(false);
           target="_blank"
           rel="me noopener noreferrer"
           :aria-label="`${person.name} on ${socials.codepen.label}`"
+          @pointerenter="playHoverSoundOnMouseEnter"
           @mouseenter="showTooltipCodepen = true"
           @mouseleave="showTooltipCodepen = false"
           @focus="showTooltipCodepen = true"
@@ -138,6 +144,7 @@ const showTooltipLab = ref(false);
           target="_blank"
           rel="me noopener noreferrer"
           :aria-label="`${person.name} on ${socials.lab.label}`"
+          @pointerenter="playHoverSoundOnMouseEnter"
           @mouseenter="showTooltipLab = true"
           @mouseleave="showTooltipLab = false"
           @focus="showTooltipLab = true"

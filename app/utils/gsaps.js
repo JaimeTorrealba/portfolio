@@ -17,6 +17,22 @@ export const showText = (elem) => {
   })
 }
 
+export const fadeInText = (elem) => {
+  const tl = gsap.timeline()
+
+  if (prefersReducedMotion()) {
+    return tl.set(elem, { opacity: 1 })
+  }
+
+  return tl.from(elem, {
+    opacity: 0,
+    ease: 'power2.out',
+    duration: 0.6,
+    // Starts partway through the card's 0.65s scale-in, so the fade reads.
+    delay: 0.2,
+  })
+}
+
 export const appear = (elem) => {
   const tl = gsap.timeline()
 

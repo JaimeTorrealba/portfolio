@@ -1,4 +1,4 @@
-// When to regenerate, shared by the card and the button: on size changes, at most once
+// When to regenerate, for the button: on size changes, at most once
 // per frame, and only once the element has come near the viewport.
 const LAZY_ROOT_MARGIN = '200px'
 

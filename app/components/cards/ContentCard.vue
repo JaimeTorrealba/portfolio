@@ -1,23 +1,19 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { gsap } from "gsap";
-import { showText } from "@/utils/gsaps.js";
+import { fadeInText } from "@/utils/gsaps.js";
 import CardFrame from "@/components/cards/CardFrame.vue";
 import AnimatedList from "@/components/common/AnimatedList.vue";
+import { playHoverSoundOnMouseEnter } from "@/utils/uiSounds.js";
 import { content } from "#shared/profile";
 
 const emit = defineEmits(["close"]);
-
-// The frame's red footer button is the card's close button.
-const frameOptions = {
-  footer: { button: { label: "Close", ariaLabel: "Close card", onClick: () => emit("close") } },
-};
 
 const titleRef = ref(null);
 
 let titleContext = null;
 onMounted(() => {
-  titleContext = gsap.context(() => showText(titleRef.value));
+  titleContext = gsap.context(() => fadeInText(titleRef.value));
 });
 // Kill, not revert: the card is still fading out when this runs.
 onBeforeUnmount(() => titleContext?.kill());
@@ -25,7 +21,7 @@ onBeforeUnmount(() => titleContext?.kill());
 
 <template>
   <section class="container" role="dialog" aria-modal="true" aria-labelledby="content-card-title">
-    <CardFrame class="card-panel" :seed="23" :options="frameOptions">
+    <CardFrame class="card-panel" :seed="23" @close="emit('close')">
       <div class="glass-content">
         <div class="overflow-hidden">
           <h2 id="content-card-title" ref="titleRef" class="is-size-1">Content</h2>
@@ -34,20 +30,22 @@ onBeforeUnmount(() => titleContext?.kill());
           :items="content"
           list-class="talks-list"
           item-class="talk-item"
+          @item-pointer-enter="playHoverSoundOnMouseEnter"
         >
           <template #default="{ item }">
-            <!-- Items without a public link render as plain text, not an empty href. -->
+            <!-- The link fills the whole item. Items without a public link render as
+                 plain text, not an empty href. -->
             <component
               :is="item.url ? 'a' : 'div'"
               v-bind="item.url ? { href: item.url, target: '_blank', rel: 'noopener noreferrer' } : {}"
-              class="talk-title"
+              class="talk-link"
             >
               <div class="talk-body">
-                <span :lang="item.lang">{{ item.title }}</span>
+                <span class="talk-title" :lang="item.lang">{{ item.title }}</span>
                 <p class="talk-description">{{ item.description }}</p>
               </div>
+              <span class="talk-type" :data-type="item.type">{{ item.type }}</span>
             </component>
-            <span class="talk-type" :data-type="item.type">{{ item.type }}</span>
           </template>
         </AnimatedList>
       </div>
@@ -89,12 +87,8 @@ onBeforeUnmount(() => titleContext?.kill());
   border-radius: 2px;
 }
 
+/* Padding and layout live on .talk-link so the whole item is clickable. */
 :deep(.talk-item) {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.875rem;
-  padding: 0.875rem 1rem;
   border-radius: 0.625rem;
   background: hsla(0, 0%, 100%, 0.04);
   border: 1px solid hsla(0, 0%, 100%, 0.08);
@@ -150,15 +144,27 @@ onBeforeUnmount(() => titleContext?.kill());
   gap: 0.3rem;
 }
 
+.talk-link {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.875rem;
+  padding: 0.875rem 1rem;
+  border-radius: inherit;
+}
+
+/* Inside the list's edge-fade mask, so the ring is drawn inside the box. */
+a.talk-link:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -2px;
+}
+
 .talk-title {
   font-family: "sentient";
   font-size: 1rem;
-  text-decoration: none;
-  transition: opacity 0.15s ease;
 }
 
-a.talk-title:hover {
-  opacity: 0.75;
+a.talk-link:hover .talk-title {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
